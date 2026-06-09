@@ -1,0 +1,387 @@
+{"level":"info","message":"🚫 Starting auto-cancel for rides with date <= 2025-12-20...","ms":"+0ms","service":"user-service","timestamp":"2025-12-22T06:46:45.593Z"}
+{"level":"info","message":"✓ Cancelled 2317 unassigned employee rides","ms":"+999ms","service":"user-service","timestamp":"2025-12-22T06:46:46.592Z"}
+{"level":"info","message":"✓ Cancelled 431 employee rides with scheduled ride masters","ms":"+56ms","service":"user-service","timestamp":"2025-12-22T06:46:46.648Z"}
+{"level":"info","message":"✓ Cancelled 217 scheduled ride masters","ms":"+109ms","service":"user-service","timestamp":"2025-12-22T06:46:46.757Z"}
+{"level":"info","message":"✅ Auto-cancel completed for date <= 2025-12-20","ms":"+39ms","service":"user-service","timestamp":"2025-12-22T06:46:46.796Z"}
+{"level":"info","message":"🚫 Starting auto-cancel for rides with date <= 2025-12-20...","ms":"+0ms","service":"user-service","timestamp":"2025-12-22T07:20:18.053Z"}
+{"level":"error","message":"❌ Error in cancelPastPendingEmployeeRides:","ms":"+682ms","service":"user-service","timestamp":"2025-12-22T07:20:18.735Z"}
+{"level":"info","message":"🚫 Starting auto-cancel for rides with date <= 2025-12-20...","ms":"+0ms","service":"user-service","timestamp":"2025-12-22T07:23:02.415Z"}
+{"level":"error","message":"❌ Error in cancelPastPendingEmployeeRides:","ms":"+616ms","service":"user-service","timestamp":"2025-12-22T07:23:03.031Z"}
+{"level":"info","message":"🚫 Starting auto-cancel for rides with date <= 2025-12-20...","ms":"+0ms","service":"user-service","timestamp":"2025-12-22T07:34:52.479Z"}
+{"level":"info","message":"✓ Cancelled 0 unassigned employee rides","ms":"+559ms","service":"user-service","timestamp":"2025-12-22T07:34:53.038Z"}
+{"level":"info","message":"✓ Cancelled 0 employee rides with scheduled ride masters","ms":"+35ms","service":"user-service","timestamp":"2025-12-22T07:34:53.073Z"}
+{"level":"info","message":"✅ Auto-cancel completed for date <= 2025-12-20","ms":"+84ms","service":"user-service","timestamp":"2025-12-22T07:34:53.157Z"}
+{"level":"info","message":"🚫 Starting auto-cancel for rides with date <= 2025-12-20...","ms":"+0ms","service":"user-service","timestamp":"2025-12-22T07:37:36.529Z"}
+{"level":"info","message":"✓ Cancelled 1 unassigned employee rides","ms":"+634ms","service":"user-service","timestamp":"2025-12-22T07:37:37.163Z"}
+{"level":"info","message":"✓ Cancelled 0 employee rides with scheduled ride masters","ms":"+31ms","service":"user-service","timestamp":"2025-12-22T07:37:37.194Z"}
+{"level":"info","message":"✅ Auto-cancel completed for date <= 2025-12-20","ms":"+107ms","service":"user-service","timestamp":"2025-12-22T07:37:37.301Z"}
+{"level":"info","message":"Gemini direct prompt response preview', [object Object]","ms":"+0ms","service":"user-service","timestamp":"2025-12-23T08:41:54.417Z"}
+{"level":"warn","message":"⚠️  State already exists: Andaman and Nicobar Islands","ms":"+0ms","service":"user-service","timestamp":"2026-02-04T11:13:19.355Z"}
+{"level":"warn","message":"⚠️  State already exists: Andhra Pradesh","ms":"+4ms","service":"user-service","timestamp":"2026-02-04T11:13:19.360Z"}
+{"level":"warn","message":"⚠️  State already exists: Arunachal Pradesh","ms":"+1ms","service":"user-service","timestamp":"2026-02-04T11:13:19.361Z"}
+{"level":"warn","message":"⚠️  State already exists: Assam","ms":"+0ms","service":"user-service","timestamp":"2026-02-04T11:13:19.361Z"}
+{"level":"warn","message":"⚠️  State already exists: Bihar","ms":"+1ms","service":"user-service","timestamp":"2026-02-04T11:13:19.362Z"}
+{"level":"warn","message":"⚠️  State already exists: Chandigarh","ms":"+1ms","service":"user-service","timestamp":"2026-02-04T11:13:19.363Z"}
+{"level":"warn","message":"⚠️  State already exists: Chhattisgarh","ms":"+0ms","service":"user-service","timestamp":"2026-02-04T11:13:19.363Z"}
+{"level":"warn","message":"⚠️  State already exists: Dadra and Nagar Haveli","ms":"+0ms","service":"user-service","timestamp":"2026-02-04T11:13:19.363Z"}
+{"level":"warn","message":"⚠️  State already exists: Delhi","ms":"+1ms","service":"user-service","timestamp":"2026-02-04T11:13:19.364Z"}
+{"level":"warn","message":"⚠️  State already exists: Goa","ms":"+1ms","service":"user-service","timestamp":"2026-02-04T11:13:19.365Z"}
+{"level":"warn","message":"⚠️  State already exists: Gujarat","ms":"+0ms","service":"user-service","timestamp":"2026-02-04T11:13:19.365Z"}
+{"level":"warn","message":"⚠️  State already exists: Haryana","ms":"+1ms","service":"user-service","timestamp":"2026-02-04T11:13:19.366Z"}
+{"level":"warn","message":"⚠️  State already exists: Himachal Pradesh","ms":"+0ms","service":"user-service","timestamp":"2026-02-04T11:13:19.366Z"}
+{"level":"warn","message":"⚠️  State already exists: Jammu and Kashmir","ms":"+0ms","service":"user-service","timestamp":"2026-02-04T11:13:19.366Z"}
+{"level":"warn","message":"⚠️  State already exists: Jharkhand","ms":"+1ms","service":"user-service","timestamp":"2026-02-04T11:13:19.367Z"}
+{"level":"warn","message":"⚠️  State already exists: Karnataka","ms":"+0ms","service":"user-service","timestamp":"2026-02-04T11:13:19.367Z"}
+{"level":"warn","message":"⚠️  State already exists: Kerala","ms":"+1ms","service":"user-service","timestamp":"2026-02-04T11:13:19.368Z"}
+{"level":"warn","message":"⚠️  State already exists: Madhya Pradesh","ms":"+0ms","service":"user-service","timestamp":"2026-02-04T11:13:19.368Z"}
+{"level":"warn","message":"⚠️  State already exists: Maharashtra","ms":"+0ms","service":"user-service","timestamp":"2026-02-04T11:13:19.368Z"}
+{"level":"warn","message":"⚠️  State already exists: Manipur","ms":"+0ms","service":"user-service","timestamp":"2026-02-04T11:13:19.368Z"}
+{"level":"warn","message":"⚠️  State already exists: Meghalaya","ms":"+1ms","service":"user-service","timestamp":"2026-02-04T11:13:19.369Z"}
+{"level":"warn","message":"⚠️  State already exists: Mizoram","ms":"+0ms","service":"user-service","timestamp":"2026-02-04T11:13:19.369Z"}
+{"level":"warn","message":"⚠️  State already exists: Nagaland","ms":"+0ms","service":"user-service","timestamp":"2026-02-04T11:13:19.369Z"}
+{"level":"warn","message":"⚠️  State already exists: Odisha","ms":"+0ms","service":"user-service","timestamp":"2026-02-04T11:13:19.369Z"}
+{"level":"warn","message":"⚠️  State already exists: Puducherry","ms":"+1ms","service":"user-service","timestamp":"2026-02-04T11:13:19.370Z"}
+{"level":"warn","message":"⚠️  State already exists: Punjab","ms":"+0ms","service":"user-service","timestamp":"2026-02-04T11:13:19.370Z"}
+{"level":"warn","message":"⚠️  State already exists: Rajasthan","ms":"+0ms","service":"user-service","timestamp":"2026-02-04T11:13:19.370Z"}
+{"level":"warn","message":"⚠️  State already exists: Tamil Nadu","ms":"+0ms","service":"user-service","timestamp":"2026-02-04T11:13:19.370Z"}
+{"level":"warn","message":"⚠️  State already exists: Telangana","ms":"+1ms","service":"user-service","timestamp":"2026-02-04T11:13:19.371Z"}
+{"level":"warn","message":"⚠️  State already exists: Tripura","ms":"+0ms","service":"user-service","timestamp":"2026-02-04T11:13:19.371Z"}
+{"level":"warn","message":"⚠️  State already exists: Uttarakhand","ms":"+0ms","service":"user-service","timestamp":"2026-02-04T11:13:19.371Z"}
+{"level":"warn","message":"⚠️  State already exists: Uttar Pradesh","ms":"+1ms","service":"user-service","timestamp":"2026-02-04T11:13:19.372Z"}
+{"level":"warn","message":"⚠️  State already exists: West Bengal","ms":"+0ms","service":"user-service","timestamp":"2026-02-04T11:13:19.372Z"}
+{"level":"warn","message":"⚠️  Skipping existing cities...","ms":"+160ms","service":"user-service","timestamp":"2026-02-04T11:13:19.532Z"}
+{"level":"info","message":"🎉 City seeding completed: 0 inserted, 1215 skipped","ms":"+3ms","service":"user-service","timestamp":"2026-02-04T11:13:19.535Z"}
+{"level":"info","message":"ℹ️  Starting vehicle brands seeding...","ms":"+33ms","service":"user-service","timestamp":"2026-02-04T11:13:19.568Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_brand: Mahindra","ms":"+181ms","service":"user-service","timestamp":"2026-02-04T11:13:19.749Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_brand: Maruti Suzuki","ms":"+90ms","service":"user-service","timestamp":"2026-02-04T11:13:19.839Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_brand: Tata Motors","ms":"+87ms","service":"user-service","timestamp":"2026-02-04T11:13:19.926Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_brand: Hyundai","ms":"+95ms","service":"user-service","timestamp":"2026-02-04T11:13:20.021Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_brand: Toyota","ms":"+92ms","service":"user-service","timestamp":"2026-02-04T11:13:20.113Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_brand: MG","ms":"+91ms","service":"user-service","timestamp":"2026-02-04T11:13:20.204Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_brand: Kia","ms":"+88ms","service":"user-service","timestamp":"2026-02-04T11:13:20.292Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_brand: Skoda","ms":"+89ms","service":"user-service","timestamp":"2026-02-04T11:13:20.381Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_brand: Volkswagen","ms":"+85ms","service":"user-service","timestamp":"2026-02-04T11:13:20.466Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_brand: Renault","ms":"+89ms","service":"user-service","timestamp":"2026-02-04T11:13:20.555Z"}
+{"level":"info","message":"📊 Summary for vehicle_brand: 0 created, 10 already existed","ms":"+1ms","service":"user-service","timestamp":"2026-02-04T11:13:20.556Z"}
+{"level":"info","message":"✅ Vehicle brands seeding completed! Created: 0, Existing: 10","ms":"+1ms","service":"user-service","timestamp":"2026-02-04T11:13:20.557Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_brand: Mahindra","ms":"+92ms","service":"user-service","timestamp":"2026-02-04T11:13:20.649Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_brand: Maruti Suzuki","ms":"+80ms","service":"user-service","timestamp":"2026-02-04T11:13:20.729Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_brand: Tata Motors","ms":"+81ms","service":"user-service","timestamp":"2026-02-04T11:13:20.810Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_brand: Hyundai","ms":"+86ms","service":"user-service","timestamp":"2026-02-04T11:13:20.896Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_brand: Toyota","ms":"+85ms","service":"user-service","timestamp":"2026-02-04T11:13:20.981Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_brand: MG","ms":"+84ms","service":"user-service","timestamp":"2026-02-04T11:13:21.065Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_brand: Kia","ms":"+90ms","service":"user-service","timestamp":"2026-02-04T11:13:21.155Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_brand: Skoda","ms":"+87ms","service":"user-service","timestamp":"2026-02-04T11:13:21.242Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_brand: Volkswagen","ms":"+94ms","service":"user-service","timestamp":"2026-02-04T11:13:21.336Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_brand: Renault","ms":"+87ms","service":"user-service","timestamp":"2026-02-04T11:13:21.422Z"}
+{"level":"info","message":"📊 Summary for vip_vehicle_brand: 10 created, 0 already existed","ms":"+1ms","service":"user-service","timestamp":"2026-02-04T11:13:21.423Z"}
+{"level":"info","message":"✅ VIP vehicle brands seeding completed! Created: 10, Existing: 0","ms":"+0ms","service":"user-service","timestamp":"2026-02-04T11:13:21.424Z"}
+{"level":"info","message":"ℹ️  Starting vehicle models seeding...","ms":"+29ms","service":"user-service","timestamp":"2026-02-04T11:13:21.453Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Thar","ms":"+132ms","service":"user-service","timestamp":"2026-02-04T11:13:21.585Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Scorpio N","ms":"+40ms","service":"user-service","timestamp":"2026-02-04T11:13:21.625Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: XUV700","ms":"+42ms","service":"user-service","timestamp":"2026-02-04T11:13:21.667Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: XUV300","ms":"+47ms","service":"user-service","timestamp":"2026-02-04T11:13:21.714Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Bolero","ms":"+43ms","service":"user-service","timestamp":"2026-02-04T11:13:21.757Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Swift","ms":"+42ms","service":"user-service","timestamp":"2026-02-04T11:13:21.799Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Brezza","ms":"+43ms","service":"user-service","timestamp":"2026-02-04T11:13:21.842Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Grand Vitara","ms":"+43ms","service":"user-service","timestamp":"2026-02-04T11:13:21.885Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Jimny","ms":"+43ms","service":"user-service","timestamp":"2026-02-04T11:13:21.928Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Baleno","ms":"+72ms","service":"user-service","timestamp":"2026-02-04T11:13:22.000Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Ertiga","ms":"+43ms","service":"user-service","timestamp":"2026-02-04T11:13:22.043Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Dzire","ms":"+43ms","service":"user-service","timestamp":"2026-02-04T11:13:22.086Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Nexon","ms":"+46ms","service":"user-service","timestamp":"2026-02-04T11:13:22.132Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Punch","ms":"+66ms","service":"user-service","timestamp":"2026-02-04T11:13:22.198Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Harrier","ms":"+41ms","service":"user-service","timestamp":"2026-02-04T11:13:22.239Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Safari","ms":"+44ms","service":"user-service","timestamp":"2026-02-04T11:13:22.283Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Creta","ms":"+41ms","service":"user-service","timestamp":"2026-02-04T11:13:22.324Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Venue","ms":"+43ms","service":"user-service","timestamp":"2026-02-04T11:13:22.367Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Verna","ms":"+43ms","service":"user-service","timestamp":"2026-02-04T11:13:22.410Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Alcazar","ms":"+42ms","service":"user-service","timestamp":"2026-02-04T11:13:22.452Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Innova Crysta","ms":"+53ms","service":"user-service","timestamp":"2026-02-04T11:13:22.505Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Innova Hycross","ms":"+41ms","service":"user-service","timestamp":"2026-02-04T11:13:22.546Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Fortuner","ms":"+43ms","service":"user-service","timestamp":"2026-02-04T11:13:22.588Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Urban Cruiser Hyryder","ms":"+42ms","service":"user-service","timestamp":"2026-02-04T11:13:22.631Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Etios","ms":"+44ms","service":"user-service","timestamp":"2026-02-04T11:13:22.675Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Hector","ms":"+42ms","service":"user-service","timestamp":"2026-02-04T11:13:22.717Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Gloster","ms":"+44ms","service":"user-service","timestamp":"2026-02-04T11:13:22.761Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Seltos","ms":"+46ms","service":"user-service","timestamp":"2026-02-04T11:13:22.807Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Carens","ms":"+42ms","service":"user-service","timestamp":"2026-02-04T11:13:22.849Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Sonet","ms":"+43ms","service":"user-service","timestamp":"2026-02-04T11:13:22.892Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Kushaq","ms":"+42ms","service":"user-service","timestamp":"2026-02-04T11:13:22.934Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Slavia","ms":"+43ms","service":"user-service","timestamp":"2026-02-04T11:13:22.977Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Taigun","ms":"+43ms","service":"user-service","timestamp":"2026-02-04T11:13:23.020Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Virtus","ms":"+43ms","service":"user-service","timestamp":"2026-02-04T11:13:23.063Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Kiger","ms":"+42ms","service":"user-service","timestamp":"2026-02-04T11:13:23.105Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Triber","ms":"+43ms","service":"user-service","timestamp":"2026-02-04T11:13:23.148Z"}
+{"level":"info","message":"📊 Summary for vehicle_model: 0 created, 36 already existed","ms":"+0ms","service":"user-service","timestamp":"2026-02-04T11:13:23.148Z"}
+{"level":"info","message":"✅ Vehicle models seeding completed! Created: 0, Existing: 36","ms":"+1ms","service":"user-service","timestamp":"2026-02-04T11:13:23.149Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Thar","ms":"+138ms","service":"user-service","timestamp":"2026-02-04T11:13:23.287Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Scorpio N","ms":"+92ms","service":"user-service","timestamp":"2026-02-04T11:13:23.379Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: XUV700","ms":"+91ms","service":"user-service","timestamp":"2026-02-04T11:13:23.470Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: XUV300","ms":"+97ms","service":"user-service","timestamp":"2026-02-04T11:13:23.567Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Bolero","ms":"+89ms","service":"user-service","timestamp":"2026-02-04T11:13:23.656Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Swift","ms":"+96ms","service":"user-service","timestamp":"2026-02-04T11:13:23.752Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Brezza","ms":"+96ms","service":"user-service","timestamp":"2026-02-04T11:13:23.848Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Grand Vitara","ms":"+94ms","service":"user-service","timestamp":"2026-02-04T11:13:23.942Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Jimny","ms":"+89ms","service":"user-service","timestamp":"2026-02-04T11:13:24.031Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Baleno","ms":"+134ms","service":"user-service","timestamp":"2026-02-04T11:13:24.165Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Ertiga","ms":"+101ms","service":"user-service","timestamp":"2026-02-04T11:13:24.266Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Dzire","ms":"+110ms","service":"user-service","timestamp":"2026-02-04T11:13:24.376Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Nexon","ms":"+85ms","service":"user-service","timestamp":"2026-02-04T11:13:24.461Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Punch","ms":"+85ms","service":"user-service","timestamp":"2026-02-04T11:13:24.546Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Harrier","ms":"+107ms","service":"user-service","timestamp":"2026-02-04T11:13:24.653Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Safari","ms":"+90ms","service":"user-service","timestamp":"2026-02-04T11:13:24.743Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Creta","ms":"+98ms","service":"user-service","timestamp":"2026-02-04T11:13:24.841Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Venue","ms":"+81ms","service":"user-service","timestamp":"2026-02-04T11:13:24.922Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Verna","ms":"+84ms","service":"user-service","timestamp":"2026-02-04T11:13:25.006Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Alcazar","ms":"+81ms","service":"user-service","timestamp":"2026-02-04T11:13:25.087Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Innova Crysta","ms":"+83ms","service":"user-service","timestamp":"2026-02-04T11:13:25.170Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Innova Hycross","ms":"+83ms","service":"user-service","timestamp":"2026-02-04T11:13:25.253Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Fortuner","ms":"+80ms","service":"user-service","timestamp":"2026-02-04T11:13:25.333Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Urban Cruiser Hyryder","ms":"+84ms","service":"user-service","timestamp":"2026-02-04T11:13:25.417Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Etios","ms":"+79ms","service":"user-service","timestamp":"2026-02-04T11:13:25.496Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Hector","ms":"+84ms","service":"user-service","timestamp":"2026-02-04T11:13:25.580Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Gloster","ms":"+91ms","service":"user-service","timestamp":"2026-02-04T11:13:25.671Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Seltos","ms":"+87ms","service":"user-service","timestamp":"2026-02-04T11:13:25.758Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Carens","ms":"+84ms","service":"user-service","timestamp":"2026-02-04T11:13:25.842Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Sonet","ms":"+83ms","service":"user-service","timestamp":"2026-02-04T11:13:25.925Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Kushaq","ms":"+82ms","service":"user-service","timestamp":"2026-02-04T11:13:26.007Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Slavia","ms":"+80ms","service":"user-service","timestamp":"2026-02-04T11:13:26.087Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Taigun","ms":"+92ms","service":"user-service","timestamp":"2026-02-04T11:13:26.179Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Virtus","ms":"+84ms","service":"user-service","timestamp":"2026-02-04T11:13:26.263Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Kiger","ms":"+103ms","service":"user-service","timestamp":"2026-02-04T11:13:26.366Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Triber","ms":"+83ms","service":"user-service","timestamp":"2026-02-04T11:13:26.449Z"}
+{"level":"info","message":"📊 Summary for vip_vehicle_model: 36 created, 0 already existed","ms":"+1ms","service":"user-service","timestamp":"2026-02-04T11:13:26.450Z"}
+{"level":"info","message":"✅ VIP vehicle models seeding completed! Created: 36, Existing: 0","ms":"+0ms","service":"user-service","timestamp":"2026-02-04T11:13:26.450Z"}
+{"level":"info","message":"ℹ️  Starting roles seeding...","ms":"+16ms","service":"user-service","timestamp":"2026-02-04T11:13:26.466Z"}
+{"level":"info","message":"ℹ️  Record already exists in role: super_admin","ms":"+43ms","service":"user-service","timestamp":"2026-02-04T11:13:26.509Z"}
+{"level":"info","message":"ℹ️  Record already exists in role: company_admin","ms":"+139ms","service":"user-service","timestamp":"2026-02-04T11:13:26.648Z"}
+{"level":"info","message":"ℹ️  Record already exists in role: company_employee","ms":"+116ms","service":"user-service","timestamp":"2026-02-04T11:13:26.764Z"}
+{"level":"info","message":"ℹ️  Record already exists in role: driver","ms":"+64ms","service":"user-service","timestamp":"2026-02-04T11:13:26.828Z"}
+{"level":"info","message":"ℹ️  Record already exists in role: vendor","ms":"+109ms","service":"user-service","timestamp":"2026-02-04T11:13:26.937Z"}
+{"level":"info","message":"📊 Summary for role: 0 created, 5 already existed","ms":"+1ms","service":"user-service","timestamp":"2026-02-04T11:13:26.938Z"}
+{"level":"info","message":"✅ Roles seeding completed! Created: 0, Existing: 5","ms":"+0ms","service":"user-service","timestamp":"2026-02-04T11:13:26.938Z"}
+{"level":"info","message":"🔍 Checking for super admin user with email: fleetiq.admin@gmail.com","ms":"+6ms","service":"user-service","timestamp":"2026-02-04T11:13:26.944Z"}
+{"level":"info","message":"✅ Found super admin role with ID: 181cca03-90fd-4f87-b622-ed47c0d60d5b","ms":"+365ms","service":"user-service","timestamp":"2026-02-04T11:13:27.309Z"}
+{"level":"info","message":"🎉 Super admin user created successfully!","ms":"+2s","service":"user-service","timestamp":"2026-02-04T11:13:28.951Z"}
+{"attempt":1,"eventTrigger":"vip_ride_start_otp","level":"info","message":"Email sent successfully:","messageId":"<9cab3c3e-9848-7e93-49bc-df978b0f1a73@forklyft.in>","ms":"+0ms","service":"user-service","subject":"Your Ride Start OTP - FleetIQ","timestamp":"2026-02-26T13:25:34.476Z","to":"funkeylook9@gmail.com"}
+{"attempt":1,"eventTrigger":"vip_ride_start_otp","level":"info","message":"Email sent successfully:","messageId":"<9403d519-8b48-538a-7b2d-26663db35024@forklyft.in>","ms":"+0ms","service":"user-service","subject":"Your Ride Start OTP - FleetIQ","timestamp":"2026-02-26T13:25:43.777Z","to":"funkeylook9@gmail.com"}
+{"attempt":1,"eventTrigger":"vip_ride_start_otp","level":"info","message":"Email sent successfully:","messageId":"<1296d328-5389-1704-9fdf-be448655061d@forklyft.in>","ms":"+0ms","service":"user-service","subject":"Your Ride Start OTP - FleetIQ","timestamp":"2026-02-26T13:28:40.429Z","to":"funkeylook9@gmail.com"}
+{"level":"info","message":"ℹ️  Starting vehicle models seeding...","ms":"+0ms","service":"user-service","timestamp":"2026-03-20T10:01:55.477Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Thar","ms":"+209ms","service":"user-service","timestamp":"2026-03-20T10:01:55.687Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Scorpio N","ms":"+31ms","service":"user-service","timestamp":"2026-03-20T10:01:55.718Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: XUV700","ms":"+28ms","service":"user-service","timestamp":"2026-03-20T10:01:55.746Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: XUV300","ms":"+30ms","service":"user-service","timestamp":"2026-03-20T10:01:55.776Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Bolero","ms":"+26ms","service":"user-service","timestamp":"2026-03-20T10:01:55.802Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Swift","ms":"+25ms","service":"user-service","timestamp":"2026-03-20T10:01:55.827Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Brezza","ms":"+25ms","service":"user-service","timestamp":"2026-03-20T10:01:55.852Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Grand Vitara","ms":"+24ms","service":"user-service","timestamp":"2026-03-20T10:01:55.876Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Jimny","ms":"+29ms","service":"user-service","timestamp":"2026-03-20T10:01:55.905Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Baleno","ms":"+26ms","service":"user-service","timestamp":"2026-03-20T10:01:55.931Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Ertiga","ms":"+23ms","service":"user-service","timestamp":"2026-03-20T10:01:55.954Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Dzire","ms":"+25ms","service":"user-service","timestamp":"2026-03-20T10:01:55.979Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Nexon","ms":"+25ms","service":"user-service","timestamp":"2026-03-20T10:01:56.004Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Punch","ms":"+25ms","service":"user-service","timestamp":"2026-03-20T10:01:56.029Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Harrier","ms":"+25ms","service":"user-service","timestamp":"2026-03-20T10:01:56.054Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Safari","ms":"+24ms","service":"user-service","timestamp":"2026-03-20T10:01:56.078Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Creta","ms":"+25ms","service":"user-service","timestamp":"2026-03-20T10:01:56.103Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Venue","ms":"+29ms","service":"user-service","timestamp":"2026-03-20T10:01:56.132Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Verna","ms":"+30ms","service":"user-service","timestamp":"2026-03-20T10:01:56.162Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Alcazar","ms":"+41ms","service":"user-service","timestamp":"2026-03-20T10:01:56.203Z"}
+{"level":"info","message":"✅ Created record in vehicle_model: Aura","ms":"+104ms","service":"user-service","timestamp":"2026-03-20T10:01:56.307Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Innova Crysta","ms":"+27ms","service":"user-service","timestamp":"2026-03-20T10:01:56.334Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Innova Hycross","ms":"+26ms","service":"user-service","timestamp":"2026-03-20T10:01:56.360Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Fortuner","ms":"+24ms","service":"user-service","timestamp":"2026-03-20T10:01:56.384Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Urban Cruiser Hyryder","ms":"+28ms","service":"user-service","timestamp":"2026-03-20T10:01:56.412Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Etios","ms":"+21ms","service":"user-service","timestamp":"2026-03-20T10:01:56.433Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Hector","ms":"+26ms","service":"user-service","timestamp":"2026-03-20T10:01:56.459Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Gloster","ms":"+24ms","service":"user-service","timestamp":"2026-03-20T10:01:56.483Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Seltos","ms":"+25ms","service":"user-service","timestamp":"2026-03-20T10:01:56.508Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Carens","ms":"+24ms","service":"user-service","timestamp":"2026-03-20T10:01:56.532Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Sonet","ms":"+25ms","service":"user-service","timestamp":"2026-03-20T10:01:56.557Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Kushaq","ms":"+25ms","service":"user-service","timestamp":"2026-03-20T10:01:56.582Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Slavia","ms":"+25ms","service":"user-service","timestamp":"2026-03-20T10:01:56.607Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Taigun","ms":"+24ms","service":"user-service","timestamp":"2026-03-20T10:01:56.631Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Virtus","ms":"+26ms","service":"user-service","timestamp":"2026-03-20T10:01:56.656Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Kiger","ms":"+24ms","service":"user-service","timestamp":"2026-03-20T10:01:56.681Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Triber","ms":"+28ms","service":"user-service","timestamp":"2026-03-20T10:01:56.709Z"}
+{"level":"info","message":"📊 Summary for vehicle_model: 1 created, 36 already existed","ms":"+1ms","service":"user-service","timestamp":"2026-03-20T10:01:56.710Z"}
+{"level":"info","message":"✅ Vehicle models seeding completed! Created: 1, Existing: 36","ms":"+1ms","service":"user-service","timestamp":"2026-03-20T10:01:56.711Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Thar","ms":"+53ms","service":"user-service","timestamp":"2026-03-20T10:01:56.764Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Scorpio N","ms":"+20ms","service":"user-service","timestamp":"2026-03-20T10:01:56.784Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: XUV700","ms":"+28ms","service":"user-service","timestamp":"2026-03-20T10:01:56.812Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: XUV300","ms":"+21ms","service":"user-service","timestamp":"2026-03-20T10:01:56.833Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Bolero","ms":"+25ms","service":"user-service","timestamp":"2026-03-20T10:01:56.858Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Swift","ms":"+21ms","service":"user-service","timestamp":"2026-03-20T10:01:56.879Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Brezza","ms":"+20ms","service":"user-service","timestamp":"2026-03-20T10:01:56.899Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Grand Vitara","ms":"+21ms","service":"user-service","timestamp":"2026-03-20T10:01:56.920Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Jimny","ms":"+21ms","service":"user-service","timestamp":"2026-03-20T10:01:56.941Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Baleno","ms":"+24ms","service":"user-service","timestamp":"2026-03-20T10:01:56.965Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Ertiga","ms":"+25ms","service":"user-service","timestamp":"2026-03-20T10:01:56.990Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Dzire","ms":"+21ms","service":"user-service","timestamp":"2026-03-20T10:01:57.011Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Nexon","ms":"+20ms","service":"user-service","timestamp":"2026-03-20T10:01:57.031Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Punch","ms":"+21ms","service":"user-service","timestamp":"2026-03-20T10:01:57.052Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Harrier","ms":"+21ms","service":"user-service","timestamp":"2026-03-20T10:01:57.073Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Safari","ms":"+20ms","service":"user-service","timestamp":"2026-03-20T10:01:57.093Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Creta","ms":"+21ms","service":"user-service","timestamp":"2026-03-20T10:01:57.114Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Venue","ms":"+20ms","service":"user-service","timestamp":"2026-03-20T10:01:57.134Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Verna","ms":"+25ms","service":"user-service","timestamp":"2026-03-20T10:01:57.159Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Alcazar","ms":"+21ms","service":"user-service","timestamp":"2026-03-20T10:01:57.180Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Aura","ms":"+45ms","service":"user-service","timestamp":"2026-03-20T10:01:57.225Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Innova Crysta","ms":"+22ms","service":"user-service","timestamp":"2026-03-20T10:01:57.247Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Innova Hycross","ms":"+24ms","service":"user-service","timestamp":"2026-03-20T10:01:57.271Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Fortuner","ms":"+27ms","service":"user-service","timestamp":"2026-03-20T10:01:57.298Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Urban Cruiser Hyryder","ms":"+31ms","service":"user-service","timestamp":"2026-03-20T10:01:57.329Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Etios","ms":"+37ms","service":"user-service","timestamp":"2026-03-20T10:01:57.366Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Hector","ms":"+29ms","service":"user-service","timestamp":"2026-03-20T10:01:57.395Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Gloster","ms":"+20ms","service":"user-service","timestamp":"2026-03-20T10:01:57.415Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Seltos","ms":"+21ms","service":"user-service","timestamp":"2026-03-20T10:01:57.436Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Carens","ms":"+25ms","service":"user-service","timestamp":"2026-03-20T10:01:57.461Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Sonet","ms":"+20ms","service":"user-service","timestamp":"2026-03-20T10:01:57.481Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Kushaq","ms":"+21ms","service":"user-service","timestamp":"2026-03-20T10:01:57.502Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Slavia","ms":"+21ms","service":"user-service","timestamp":"2026-03-20T10:01:57.522Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Taigun","ms":"+20ms","service":"user-service","timestamp":"2026-03-20T10:01:57.543Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Virtus","ms":"+26ms","service":"user-service","timestamp":"2026-03-20T10:01:57.569Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Kiger","ms":"+24ms","service":"user-service","timestamp":"2026-03-20T10:01:57.593Z"}
+{"level":"info","message":"ℹ️  Record already exists in vip_vehicle_model: Triber","ms":"+21ms","service":"user-service","timestamp":"2026-03-20T10:01:57.614Z"}
+{"level":"info","message":"ℹ️  Starting vehicle models seeding...","ms":"+0ms","service":"user-service","timestamp":"2026-03-20T10:04:24.029Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Thar","ms":"+61ms","service":"user-service","timestamp":"2026-03-20T10:04:24.090Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Scorpio N","ms":"+23ms","service":"user-service","timestamp":"2026-03-20T10:04:24.113Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: XUV700","ms":"+20ms","service":"user-service","timestamp":"2026-03-20T10:04:24.133Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: XUV300","ms":"+21ms","service":"user-service","timestamp":"2026-03-20T10:04:24.154Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Bolero","ms":"+21ms","service":"user-service","timestamp":"2026-03-20T10:04:24.175Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Swift","ms":"+20ms","service":"user-service","timestamp":"2026-03-20T10:04:24.195Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Brezza","ms":"+22ms","service":"user-service","timestamp":"2026-03-20T10:04:24.217Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Grand Vitara","ms":"+24ms","service":"user-service","timestamp":"2026-03-20T10:04:24.241Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Jimny","ms":"+21ms","service":"user-service","timestamp":"2026-03-20T10:04:24.262Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Baleno","ms":"+23ms","service":"user-service","timestamp":"2026-03-20T10:04:24.285Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Ertiga","ms":"+20ms","service":"user-service","timestamp":"2026-03-20T10:04:24.305Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Dzire","ms":"+20ms","service":"user-service","timestamp":"2026-03-20T10:04:24.325Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Nexon","ms":"+20ms","service":"user-service","timestamp":"2026-03-20T10:04:24.345Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Punch","ms":"+21ms","service":"user-service","timestamp":"2026-03-20T10:04:24.366Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Harrier","ms":"+24ms","service":"user-service","timestamp":"2026-03-20T10:04:24.390Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Safari","ms":"+20ms","service":"user-service","timestamp":"2026-03-20T10:04:24.410Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Creta","ms":"+23ms","service":"user-service","timestamp":"2026-03-20T10:04:24.433Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Venue","ms":"+25ms","service":"user-service","timestamp":"2026-03-20T10:04:24.458Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Verna","ms":"+23ms","service":"user-service","timestamp":"2026-03-20T10:04:24.481Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Alcazar","ms":"+21ms","service":"user-service","timestamp":"2026-03-20T10:04:24.502Z"}
+{"level":"info","message":"✅ Created record in vehicle_model: Aura","ms":"+56ms","service":"user-service","timestamp":"2026-03-20T10:04:24.558Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Innova Crysta","ms":"+19ms","service":"user-service","timestamp":"2026-03-20T10:04:24.577Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Innova Hycross","ms":"+25ms","service":"user-service","timestamp":"2026-03-20T10:04:24.602Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Fortuner","ms":"+20ms","service":"user-service","timestamp":"2026-03-20T10:04:24.622Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Urban Cruiser Hyryder","ms":"+20ms","service":"user-service","timestamp":"2026-03-20T10:04:24.642Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Etios","ms":"+20ms","service":"user-service","timestamp":"2026-03-20T10:04:24.662Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Hector","ms":"+24ms","service":"user-service","timestamp":"2026-03-20T10:04:24.686Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Gloster","ms":"+21ms","service":"user-service","timestamp":"2026-03-20T10:04:24.707Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Seltos","ms":"+25ms","service":"user-service","timestamp":"2026-03-20T10:04:24.732Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Carens","ms":"+21ms","service":"user-service","timestamp":"2026-03-20T10:04:24.753Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Sonet","ms":"+20ms","service":"user-service","timestamp":"2026-03-20T10:04:24.773Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Kushaq","ms":"+20ms","service":"user-service","timestamp":"2026-03-20T10:04:24.793Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Slavia","ms":"+21ms","service":"user-service","timestamp":"2026-03-20T10:04:24.814Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Taigun","ms":"+24ms","service":"user-service","timestamp":"2026-03-20T10:04:24.838Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Virtus","ms":"+23ms","service":"user-service","timestamp":"2026-03-20T10:04:24.861Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Kiger","ms":"+22ms","service":"user-service","timestamp":"2026-03-20T10:04:24.883Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Triber","ms":"+24ms","service":"user-service","timestamp":"2026-03-20T10:04:24.907Z"}
+{"level":"info","message":"📊 Summary for vehicle_model: 1 created, 36 already existed","ms":"+1ms","service":"user-service","timestamp":"2026-03-20T10:04:24.908Z"}
+{"level":"info","message":"✅ Vehicle models seeding completed! Created: 1, Existing: 36","ms":"+0ms","service":"user-service","timestamp":"2026-03-20T10:04:24.908Z"}
+{"level":"info","message":"⚠️  VIP Brand 'Mahindra' not found in vip_vehicle_brand, skipping its VIP models","ms":"+24ms","service":"user-service","timestamp":"2026-03-20T10:04:24.932Z"}
+{"level":"info","message":"ℹ️  Starting vehicle brands seeding...","ms":"+0ms","service":"user-service","timestamp":"2026-03-20T10:06:34.442Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_brand: Mahindra","ms":"+68ms","service":"user-service","timestamp":"2026-03-20T10:06:34.511Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_brand: Maruti Suzuki","ms":"+62ms","service":"user-service","timestamp":"2026-03-20T10:06:34.573Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_brand: Tata Motors","ms":"+50ms","service":"user-service","timestamp":"2026-03-20T10:06:34.623Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_brand: Hyundai","ms":"+24ms","service":"user-service","timestamp":"2026-03-20T10:06:34.647Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_brand: Toyota","ms":"+31ms","service":"user-service","timestamp":"2026-03-20T10:06:34.678Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_brand: MG","ms":"+32ms","service":"user-service","timestamp":"2026-03-20T10:06:34.710Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_brand: Kia","ms":"+41ms","service":"user-service","timestamp":"2026-03-20T10:06:34.751Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_brand: Skoda","ms":"+26ms","service":"user-service","timestamp":"2026-03-20T10:06:34.777Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_brand: Volkswagen","ms":"+25ms","service":"user-service","timestamp":"2026-03-20T10:06:34.802Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_brand: Renault","ms":"+24ms","service":"user-service","timestamp":"2026-03-20T10:06:34.826Z"}
+{"level":"info","message":"📊 Summary for vehicle_brand: 0 created, 10 already existed","ms":"+0ms","service":"user-service","timestamp":"2026-03-20T10:06:34.826Z"}
+{"level":"info","message":"✅ Vehicle brands seeding completed! Created: 0, Existing: 10","ms":"+1ms","service":"user-service","timestamp":"2026-03-20T10:06:34.827Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_brand: Mahindra","ms":"+57ms","service":"user-service","timestamp":"2026-03-20T10:06:34.884Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_brand: Maruti Suzuki","ms":"+45ms","service":"user-service","timestamp":"2026-03-20T10:06:34.929Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_brand: Tata Motors","ms":"+49ms","service":"user-service","timestamp":"2026-03-20T10:06:34.978Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_brand: Hyundai","ms":"+47ms","service":"user-service","timestamp":"2026-03-20T10:06:35.025Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_brand: Toyota","ms":"+48ms","service":"user-service","timestamp":"2026-03-20T10:06:35.073Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_brand: MG","ms":"+52ms","service":"user-service","timestamp":"2026-03-20T10:06:35.125Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_brand: Kia","ms":"+59ms","service":"user-service","timestamp":"2026-03-20T10:06:35.184Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_brand: Skoda","ms":"+68ms","service":"user-service","timestamp":"2026-03-20T10:06:35.252Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_brand: Volkswagen","ms":"+57ms","service":"user-service","timestamp":"2026-03-20T10:06:35.309Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_brand: Renault","ms":"+95ms","service":"user-service","timestamp":"2026-03-20T10:06:35.404Z"}
+{"level":"info","message":"ℹ️  Starting vehicle models seeding...","ms":"+0ms","service":"user-service","timestamp":"2026-03-20T10:06:49.828Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Thar","ms":"+130ms","service":"user-service","timestamp":"2026-03-20T10:06:49.958Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Scorpio N","ms":"+58ms","service":"user-service","timestamp":"2026-03-20T10:06:50.016Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: XUV700","ms":"+55ms","service":"user-service","timestamp":"2026-03-20T10:06:50.071Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: XUV300","ms":"+56ms","service":"user-service","timestamp":"2026-03-20T10:06:50.127Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Bolero","ms":"+56ms","service":"user-service","timestamp":"2026-03-20T10:06:50.183Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Swift","ms":"+59ms","service":"user-service","timestamp":"2026-03-20T10:06:50.242Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Brezza","ms":"+59ms","service":"user-service","timestamp":"2026-03-20T10:06:50.301Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Grand Vitara","ms":"+57ms","service":"user-service","timestamp":"2026-03-20T10:06:50.358Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Jimny","ms":"+64ms","service":"user-service","timestamp":"2026-03-20T10:06:50.422Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Baleno","ms":"+61ms","service":"user-service","timestamp":"2026-03-20T10:06:50.483Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Ertiga","ms":"+63ms","service":"user-service","timestamp":"2026-03-20T10:06:50.546Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Dzire","ms":"+60ms","service":"user-service","timestamp":"2026-03-20T10:06:50.606Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Nexon","ms":"+60ms","service":"user-service","timestamp":"2026-03-20T10:06:50.666Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Punch","ms":"+59ms","service":"user-service","timestamp":"2026-03-20T10:06:50.725Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Harrier","ms":"+54ms","service":"user-service","timestamp":"2026-03-20T10:06:50.779Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Safari","ms":"+67ms","service":"user-service","timestamp":"2026-03-20T10:06:50.846Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Creta","ms":"+58ms","service":"user-service","timestamp":"2026-03-20T10:06:50.904Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Venue","ms":"+61ms","service":"user-service","timestamp":"2026-03-20T10:06:50.965Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Verna","ms":"+54ms","service":"user-service","timestamp":"2026-03-20T10:06:51.019Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Alcazar","ms":"+60ms","service":"user-service","timestamp":"2026-03-20T10:06:51.079Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Aura","ms":"+63ms","service":"user-service","timestamp":"2026-03-20T10:06:51.142Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Innova Crysta","ms":"+58ms","service":"user-service","timestamp":"2026-03-20T10:06:51.200Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Innova Hycross","ms":"+58ms","service":"user-service","timestamp":"2026-03-20T10:06:51.258Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Fortuner","ms":"+64ms","service":"user-service","timestamp":"2026-03-20T10:06:51.322Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Urban Cruiser Hyryder","ms":"+58ms","service":"user-service","timestamp":"2026-03-20T10:06:51.380Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Etios","ms":"+55ms","service":"user-service","timestamp":"2026-03-20T10:06:51.435Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Hector","ms":"+52ms","service":"user-service","timestamp":"2026-03-20T10:06:51.487Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Gloster","ms":"+60ms","service":"user-service","timestamp":"2026-03-20T10:06:51.547Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Seltos","ms":"+54ms","service":"user-service","timestamp":"2026-03-20T10:06:51.601Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Carens","ms":"+61ms","service":"user-service","timestamp":"2026-03-20T10:06:51.662Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Sonet","ms":"+60ms","service":"user-service","timestamp":"2026-03-20T10:06:51.722Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Kushaq","ms":"+58ms","service":"user-service","timestamp":"2026-03-20T10:06:51.780Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Slavia","ms":"+57ms","service":"user-service","timestamp":"2026-03-20T10:06:51.837Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Taigun","ms":"+63ms","service":"user-service","timestamp":"2026-03-20T10:06:51.900Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Virtus","ms":"+72ms","service":"user-service","timestamp":"2026-03-20T10:06:51.972Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Kiger","ms":"+60ms","service":"user-service","timestamp":"2026-03-20T10:06:52.032Z"}
+{"level":"info","message":"ℹ️  Record already exists in vehicle_model: Triber","ms":"+57ms","service":"user-service","timestamp":"2026-03-20T10:06:52.089Z"}
+{"level":"info","message":"📊 Summary for vehicle_model: 0 created, 37 already existed","ms":"+1ms","service":"user-service","timestamp":"2026-03-20T10:06:52.090Z"}
+{"level":"info","message":"✅ Vehicle models seeding completed! Created: 0, Existing: 37","ms":"+0ms","service":"user-service","timestamp":"2026-03-20T10:06:52.090Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Thar","ms":"+189ms","service":"user-service","timestamp":"2026-03-20T10:06:52.279Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Scorpio N","ms":"+120ms","service":"user-service","timestamp":"2026-03-20T10:06:52.399Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: XUV700","ms":"+115ms","service":"user-service","timestamp":"2026-03-20T10:06:52.514Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: XUV300","ms":"+119ms","service":"user-service","timestamp":"2026-03-20T10:06:52.633Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Bolero","ms":"+113ms","service":"user-service","timestamp":"2026-03-20T10:06:52.746Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Swift","ms":"+114ms","service":"user-service","timestamp":"2026-03-20T10:06:52.860Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Brezza","ms":"+120ms","service":"user-service","timestamp":"2026-03-20T10:06:52.980Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Grand Vitara","ms":"+122ms","service":"user-service","timestamp":"2026-03-20T10:06:53.102Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Jimny","ms":"+119ms","service":"user-service","timestamp":"2026-03-20T10:06:53.221Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Baleno","ms":"+112ms","service":"user-service","timestamp":"2026-03-20T10:06:53.333Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Ertiga","ms":"+109ms","service":"user-service","timestamp":"2026-03-20T10:06:53.442Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Dzire","ms":"+119ms","service":"user-service","timestamp":"2026-03-20T10:06:53.561Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Nexon","ms":"+118ms","service":"user-service","timestamp":"2026-03-20T10:06:53.679Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Punch","ms":"+114ms","service":"user-service","timestamp":"2026-03-20T10:06:53.793Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Harrier","ms":"+114ms","service":"user-service","timestamp":"2026-03-20T10:06:53.907Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Safari","ms":"+115ms","service":"user-service","timestamp":"2026-03-20T10:06:54.022Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Creta","ms":"+154ms","service":"user-service","timestamp":"2026-03-20T10:06:54.176Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Venue","ms":"+122ms","service":"user-service","timestamp":"2026-03-20T10:06:54.298Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Verna","ms":"+115ms","service":"user-service","timestamp":"2026-03-20T10:06:54.413Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Alcazar","ms":"+125ms","service":"user-service","timestamp":"2026-03-20T10:06:54.538Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Aura","ms":"+134ms","service":"user-service","timestamp":"2026-03-20T10:06:54.672Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Innova Crysta","ms":"+117ms","service":"user-service","timestamp":"2026-03-20T10:06:54.789Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Innova Hycross","ms":"+116ms","service":"user-service","timestamp":"2026-03-20T10:06:54.905Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Fortuner","ms":"+109ms","service":"user-service","timestamp":"2026-03-20T10:06:55.014Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Urban Cruiser Hyryder","ms":"+85ms","service":"user-service","timestamp":"2026-03-20T10:06:55.099Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Etios","ms":"+116ms","service":"user-service","timestamp":"2026-03-20T10:06:55.215Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Hector","ms":"+78ms","service":"user-service","timestamp":"2026-03-20T10:06:55.293Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Gloster","ms":"+73ms","service":"user-service","timestamp":"2026-03-20T10:06:55.366Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Seltos","ms":"+121ms","service":"user-service","timestamp":"2026-03-20T10:06:55.487Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Carens","ms":"+108ms","service":"user-service","timestamp":"2026-03-20T10:06:55.595Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Sonet","ms":"+122ms","service":"user-service","timestamp":"2026-03-20T10:06:55.717Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Kushaq","ms":"+121ms","service":"user-service","timestamp":"2026-03-20T10:06:55.838Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Slavia","ms":"+115ms","service":"user-service","timestamp":"2026-03-20T10:06:55.953Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Taigun","ms":"+108ms","service":"user-service","timestamp":"2026-03-20T10:06:56.061Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Virtus","ms":"+122ms","service":"user-service","timestamp":"2026-03-20T10:06:56.183Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Kiger","ms":"+163ms","service":"user-service","timestamp":"2026-03-20T10:06:56.346Z"}
+{"level":"info","message":"✅ Created record in vip_vehicle_model: Triber","ms":"+78ms","service":"user-service","timestamp":"2026-03-20T10:06:56.424Z"}

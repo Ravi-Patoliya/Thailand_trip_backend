@@ -1,0 +1,114 @@
+'use strict';
+
+const MSG = {
+
+  // ── Auth ────────────────────────────────────────────────────────
+  OTP_SENT_EMAIL:          'OTP sent to your email.',
+  OTP_SENT:                'OTP sent successfully.',
+  LOGIN_SUCCESS:           'Login successful.',
+  LOGOUT_SUCCESS:          'Logged out successfully.',
+  TOKEN_REFRESHED:         'Token refreshed.',
+  NO_TOKEN:                'No token provided. Please log in.',
+  INVALID_TOKEN:           'Invalid or expired token. Please log in again.',
+  TOKEN_REUSE:             'Token reuse detected. Please log in again.',
+  NO_REFRESH_TOKEN:        'No refresh token. Please log in.',
+  INVALID_CREDENTIALS:     'Invalid email or password.',
+  ACCOUNT_DEACTIVATED:     'Your account has been deactivated. Please contact support.',
+
+  // ── Permission ──────────────────────────────────────────────────
+  FORBIDDEN:               'You do not have permission to access this resource.',
+  FORBIDDEN_INQUIRY_VIEW:  'You do not have permission to view this inquiry.',
+  FORBIDDEN_INQUIRY_OWN:   'This inquiry does not belong to your account.',
+  FORBIDDEN_REVIEW_OWN:    'You can only review a completed booking.',
+  FORBIDDEN_SUPERADMIN_DEACTIVATE: 'Superadmin account cannot be deactivated.',
+  FORBIDDEN_SUPERADMIN_DELETE:     'Superadmin cannot be deleted.',
+  FORBIDDEN_ADMIN_CREATE:  'Only superadmin can create admin accounts.',
+
+  // ── User ────────────────────────────────────────────────────────
+  USER_FETCHED:            'User fetched.',
+  USERS_FETCHED:           'Users fetched.',
+  USER_CREATED:            'Admin user created successfully.',
+  USER_UPDATED:            'Profile updated successfully.',
+  USER_DELETED:            'User deleted successfully.',
+  USER_ACTIVATED:          'User activated successfully.',
+  USER_DEACTIVATED:        'User deactivated successfully.',
+  AVATAR_UPDATED:          'Avatar updated.',
+  PASSWORD_CHANGED:        'Password changed successfully.',
+  STATS_FETCHED:           'Stats fetched.',
+  EMAIL_CONFLICT:          'This email is already registered to another account.',
+  MOBILE_CONFLICT:         'This mobile number is already registered to another account.',
+  NO_PASSWORD:             'No password set on this account. Use OTP login or set a password first.',
+  WRONG_PASSWORD:          'Current password is incorrect.',
+  SAME_PASSWORD:           'New password must be different from current password.',
+  INVALID_ADMIN_ROLE:      'Admin role must be "admin" or "superadmin".',
+
+  // ── Category ────────────────────────────────────────────────────
+  CATEGORY_FETCHED:        'Category fetched.',
+  CATEGORIES_FETCHED:      'Categories fetched.',
+  CATEGORY_CREATED:        'Category created successfully.',
+  CATEGORY_UPDATED:        'Category updated successfully.',
+  CATEGORY_DELETED:        'Category deleted successfully.',
+  CATEGORY_ALREADY_INACTIVE: 'Category is already deactivated.',
+  CATEGORY_NO_DEEP_NEST:   'Nesting beyond one level is not allowed.',
+  CATEGORY_REORDER_EMPTY:  'items must be a non-empty array of { id, order }.',
+  CATEGORY_REORDER_DUPES:  'Duplicate order values are not allowed.',
+
+  // ── Service ─────────────────────────────────────────────────────
+  SERVICE_FETCHED:         'Service fetched.',
+  SERVICES_FETCHED:        'Services fetched.',
+  SERVICE_CREATED:         'Service created successfully.',
+  SERVICE_UPDATED:         'Service updated successfully.',
+  SERVICE_DELETED:         'Service deactivated successfully.',
+  SERVICE_ALREADY_INACTIVE:'Service is already deactivated.',
+
+  // ── Inquiry ─────────────────────────────────────────────────────
+  INQUIRY_FETCHED:         'Inquiry fetched.',
+  INQUIRIES_FETCHED:       'Inquiries fetched.',
+  INQUIRY_CREATED:         'Inquiry submitted successfully.',
+  INQUIRY_ASSIGNED:        'Inquiry assigned.',
+  INQUIRY_NOTE_ADDED:      'Note added.',
+  INQUIRY_CALL_RECORDED:   'Call attempt recorded.',
+  INQUIRY_PAYMENT_LOGGED:  'Payment logged successfully.',
+  INQUIRY_INVALID_ASSIGN:  'Assigned user is not a valid admin.',
+  INQUIRY_PAYMENT_UNCONFIRMED: 'Cannot log payment on an unconfirmed inquiry. Confirm it first.',
+  INQUIRY_PAYMENT_CANCELLED:   'Cannot log payment on a cancelled inquiry.',
+
+  // ── Review ──────────────────────────────────────────────────────
+  REVIEW_FETCHED:          'Review fetched.',
+  REVIEWS_FETCHED:         'Reviews fetched.',
+  REVIEW_CREATED:          'Review submitted. It will be visible after approval.',
+  REVIEW_DELETED:          'Review deleted.',
+  REVIEW_REPLY_ADDED:      'Reply added.',
+  REVIEW_HELPFUL:          'Marked as helpful.',
+  REVIEW_PENDING_COUNT:    'Pending count fetched.',
+  REVIEW_NOT_PENDING:      'Only pending reviews can be moderated.',
+  REVIEW_REJECT_REASON:    'Rejection reason is required when rejecting a review.',
+  REVIEW_REPLY_APPROVED_ONLY: 'Can only reply to approved reviews.',
+  REVIEW_SERVICE_NOT_BOOKED:  'This service is not part of the selected inquiry.',
+  REVIEW_ALREADY_EXISTS:      'You have already reviewed this service for this booking.',
+  REVIEW_OWN_HELPFUL:         'You cannot mark your own review as helpful.',
+  REVIEW_ALREADY_HELPFUL:     'You have already marked this review as helpful.',
+  REVIEW_MAX_IMAGES:          'Maximum 5 images allowed per review.',
+
+  // ── Notification ────────────────────────────────────────────────
+  NOTIFICATIONS_FETCHED:   'Notifications fetched.',
+  NOTIFICATION_DELETED:    'Notification deleted.',
+  NOTIFICATION_READ:       'Marked as read.',
+  NOTIFICATIONS_ALL_READ:  'All notifications marked as read.',
+  NOTIFICATIONS_CLEARED:   'Read notifications cleared.',
+  UNREAD_COUNT_FETCHED:    'Unread count fetched.',
+  FCM_REGISTERED:          'FCM token registered.',
+  FCM_REMOVED:             'FCM token removed.',
+
+  // ── Upload ──────────────────────────────────────────────────────
+  UPLOAD_IMAGE_SUCCESS:    'Image uploaded successfully.',
+  UPLOAD_MEDIA_SUCCESS:    'Media uploaded successfully.',
+  UPLOAD_DELETED:          'File deleted successfully.',
+  UPLOAD_NO_IMAGE:         'No image file provided.',
+  UPLOAD_NO_IMAGES:        'No image files provided.',
+  UPLOAD_NO_MEDIA:         'No files provided. Send images and/or a video.',
+  UPLOAD_KEY_REQUIRED:     'S3 key is required.',
+
+};
+
+module.exports = MSG;
