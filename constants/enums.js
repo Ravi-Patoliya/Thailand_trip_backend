@@ -48,6 +48,15 @@ const TRAVEL_TYPE = {
   BUSINESS: 'business',
 };
 
+// ── Thailand Cities ───────────────────────────────────────────────
+const THAILAND_CITY = {
+  1: 'bangkok',
+  2: 'phuket',
+  3: 'pattaya',
+  4: 'chiang_mai',
+  5: 'koh_samui',
+};
+
 // ── Service ───────────────────────────────────────────────────────
 const SERVICE_AVAILABILITY = {
   AVAILABLE:   'available',
@@ -112,6 +121,7 @@ const HTTP_CODES = {
 
 module.exports = {
   ROLE,
+  THAILAND_CITY,
   INQUIRY_STATUS,
   PAYMENT_STATUS,
   PAYMENT_METHOD,

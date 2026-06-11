@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const slugify  = require('slugify');
-const { SERVICE_AVAILABILITY, DURATION_UNIT } = require('../constants/enums');
+const { SERVICE_AVAILABILITY, DURATION_UNIT, THAILAND_CITY } = require('../constants/enums');
 
 /**
  * Service Model
@@ -106,7 +106,7 @@ const serviceSchema = new mongoose.Schema(
 
     // ── Location (Thailand context) ────────────────────────────
     location: {
-      city: { type: String, trim: true },   // e.g. Phuket, Pattaya, Bangkok
+      city: { type: String, enum: Object.values(THAILAND_CITY), trim: true },
       region: { type: String, trim: true },
     },
 

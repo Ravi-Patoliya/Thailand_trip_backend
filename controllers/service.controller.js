@@ -3,7 +3,7 @@ const { z }            = require('zod');
 const serviceService   = require('../services/service.service');
 const { validate, validateQuery, zod: zv } = require('../middlewares/validate.middleware');
 const { API_response } = require('../helpers');
-const { SERVICE_AVAILABILITY, DURATION_UNIT, ROLE } = require('../constants/enums');
+const { SERVICE_AVAILABILITY, DURATION_UNIT, ROLE, THAILAND_CITY } = require('../constants/enums');
 const MSG              = require('../constants/message');
 
 const priceTierSchema = z.object({
@@ -18,7 +18,7 @@ const listQuerySchema = z.object({
   page:         zv.positiveInt.optional(),
   limit:        zv.positiveInt.optional(),
   category:     zv.mongoId.optional(),
-  city:         z.string().trim().max(100).optional(),
+  city:         z.enum(Object.values(THAILAND_CITY)).optional(),
   availability: z.enum(Object.values(SERVICE_AVAILABILITY)).optional(),
   minPrice:     z.coerce.number().min(0).optional(),
   maxPrice:     z.coerce.number().min(0).optional(),
@@ -45,7 +45,7 @@ const createServiceSchema = z.object({
   exclusions:   z.array(z.string().trim()).optional(),
   highlights:   z.array(z.string().trim()).optional(),
   location: z.object({
-    city:   z.string().trim().optional(),
+    city:   z.enum(Object.values(THAILAND_CITY)).optional(),
     region: z.string().trim().optional(),
   }).optional(),
   isActive:        z.boolean().optional(),
