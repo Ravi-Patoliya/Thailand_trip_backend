@@ -1,10 +1,13 @@
 'use strict';
 const bcrypt         = require('bcryptjs');
 const userRepository = require('../repositories/user.repository');
+const roleService    = require('./role.service');
 const AppError       = require('../utils/AppError');
 const MSG            = require('../constants/message');
 const { paginate }   = require('../utils/paginate');
 const { deleteObject } = require('../helpers/s3.helper');
+
+const ADMIN_ROLES = ['admin', 'superadmin'];
 
 class UserService {
   async listUsers(query) {
@@ -12,7 +15,7 @@ class UserService {
 
     const filter = {};
 
-    if (query.role) filter.role = query.role;
+    if (query.role_id) filter.role_id = query.role_id;
     if (query.isActive !== undefined) filter.isActive = query.isActive === 'true';
 
     if (query.search) {
@@ -89,40 +92,80 @@ class UserService {
       throw AppError.forbidden(MSG.FORBIDDEN_ADMIN_CREATE);
     }
 
-    const { name, email, password, role = 'admin' } = body;
+    const { name, email, password, role_id } = body;
 
-    if (!['admin', 'superadmin'].includes(role)) {
+    const role = await roleService.getRoleById(role_id);
+    if (!['admin', 'superadmin'].includes(role.name)) {
       throw AppError.badRequest(MSG.INVALID_ADMIN_ROLE);
     }
 
     const emailExists = await userRepository.existsByEmail(email);
     if (emailExists) throw AppError.conflict(MSG.EMAIL_CONFLICT);
 
-    return userRepository.create({ name, email, password, role, isVerified: true, isActive: true });
+    return userRepository.create({ name, email, password, role_id, isVerified: true, isActive: true });
+  }
+
+  async updateAdminUser(targetId, body, callerRole) {
+    if (callerRole !== 'superadmin') throw AppError.forbidden(MSG.FORBIDDEN_ADMIN_CREATE);
+    const target = await userRepository.findById(targetId);
+    if (!target) throw AppError.notFound('User');
+    if (!ADMIN_ROLES.includes(target.role_id?.name)) throw AppError.badRequest('Target user is not an admin.');
+
+    const { name, email, mobile } = body;
+    if (email && email !== target.email) {
+      const exists = await userRepository.existsByEmail(email, targetId);
+      if (exists) throw AppError.conflict(MSG.EMAIL_CONFLICT);
+    }
+    if (mobile && mobile !== target.mobile) {
+      const exists = await userRepository.existsByMobile(mobile, targetId);
+      if (exists) throw AppError.conflict(MSG.MOBILE_CONFLICT);
+    }
+    const updated = await userRepository.updateById(targetId, {
+      ...(name   && { name }),
+      ...(email  && { email }),
+      ...(mobile && { mobile }),
+    });
+    if (!updated) throw AppError.notFound('User');
+    return updated;
+  }
+
+  async setAdminPassword(targetId, newPassword, callerRole) {
+    if (callerRole !== 'superadmin') throw AppError.forbidden(MSG.FORBIDDEN_ADMIN_CREATE);
+    const target = await userRepository.findById(targetId);
+    if (!target) throw AppError.notFound('User');
+    if (!ADMIN_ROLES.includes(target.role_id?.name)) throw AppError.badRequest('Target user is not an admin.');
+    const hashed = await bcrypt.hash(newPassword, 12);
+    await userRepository.updatePassword(targetId, hashed);
   }
 
   async setUserActive(userId, isActive) {
     const user = await userRepository.findById(userId);
     if (!user) throw AppError.notFound('User');
-
-    if (user.role === 'superadmin') {
-      throw AppError.forbidden(MSG.FORBIDDEN_SUPERADMIN_DEACTIVATE);
-    }
-
+    if (user.role_id?.name === 'superadmin') throw AppError.forbidden(MSG.FORBIDDEN_SUPERADMIN_DEACTIVATE);
     return userRepository.setActive(userId, isActive);
+  }
+
+  async updateUserRole(userId, role_id) {
+    const user = await userRepository.findById(userId);
+    if (!user) throw AppError.notFound('User');
+    if (user.role_id?.name === 'superadmin') throw AppError.forbidden(MSG.FORBIDDEN_SUPERADMIN_DELETE);
+    const role = await roleService.getRoleById(role_id);
+    if (!role.isActive) throw AppError.badRequest('Cannot assign an inactive role.');
+    return userRepository.updateById(userId, { role_id });
   }
 
   async deleteUser(userId) {
     const user = await userRepository.findById(userId);
     if (!user) throw AppError.notFound('User');
-    if (user.role === 'superadmin') throw AppError.forbidden(MSG.FORBIDDEN_SUPERADMIN_DELETE);
+    if (user.role_id?.name === 'superadmin') throw AppError.forbidden(MSG.FORBIDDEN_SUPERADMIN_DELETE);
     return userRepository.deleteById(userId);
   }
 
   async getDashboardStats() {
+    const userRoleId = await roleService.getIdByName('user');
     const [roleCounts, recentUsers] = await Promise.all([
       userRepository.countByRole(),
-      userRepository.getRecentUsers(5),
+      userRepository.getRecentUsers(userRoleId, 5),
     ]);
     return { roleCounts, recentUsers };
   }

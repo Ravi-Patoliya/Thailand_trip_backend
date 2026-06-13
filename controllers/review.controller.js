@@ -46,6 +46,7 @@ const listQuerySchema = z.object({
   status:    z.enum(Object.values(REVIEW_STATUS)).optional(),
   rating:    z.coerce.number().int().min(1).max(5).optional(),
   isFlagged: z.enum(['true', 'false']).optional(),
+  search:    z.string().trim().max(100).optional(),
 });
 
 const createReviewValidator = validate(createReviewSchema);

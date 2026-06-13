@@ -50,4 +50,10 @@ const getFirestore = () => {
   return admin.firestore(app);
 };
 
-module.exports = { initFirebase, getMessaging, getFirestore };
+const getAuth = () => {
+  const app = initFirebase();
+  if (!app) return null;
+  return admin.auth(app);
+};
+
+module.exports = { initFirebase, getMessaging, getFirestore, getAuth };

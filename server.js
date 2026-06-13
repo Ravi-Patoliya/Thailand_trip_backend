@@ -5,6 +5,7 @@ const validateEnv  = require('./env');
 const connectDB    = require('./config/db.config');
 const redis        = require('./config/redis.config');
 const app          = require('./app');
+const roleService  = require('./services/role.service');
 
 const PORT = parseInt(process.env.PORT, 10) || 5000;
 
@@ -12,6 +13,7 @@ const bootstrap = async () => {
   try {
     validateEnv();
     await connectDB();
+    await roleService.seedDefaults();
 
     app.locals.redis = redis;
 

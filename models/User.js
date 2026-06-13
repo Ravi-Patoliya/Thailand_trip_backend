@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const { ROLE } = require('../constants/enums');
+const bcrypt   = require('bcryptjs');
 
 const userSchema = new mongoose.Schema(
   {
@@ -36,13 +35,9 @@ const userSchema = new mongoose.Schema(
       minlength: [8, 'Password must be at least 8 characters'],
       select:    false,
     },
-    role: {
-      type: String,
-      enum: {
-        values:  [...Object.values(ROLE)],
-        message: 'Invalid role',
-      },
-      default: ROLE.USER,
+    role_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref:  'Role',
     },
     // OTP stored in Redis in production; this is a fallback
     otp: {
@@ -102,9 +97,7 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-// userSchema.index({ email: 1 });
-// userSchema.index({ mobile: 1 });
-userSchema.index({ role: 1 });
+userSchema.index({ role_id: 1 });
 userSchema.index({ createdAt: -1 });
 
 userSchema.virtual('fullMobile').get(function () {
@@ -130,8 +123,9 @@ userSchema.methods.isOtpValid = function (code) {
   return this.otp.code === code;
 };
 
-userSchema.statics.findAdmins = function () {
-  return this.find({ role: { $in: [ROLE.ADMIN, ROLE.SUPERADMIN] }, isActive: true });
+// Find admins: caller must pass admin/superadmin role_ids
+userSchema.statics.findAdmins = function (adminRoleIds = []) {
+  return this.find({ role_id: { $in: adminRoleIds }, isActive: true });
 };
 
 module.exports = mongoose.model('User', userSchema);

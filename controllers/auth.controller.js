@@ -27,6 +27,24 @@ const loginSchema = z.object({
   password: z.string().min(1, 'Password is required'),
 });
 
+const googleSchema = z.object({
+  idToken: z.string().min(1, 'Firebase ID token is required'),
+});
+
+const forgotPasswordSchema = z.object({
+  email: zv.email,
+});
+
+const resetPasswordSchema = z.object({
+  email:           zv.email,
+  otp:             zv.otp,
+  newPassword:     zv.password,
+  confirmPassword: z.string().min(1, 'Please confirm your password'),
+}).refine(d => d.newPassword === d.confirmPassword, {
+  message: 'Passwords do not match',
+  path:    ['confirmPassword'],
+});
+
 const sendOtpValidator = validate(sendOtpSchema);
 const sendOtp = async (req, res, next) => {
   try {
@@ -47,6 +65,14 @@ const verifyOtp = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
+const googleValidator = validate(googleSchema);
+const googleLogin = async (req, res, next) => {
+  try {
+    const result = await authService.googleLogin(req.body.idToken, res);
+    API_response.OK({ res, message: MSG.LOGIN_SUCCESS, payload: result });
+  } catch (err) { next(err); }
+};
+
 const loginValidator = validate(loginSchema);
 const login = async (req, res, next) => {
   try {
@@ -59,6 +85,23 @@ const refresh = async (req, res, next) => {
   try {
     const result = await authService.refreshTokens(req, res);
     API_response.OK({ res, message: MSG.TOKEN_REFRESHED, payload: result });
+  } catch (err) { next(err); }
+};
+
+const forgotPasswordValidator = validate(forgotPasswordSchema);
+const forgotPassword = async (req, res, next) => {
+  try {
+    const payload = await authService.forgotPassword(req.body.email, req.redis);
+    API_response.OK({ res, message: 'Password reset OTP sent to your email.', payload });
+  } catch (err) { next(err); }
+};
+
+const resetPasswordValidator = validate(resetPasswordSchema);
+const resetPassword = async (req, res, next) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+    await authService.resetPassword(email, otp, newPassword, req.redis);
+    API_response.OK({ res, message: 'Password reset successfully. Please log in again.' });
   } catch (err) { next(err); }
 };
 
@@ -77,9 +120,12 @@ const getMe = async (req, res, next) => {
 };
 
 module.exports = {
-  sendOtpValidator, sendOtp,
-  verifyOtpValidator, verifyOtp,
-  loginValidator, login,
+  sendOtpValidator,      sendOtp,
+  verifyOtpValidator,    verifyOtp,
+  googleValidator,       googleLogin,
+  loginValidator,        login,
+  forgotPasswordValidator, forgotPassword,
+  resetPasswordValidator,  resetPassword,
   refresh,
   logout,
   getMe,

@@ -5,6 +5,7 @@ class UserRepository {
   async findAll({ filter = {}, skip = 0, limit = 10, sort = { createdAt: -1 } }) {
     return User.find(filter)
       .select('-refreshToken -otp -password')
+      .populate({ path: 'role_id', select: 'name label' })
       .sort(sort)
       .skip(skip)
       .limit(limit)
@@ -16,7 +17,9 @@ class UserRepository {
   }
 
   async findById(id) {
-    return User.findById(id).select('-refreshToken -otp -password');
+    return User.findById(id)
+      .select('-refreshToken -otp -password')
+      .populate({ path: 'role_id', select: 'name label' });
   }
 
   async findByIdWithSensitive(id) {
@@ -52,7 +55,9 @@ class UserRepository {
       id,
       { $set: data },
       { new: true, runValidators: true }
-    ).select('-refreshToken -otp -password');
+    )
+      .select('-refreshToken -otp -password')
+      .populate({ path: 'role_id', select: 'name label' });
   }
 
   async updateAvatar(id, avatarUrl) {
@@ -81,13 +86,16 @@ class UserRepository {
 
   async countByRole() {
     return User.aggregate([
-      { $group: { _id: '$role', count: { $sum: 1 } } },
-      { $sort: { _id: 1 } },
+      { $group: { _id: '$role_id', count: { $sum: 1 } } },
+      { $lookup: { from: 'roles', localField: '_id', foreignField: '_id', as: 'role' } },
+      { $unwind: { path: '$role', preserveNullAndEmpty: true } },
+      { $project: { _id: 0, role: '$role.name', label: '$role.label', count: 1 } },
+      { $sort: { role: 1 } },
     ]);
   }
 
-  async getRecentUsers(limit = 5) {
-    return User.find({ role: 'user', isActive: true })
+  async getRecentUsers(userRoleId, limit = 5) {
+    return User.find({ role_id: userRoleId, isActive: true })
       .sort({ createdAt: -1 })
       .limit(limit)
       .select('name mobile email createdAt')

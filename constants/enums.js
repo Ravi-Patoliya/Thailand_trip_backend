@@ -113,10 +113,15 @@ const HTTP_CODES = {
   UNAUTHORIZED:         401,
   FORBIDDEN:            403,
   NOT_FOUND:            404,
+  NOT_ACCEPTABLE:       406,
   CONFLICT:             409,
+  GONE:                 410,
   VALIDATION_ERROR:     422,
   TOO_MANY_REQUESTS:    429,
+  DUPLICATE_VALUE:      409,
   INTERNAL_SERVER_ERROR:500,
+  SERVICE_UNAVAILABLE:  503,
+  CATCH_ERROR:          500,
 };
 
 module.exports = {

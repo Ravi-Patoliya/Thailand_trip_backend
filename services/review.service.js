@@ -79,6 +79,13 @@ class ReviewService {
     if (query.serviceId) filter.service   = query.serviceId;
     if (query.rating)    filter.rating    = Number(query.rating);
     if (query.isFlagged) filter.isFlagged = query.isFlagged === 'true';
+    if (query.search) {
+      const regex = new RegExp(query.search, 'i');
+      filter.$or  = [
+        { title: regex },
+        { body:  regex },
+      ];
+    }
 
     const [data, total] = await Promise.all([
       reviewRepository.findAllAdmin({ filter, skip, limit, sort }),

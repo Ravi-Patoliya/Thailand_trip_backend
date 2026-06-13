@@ -40,6 +40,8 @@ const MSG = {
   NO_PASSWORD:             'No password set on this account. Use OTP login or set a password first.',
   WRONG_PASSWORD:          'Current password is incorrect.',
   SAME_PASSWORD:           'New password must be different from current password.',
+  PASSWORD_RESET_SENT:     'Password reset OTP sent to your email.',
+  PASSWORD_RESET_SUCCESS:  'Password reset successfully. Please log in again.',
   INVALID_ADMIN_ROLE:      'Admin role must be "admin" or "superadmin".',
 
   // ── Category ────────────────────────────────────────────────────

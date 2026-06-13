@@ -5,8 +5,11 @@ const helmet        = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const cookieParser  = require('cookie-parser');
 
-const errorHandler  = require('./middlewares/error.handler');
+const errorHandler     = require('./middlewares/error.handler');
+const requestLogger    = require('./middlewares/request.logger');
 
+const roleRoutes          = require('./routes/role.routes');
+const cityRoutes          = require('./routes/city.routes');
 const authRoutes          = require('./routes/auth.routes');
 const userRoutes          = require('./routes/user.routes');
 const inquiryRoutes       = require('./routes/inquiry.routes');
@@ -44,6 +47,7 @@ app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser());
 app.use(mongoSanitize());
+app.use(requestLogger);
 
 app.use((req, _res, next) => {
   req.redis = app.locals.redis;
@@ -62,6 +66,8 @@ app.get('/health', (_req, res) => {
 const { initFirebase } = require('./config/firebase.config');
 initFirebase();
 
+app.use('/api/roles',         roleRoutes);
+app.use('/api/cities',        cityRoutes);
 app.use('/api/auth',          authRoutes);
 app.use('/api/users',         userRoutes);
 app.use('/api/inquiries',     inquiryRoutes);

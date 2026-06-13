@@ -2,7 +2,6 @@
 const jwt      = require('jsonwebtoken');
 const AppError = require('../utils/AppError');
 const { User } = require('../models');
-const { ROLE } = require('../constants/enums');
 const MSG      = require('../constants/message');
 
 const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
@@ -18,12 +17,18 @@ const decodeAndAttach = async (req) => {
   } catch {
     throw AppError.unauthorized(MSG.INVALID_TOKEN);
   }
-  const user = await User.findById(decoded.id).select('_id name email role isActive isVerfied fullMobile');
-  console.log(user);
-  if (!user)          throw AppError.unauthorized(MSG.INVALID_TOKEN);
-  if (!user.isActive) throw AppError.forbidden(MSG.ACCOUNT_DEACTIVATED);
 
+  const user = await User.findById(decoded.id)
+    .select('_id name email role_id isActive isVerified fullMobile')
+    .populate({ path: 'role_id', select: 'name label isActive' });
+
+  if (!user)                                throw AppError.unauthorized(MSG.INVALID_TOKEN);
+  if (!user.isActive)                       throw AppError.forbidden(MSG.ACCOUNT_DEACTIVATED);
+  if (!user.role_id || !user.role_id.isActive) throw AppError.forbidden('Your role has been deactivated. Please contact support.');
+
+  // Expose role name as req.user.role so all existing permission checks continue to work
   req.user = user;
+  req.user.role = user.role_id.name;
 };
 
 const authenticate = async (req, res, next) => {
@@ -43,9 +48,9 @@ const requireRole = (...roles) => [
   },
 ];
 
-const requireUser       = requireRole(ROLE.USER, ROLE.ADMIN, ROLE.SUPERADMIN);
-const requireAdmin      = requireRole(ROLE.ADMIN, ROLE.SUPERADMIN);
-const requireSuperAdmin = requireRole(ROLE.SUPERADMIN);
+const requireUser       = requireRole('user', 'admin', 'superadmin');
+const requireAdmin      = requireRole('admin', 'superadmin');
+const requireSuperAdmin = requireRole('superadmin');
 
 // Attaches req.user if a valid token is present, but never blocks the request
 const optionalAuth = async (req, res, next) => {

@@ -24,11 +24,20 @@ class ServiceService {
       if (!cat) throw AppError.notFound('Category');
       filter.category = query.category;
     }
-    if (query.city)         filter['location.city']  = new RegExp(query.city, 'i');
+    if (query.city)         filter['location.city']  = query.city;
     if (query.availability) filter.availability      = query.availability;
     if (query.minPrice)     filter.basePrice         = { ...filter.basePrice, $gte: Number(query.minPrice) };
     if (query.maxPrice)     filter.basePrice         = { ...filter.basePrice, $lte: Number(query.maxPrice) };
     if (query.tags)         filter.tags              = { $in: query.tags.split(',').map(t => t.trim().toLowerCase()) };
+    if (query.search) {
+      const regex = new RegExp(query.search, 'i');
+      filter.$or  = [
+        { title:            regex },
+        { shortDescription: regex },
+        { tags:             regex },
+        { 'location.city':  regex },
+      ];
+    }
 
     let sort = { order: 1, createdAt: -1 };
     if (query.sort === 'price_asc')    sort = { basePrice: 1 };

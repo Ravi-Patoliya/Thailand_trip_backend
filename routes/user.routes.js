@@ -13,6 +13,9 @@ router.get   ('/',             ...requireAdmin,      ctrl.listUsersQueryValidato
 router.get   ('/:id',          ...requireAdmin,      ctrl.getUserByIdParamValidator, ctrl.getUserById);
 router.post  ('/',             ...requireAdmin,      ctrl.createAdminUserValidator, ctrl.createAdminUser);
 router.patch ('/:id/active',   ...requireAdmin,      ctrl.setActiveValidator,       ctrl.setUserActive);
+router.patch ('/:id/role',     ...requireSuperAdmin, ctrl.updateUserRoleValidator,   ctrl.updateUserRole);
+router.patch ('/:id',          ...requireSuperAdmin, ctrl.getUserByIdParamValidator, ctrl.updateAdminUserValidator,  ctrl.updateAdminUser);
+router.patch ('/:id/password', ...requireSuperAdmin, ctrl.getUserByIdParamValidator, ctrl.setAdminPasswordValidator, ctrl.setAdminPassword);
 router.delete('/:id',          ...requireSuperAdmin, ctrl.deleteUser);
 
 module.exports = router;

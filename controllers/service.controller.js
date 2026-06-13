@@ -19,6 +19,7 @@ const listQuerySchema = z.object({
   limit:        zv.positiveInt.optional(),
   category:     zv.mongoId.optional(),
   city:         z.enum(Object.values(THAILAND_CITY)).optional(),
+  search:       z.string().trim().max(100).optional(),
   availability: z.enum(Object.values(SERVICE_AVAILABILITY)).optional(),
   minPrice:     z.coerce.number().min(0).optional(),
   maxPrice:     z.coerce.number().min(0).optional(),

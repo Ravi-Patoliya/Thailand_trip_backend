@@ -3,7 +3,6 @@ const { z }        = require('zod');
 const userService  = require('../services/user.service');
 const { validate, validateParams, validateQuery, zod: zv } = require('../middlewares/validate.middleware');
 const { API_response } = require('../helpers');
-const { ROLE }     = require('../constants/enums');
 const MSG          = require('../constants/message');
 
 const idParamSchema = z.object({ id: zv.mongoId });
@@ -39,17 +38,35 @@ const createAdminSchema = z.object({
   name:     z.string().trim().min(2).max(100),
   email:    zv.email,
   password: zv.password,
-  role:     z.enum([ROLE.ADMIN, ROLE.SUPERADMIN]).default(ROLE.ADMIN),
+  role_id:  zv.mongoId,
 });
 
 const setActiveSchema = z.object({
   isActive: z.boolean(),
 });
 
+const updateAdminSchema = z.object({
+  name:   z.string().trim().min(2).max(100).optional(),
+  email:  zv.email.optional(),
+  mobile: zv.mobile.optional(),
+}).refine(obj => Object.keys(obj).length > 0, { message: 'At least one field is required.' });
+
+const setAdminPasswordSchema = z.object({
+  newPassword:     zv.password,
+  confirmPassword: z.string().min(1, 'Please confirm the password'),
+}).refine(d => d.newPassword === d.confirmPassword, {
+  message: 'Passwords do not match',
+  path:    ['confirmPassword'],
+});
+
+const updateRoleSchema = z.object({
+  role_id: zv.mongoId,
+});
+
 const listUsersQuerySchema = z.object({
   page:     zv.positiveInt.optional(),
   limit:    zv.positiveInt.optional(),
-  role:     z.enum(Object.values(ROLE)).optional(),
+  role_id:  zv.mongoId.optional(),
   isActive: z.enum(['true', 'false']).optional(),
   search:   z.string().trim().max(100).optional(),
   sort:     z.string().optional(),
@@ -122,6 +139,30 @@ const setUserActive = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
+const updateUserRoleValidator = validate(updateRoleSchema);
+const updateUserRole = async (req, res, next) => {
+  try {
+    const updated = await userService.updateUserRole(req.params.id, req.body.role_id);
+    API_response.OK({ res, message: 'User role updated successfully.', payload: updated });
+  } catch (err) { next(err); }
+};
+
+const updateAdminUserValidator = validate(updateAdminSchema);
+const updateAdminUser = async (req, res, next) => {
+  try {
+    const updated = await userService.updateAdminUser(req.params.id, req.body, req.user.role);
+    API_response.OK({ res, message: MSG.USER_UPDATED, payload: updated });
+  } catch (err) { next(err); }
+};
+
+const setAdminPasswordValidator = validate(setAdminPasswordSchema);
+const setAdminPassword = async (req, res, next) => {
+  try {
+    await userService.setAdminPassword(req.params.id, req.body.newPassword, req.user.role);
+    API_response.OK({ res, message: MSG.PASSWORD_CHANGED });
+  } catch (err) { next(err); }
+};
+
 const deleteUser = async (req, res, next) => {
   try {
     await userService.deleteUser(req.params.id);
@@ -147,4 +188,7 @@ module.exports = {
   setActiveValidator,        setUserActive,
   deleteUser,
   getUserStats,
+  updateUserRoleValidator,    updateUserRole,
+  updateAdminUserValidator,   updateAdminUser,
+  setAdminPasswordValidator,  setAdminPassword,
 };

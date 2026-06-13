@@ -128,9 +128,11 @@ class InquiryService {
     if (query.search) {
       const regex = new RegExp(query.search, 'i');
       filter.$or  = [
-        { referenceNumber: regex },
-        { 'contactSnapshot.name': regex },
-        { 'contactSnapshot.mobile': regex },
+        { referenceNumber:           regex },
+        { 'contactSnapshot.name':    regex },
+        { 'contactSnapshot.mobile':  regex },
+        { 'contactSnapshot.email':   regex },
+        { 'services.serviceTitle':   regex },
       ];
     }
     if (query.from || query.to) {

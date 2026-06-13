@@ -1,4 +1,5 @@
 'use strict';
+const Role         = require('./Role');
 const User         = require('./User');
 const Category     = require('./Category');
 const Service      = require('./Service');
@@ -8,4 +9,4 @@ const Review       = require('./Review');
 const Contact      = require('./Contact');
 const Notification = require('./Notification');
 
-module.exports = { User, Category, Service, Inquiry, Coupon, Review, Contact, Notification };
+module.exports = { Role, User, Category, Service, Inquiry, Coupon, Review, Contact, Notification };
