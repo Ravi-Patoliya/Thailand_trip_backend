@@ -58,9 +58,11 @@ const getCategories = async (req, res, next) => {
       return API_response.OK({ res, message: MSG.CATEGORIES_FETCHED, payload: { data, page, limit, total } });
     }
 
-    // public — force isActive, ignore any status filter from query
+    // public — force isActive, ignore any status filter from query.
+    // Unpaginated by design; still wrapped in { data } so list payloads are
+    // consistently objects with a `data` key (never a bare array).
     const data = await categoryService.getActiveCategories({ ...rest, isActive: 'true' });
-    API_response.OK({ res, message: MSG.CATEGORIES_FETCHED, payload: data });
+    API_response.OK({ res, message: MSG.CATEGORIES_FETCHED, payload: { data } });
   } catch (err) { next(err); }
 };
 

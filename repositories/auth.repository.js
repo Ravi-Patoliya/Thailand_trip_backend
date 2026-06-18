@@ -3,25 +3,25 @@ const { User } = require('../models');
 
 class AuthRepository {
   async findByMobile(mobile) {
-    return User.findOne({ mobile })
-      .select('+password +refreshToken +otp')
+    return User.findOne({ mobile, isDeleted: false })
+      .select('+password +refreshToken')
       .populate({ path: 'role_id', select: 'name label isActive' });
   }
 
   async findByEmail(email) {
-    return User.findOne({ email: email.toLowerCase() })
+    return User.findOne({ email: email.toLowerCase(), isDeleted: false })
       .select('+password +refreshToken')
       .populate({ path: 'role_id', select: 'name label isActive' });
   }
 
   async findById(id) {
-    return User.findById(id)
+    return User.findOne({ _id: id, isDeleted: false })
       .select('+refreshToken')
       .populate({ path: 'role_id', select: 'name label isActive' });
   }
 
   async findByGoogleId(googleId) {
-    return User.findOne({ googleId })
+    return User.findOne({ googleId, isDeleted: false })
       .populate({ path: 'role_id', select: 'name label isActive' });
   }
 
@@ -63,11 +63,7 @@ class AuthRepository {
   }
 
   async markVerified(userId) {
-    return User.findByIdAndUpdate(
-      userId,
-      { isVerified: true, 'otp.code': null, 'otp.expiresAt': null },
-      { new: true }
-    );
+    return User.findByIdAndUpdate(userId, { isVerified: true }, { new: true });
   }
 
   async updateLastLogin(userId) {
@@ -80,6 +76,10 @@ class AuthRepository {
 
   async updatePassword(userId, hashedPassword) {
     return User.findByIdAndUpdate(userId, { password: hashedPassword });
+  }
+
+  async updateById(userId, data) {
+    return User.findByIdAndUpdate(userId, { $set: data }, { new: true });
   }
 }
 

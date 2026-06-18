@@ -17,7 +17,7 @@ class UserRepository {
   }
 
   async findById(id) {
-    return User.findById(id)
+    return User.findOne({ _id: id, isDeleted: false })
       .select('-refreshToken -otp -password')
       .populate({ path: 'role_id', select: 'name label' });
   }
@@ -80,8 +80,8 @@ class UserRepository {
     return User.findByIdAndUpdate(id, { $set: { password: hashedPassword } });
   }
 
-  async deleteById(id) {
-    return User.findByIdAndDelete(id);
+  async softDeleteById(id) {
+    return User.findByIdAndUpdate(id, { $set: { isDeleted: true } }, { new: true });
   }
 
   async countByRole() {
@@ -95,7 +95,7 @@ class UserRepository {
   }
 
   async getRecentUsers(userRoleId, limit = 5) {
-    return User.find({ role_id: userRoleId, isActive: true })
+    return User.find({ role_id: userRoleId, isActive: true, isDeleted: false })
       .sort({ createdAt: -1 })
       .limit(limit)
       .select('name mobile email createdAt')

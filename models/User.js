@@ -39,12 +39,8 @@ const userSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref:  'Role',
     },
-    // OTP stored in Redis in production; this is a fallback
-    otp: {
-      code:      { type: String, select: false },
-      expiresAt: { type: Date, select: false },
-      attempts:  { type: Number, default: 0, select: false },
-    },
+    // OTPs live exclusively in Redis (see utils/otp.js) — no Mongo copy, so a
+    // stale code can never block a fresh login attempt.
     refreshToken: {
       type:   String,
       select: false,
@@ -81,6 +77,10 @@ const userSchema = new mongoose.Schema(
       type:    Boolean,
       default: true,
     },
+    isDeleted: {
+      type:    Boolean,
+      default: false,
+    },
     isVerified: {
       type:    Boolean,
       default: false,
@@ -116,16 +116,9 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-userSchema.methods.isOtpValid = function (code) {
-  if (!this.otp.code || !this.otp.expiresAt) return false;
-  if (new Date() > this.otp.expiresAt) return false;
-  if (this.otp.attempts >= 3) return false;
-  return this.otp.code === code;
-};
-
 // Find admins: caller must pass admin/superadmin role_ids
 userSchema.statics.findAdmins = function (adminRoleIds = []) {
-  return this.find({ role_id: { $in: adminRoleIds }, isActive: true });
+  return this.find({ role_id: { $in: adminRoleIds }, isActive: true, isDeleted: false });
 };
 
 module.exports = mongoose.model('User', userSchema);

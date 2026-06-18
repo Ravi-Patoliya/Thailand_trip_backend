@@ -49,6 +49,11 @@ const categorySchema = new mongoose.Schema(
       default: true,
     },
 
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+
     // Self-referencing parent — null means top-level category, ObjectId means subcategory
     parent: {
       type: mongoose.Schema.Types.ObjectId,

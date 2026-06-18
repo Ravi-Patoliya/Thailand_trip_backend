@@ -130,6 +130,11 @@ const reviewSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
@@ -154,6 +159,7 @@ reviewSchema.statics.getRatingDistribution = async function (serviceId) {
       $match: {
         service: new mongoose.Types.ObjectId(serviceId),
         status: REVIEW_STATUS.APPROVED,
+        isDeleted: false,
       },
     },
     {
@@ -168,7 +174,7 @@ reviewSchema.statics.getRatingDistribution = async function (serviceId) {
 
 // ── Static: get pending moderation count ──────────────────────
 reviewSchema.statics.getPendingCount = function () {
-  return this.countDocuments({ status: REVIEW_STATUS.PENDING });
+  return this.countDocuments({ status: REVIEW_STATUS.PENDING, isDeleted: false });
 };
 
 module.exports = mongoose.model('Review', reviewSchema);

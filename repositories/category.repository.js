@@ -19,21 +19,27 @@ class CategoryRepository {
   }
 
   async findById(id) {
-    return Category.findById(id);
+    return Category.findOne({ _id: id, isDeleted: false });
   }
 
   async findBySlug(slug) {
-    return Category.findOne({ slug });
+    return Category.findOne({ slug, isDeleted: false });
   }
 
   async existsByName(name, excludeId = null) {
-    const filter = { name: new RegExp(`^${name}$`, 'i') };
+    const filter = { name: new RegExp(`^${name}$`, 'i'), isDeleted: false };
     if (excludeId) filter._id = { $ne: excludeId };
     return Category.exists(filter);
   }
 
+  // Find a soft-deleted category by exact (case-insensitive) name, so a create
+  // with the same name can revive it instead of leaving a duplicate tombstone.
+  async findDeletedByName(name) {
+    return Category.findOne({ name: new RegExp(`^${name}$`, 'i'), isDeleted: true });
+  }
+
   async getMaxOrder(parent = null) {
-    const last = await Category.findOne({ parent }).sort({ order: -1 }).select('order').lean();
+    const last = await Category.findOne({ parent, isDeleted: false }).sort({ order: -1 }).select('order').lean();
     return last?.order ?? 0;
   }
 
@@ -55,11 +61,11 @@ class CategoryRepository {
   }
 
   async findChildren(parentId) {
-    return Category.find({ parent: parentId }).sort({ order: 1 }).lean();
+    return Category.find({ parent: parentId, isDeleted: false }).sort({ order: 1 }).lean();
   }
 
   async countChildren(parentId) {
-    return Category.countDocuments({ parent: parentId });
+    return Category.countDocuments({ parent: parentId, isDeleted: false });
   }
 
   async create(data) {
@@ -70,8 +76,8 @@ class CategoryRepository {
     return Category.findByIdAndUpdate(id, { $set: update }, { new: true, runValidators: true });
   }
 
-  async deleteById(id) {
-    return Category.findByIdAndDelete(id);
+  async softDeleteById(id) {
+    return Category.findByIdAndUpdate(id, { $set: { isDeleted: true } }, { new: true });
   }
 
   async bulkReorder(items) {

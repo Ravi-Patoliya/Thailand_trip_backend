@@ -3,7 +3,7 @@ const { Review } = require('../models');
 
 class ReviewRepository {
   async findByService({ serviceId, skip = 0, limit = 10, sort = { createdAt: -1 } }) {
-    return Review.find({ service: serviceId, status: 'approved' })
+    return Review.find({ service: serviceId, status: 'approved', isDeleted: false })
       .populate('user', 'name avatar')
       .sort(sort)
       .skip(skip)
@@ -12,7 +12,7 @@ class ReviewRepository {
   }
 
   async countByService(serviceId) {
-    return Review.countDocuments({ service: serviceId, status: 'approved' });
+    return Review.countDocuments({ service: serviceId, status: 'approved', isDeleted: false });
   }
 
   async getRatingDistribution(serviceId) {
@@ -20,7 +20,7 @@ class ReviewRepository {
   }
 
   async findById(id) {
-    return Review.findById(id)
+    return Review.findOne({ _id: id, isDeleted: false })
       .populate('user',        'name avatar')
       .populate('service',     'title slug')
       .populate('moderatedBy', 'name');
@@ -72,8 +72,8 @@ class ReviewRepository {
     );
   }
 
-  async deleteById(id) {
-    return Review.findByIdAndDelete(id);
+  async softDeleteById(id) {
+    return Review.findByIdAndUpdate(id, { $set: { isDeleted: true } }, { new: true });
   }
 
   async getPendingCount() {

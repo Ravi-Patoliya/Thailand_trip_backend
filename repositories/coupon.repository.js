@@ -3,7 +3,7 @@ const { Coupon } = require('../models');
 
 class CouponRepository {
   async findByCode(code) {
-    return Coupon.findOne({ code: code.toUpperCase() });
+    return Coupon.findOne({ code: code.toUpperCase(), isDeleted: false });
   }
 
   async validateForUser(code, userId, orderAmount) {

@@ -10,7 +10,7 @@ class ServiceService {
     const limit = Math.min(100, parseInt(query.limit) || 20);
     const skip  = (page - 1) * limit;
 
-    const filter = {};
+    const filter = { isDeleted: false };
 
     if (!adminView) {
       filter.isActive = true;
@@ -63,7 +63,7 @@ class ServiceService {
   async createService(body, adminId) {
     const {
       title, category, description, shortDescription,
-      pricing = [], duration, maxGroupSize, availability,
+      pricing = [], images, videos, duration, maxGroupSize, availability,
       inclusions, exclusions, highlights, location,
       isActive, isFeatured, metaTitle, metaDescription, tags,
     } = body;
@@ -79,6 +79,8 @@ class ServiceService {
     return serviceRepository.create({
       title, category, description, shortDescription,
       pricing, duration, maxGroupSize,
+      images:       images || [],
+      videos:       videos || [],
       availability: availability || 'available',
       inclusions:   inclusions  || [],
       exclusions:   exclusions  || [],
@@ -102,16 +104,18 @@ class ServiceService {
       if (exists) throw AppError.conflict(`Service "${body.title}" already exists.`);
     }
 
-    if (body.category && body.category !== service.category.toString()) {
+    // service.category is populated ({ _id, name, slug }) and may be null if unset.
+    const currentCategoryId = service.category?._id?.toString() ?? service.category?.toString();
+    if (body.category && body.category !== currentCategoryId) {
       const cat = await categoryRepository.findById(body.category);
       if (!cat) throw AppError.notFound('Category');
     }
 
     const allowed = [
       'title', 'category', 'description', 'shortDescription',
-      'pricing', 'duration', 'maxGroupSize', 'availability',
+      'pricing', 'images', 'videos', 'duration', 'maxGroupSize', 'availability',
       'inclusions', 'exclusions', 'highlights', 'location',
-      'isActive', 'isFeatured', 'metaTitle', 'metaDescription', 'tags',
+      'isActive', 'isFeatured', 'metaTitle', 'metaDescription', 'tags', 'metadata',
     ];
     const update = {};
     allowed.forEach(k => { if (body[k] !== undefined) update[k] = body[k]; });
@@ -123,8 +127,7 @@ class ServiceService {
   async deleteService(id) {
     const service = await serviceRepository.findById(id);
     if (!service) throw AppError.notFound('Service');
-    if (!service.isActive) throw AppError.badRequest(MSG.SERVICE_ALREADY_INACTIVE);
-    return serviceRepository.updateById(id, { isActive: false });
+    return serviceRepository.softDeleteById(id);
   }
 }
 

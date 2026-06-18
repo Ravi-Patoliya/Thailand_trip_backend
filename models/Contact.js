@@ -61,6 +61,11 @@ const contactSchema = new mongoose.Schema(
 
     // IP for spam detection (optional)
     ipAddress: { type: String, select: false },
+
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

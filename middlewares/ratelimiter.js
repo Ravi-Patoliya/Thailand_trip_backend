@@ -109,9 +109,9 @@ const rateLimiters = {
 
     // OTP sending limit
     otp: createRateLimiter({
-        windowMs: 60 * 60 * 1000,  // 1 hour
+        windowMs: 5 * 60 * 1000,  // 5 minutes
         maxRequests: 5,
-        message: 'Too many OTP requests. Please try again after an hour.'
+        message: 'Too many OTP requests. Please try again after 5 minutes.'
     }),
 
     // Template/file download limit

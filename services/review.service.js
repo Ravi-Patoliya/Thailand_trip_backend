@@ -5,7 +5,6 @@ const serviceRepository  = require('../repositories/service.repository');
 const notificationService = require('./notification.service');
 const AppError           = require('../utils/AppError');
 const MSG                = require('../constants/message');
-const { deleteObject, deleteObjects } = require('../helpers/s3.helper');
 const { paginate }       = require('../utils/paginate');
 
 class ReviewService {
@@ -74,7 +73,7 @@ class ReviewService {
 
   async listAdminReviews(query) {
     const { page, limit, skip, sort } = paginate(query, { limit: 20 });
-    const filter = {};
+    const filter = { isDeleted: false };
     if (query.status)    filter.status    = query.status;
     if (query.serviceId) filter.service   = query.serviceId;
     if (query.rating)    filter.rating    = Number(query.rating);
@@ -160,10 +159,7 @@ class ReviewService {
       serviceRepository.removeRating(review.service._id, review.rating).catch(() => {});
     }
 
-    const imageKeys = (review.images || []).map(i => i.key).filter(Boolean);
-    const videoKey  = review.video?.key;
-    await deleteObjects([...imageKeys, ...(videoKey ? [videoKey] : [])]);
-    return reviewRepository.deleteById(id);
+    return reviewRepository.softDeleteById(id);
   }
 
   async getPendingCount() {

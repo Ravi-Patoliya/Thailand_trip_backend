@@ -21,7 +21,8 @@ const activeValidator = validate(activeSchema);
 const getRoles = async (req, res, next) => {
   try {
     const roles = await roleService.getRoles();
-    API_response.OK({ res, message: 'Roles fetched.', payload: roles });
+    // Unpaginated by design (small fixed set); wrapped in { data } for list consistency.
+    API_response.OK({ res, message: 'Roles fetched.', payload: { data: roles } });
   } catch (err) { next(err); }
 };
 

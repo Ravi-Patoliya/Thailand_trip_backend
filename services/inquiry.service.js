@@ -120,7 +120,7 @@ class InquiryService {
     if (query.paymentStatus) filter.paymentStatus = query.paymentStatus;
     if (query.assignedTo) {
       const admin = await userRepository.findById(query.assignedTo);
-      if (!admin || !['admin', 'superadmin'].includes(admin.role)) {
+      if (!admin || !['admin', 'superadmin'].includes(admin.role_id?.name)) {
         throw AppError.badRequest(MSG.INQUIRY_INVALID_ASSIGN);
       }
       filter.assignedTo = query.assignedTo;
@@ -215,7 +215,7 @@ class InquiryService {
     if (!inquiry) throw AppError.notFound('Inquiry');
 
     const admin = await userRepository.findById(adminId);
-    if (!admin || !['admin', 'superadmin'].includes(admin.role)) {
+    if (!admin || !['admin', 'superadmin'].includes(admin.role_id?.name)) {
       throw AppError.badRequest(MSG.INQUIRY_INVALID_ASSIGN);
     }
 

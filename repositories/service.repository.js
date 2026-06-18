@@ -3,7 +3,7 @@ const { Service } = require('../models');
 
 class ServiceRepository {
   async findById(id) {
-    return Service.findById(id).populate('category', 'name slug');
+    return Service.findOne({ _id: id, isDeleted: false }).populate('category', 'name slug');
   }
 
   async findAll({ filter = {}, skip = 0, limit = 20, sort = { createdAt: -1 } } = {}) {
@@ -20,17 +20,17 @@ class ServiceRepository {
   }
 
   async countByCategory(categoryId) {
-    return Service.countDocuments({ category: categoryId });
+    return Service.countDocuments({ category: categoryId, isDeleted: false });
   }
 
   async existsByTitle(title, excludeId = null) {
-    const filter = { title: new RegExp(`^${title}$`, 'i') };
+    const filter = { title: new RegExp(`^${title}$`, 'i'), isDeleted: false };
     if (excludeId) filter._id = { $ne: excludeId };
     return Service.exists(filter);
   }
 
   async getMaxOrder(categoryId) {
-    const last = await Service.findOne({ category: categoryId }).sort({ order: -1 }).select('order').lean();
+    const last = await Service.findOne({ category: categoryId, isDeleted: false }).sort({ order: -1 }).select('order').lean();
     return last?.order ?? 0;
   }
 
@@ -42,8 +42,8 @@ class ServiceRepository {
     return Service.findByIdAndUpdate(id, { $set: update }, { new: true, runValidators: true });
   }
 
-  async deleteById(id) {
-    return Service.findByIdAndDelete(id);
+  async softDeleteById(id) {
+    return Service.findByIdAndUpdate(id, { $set: { isDeleted: true } }, { new: true });
   }
 
   // Incrementally add a new rating without querying all reviews

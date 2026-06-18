@@ -194,7 +194,7 @@ const inquirySchema = new mongoose.Schema(
 );
 
 // ── Indexes ────────────────────────────────────────────────────
-inquirySchema.index({ referenceNumber: 1 });
+// inquirySchema.index({ referenceNumber: 1 });
 inquirySchema.index({ user: 1, createdAt: -1 });       // user's inquiry list
 inquirySchema.index({ status: 1, createdAt: -1 });     // admin filtered by status
 inquirySchema.index({ assignedTo: 1, status: 1 });    // admin staff workload

@@ -8,7 +8,7 @@ const MSG                 = require('../constants/message');
 
 class CategoryService {
   async getActiveCategories(query = {}) {
-    const filter = { isActive: true };
+    const filter = { isActive: true, isDeleted: false };
     if (query.parent === 'null') {
       filter.parent = null;
     } else if (query.parent) {
@@ -25,7 +25,7 @@ class CategoryService {
     const limit = Math.min(100, parseInt(query.limit) || 20);
     const skip  = (page - 1) * limit;
 
-    const filter = {};
+    const filter = { isDeleted: false };
     if (query.isActive !== undefined) filter.isActive = query.isActive === 'true';
     if (query.search)  filter.name = { $regex: new RegExp(query.search, 'i') };
     if (query.parent === 'null') {
@@ -75,6 +75,23 @@ class CategoryService {
     const exists = await categoryRepository.existsByName(name);
     if (exists) throw AppError.conflict(`Category "${name}" already exists.`);
 
+    // If a soft-deleted category already holds this name, revive it (and refresh
+    // its data) instead of creating a duplicate tombstone.
+    const deleted = await categoryRepository.findDeletedByName(name);
+    if (deleted) {
+      return categoryRepository.updateById(deleted._id, {
+        name,
+        description,
+        icon,
+        metaTitle,
+        metaDescription,
+        parent,
+        isActive:  true,
+        isDeleted: false,
+        updatedBy: adminId,
+      });
+    }
+
     const maxOrder = await categoryRepository.getMaxOrder(parent);
 
     return categoryRepository.create({
@@ -118,9 +135,7 @@ class CategoryService {
   async deleteCategory(id) {
     const cat = await categoryRepository.findById(id);
     if (!cat) throw AppError.notFound('Category');
-    if (!cat.isActive) throw AppError.badRequest(MSG.CATEGORY_ALREADY_INACTIVE);
-
-    return categoryRepository.updateById(id, { isActive: false });
+    return categoryRepository.softDeleteById(id);
   }
 
   async reorderCategories(items) {

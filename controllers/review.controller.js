@@ -118,7 +118,7 @@ const markHelpful = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-// DELETE /api/reviews/:id  — admin only (hard delete)
+// DELETE /api/reviews/:id  — admin only (soft delete)
 const deleteReview = async (req, res, next) => {
   try {
     await reviewService.deleteReview(req.params.id);

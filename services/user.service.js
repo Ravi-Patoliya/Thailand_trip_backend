@@ -13,7 +13,7 @@ class UserService {
   async listUsers(query) {
     const { page, limit, skip, sort } = paginate(query, { limit: 20 });
 
-    const filter = {};
+    const filter = { isDeleted: false };
 
     if (query.role_id) filter.role_id = query.role_id;
     if (query.isActive !== undefined) filter.isActive = query.isActive === 'true';
@@ -158,7 +158,7 @@ class UserService {
     const user = await userRepository.findById(userId);
     if (!user) throw AppError.notFound('User');
     if (user.role_id?.name === 'superadmin') throw AppError.forbidden(MSG.FORBIDDEN_SUPERADMIN_DELETE);
-    return userRepository.deleteById(userId);
+    return userRepository.softDeleteById(userId);
   }
 
   async getDashboardStats() {

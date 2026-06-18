@@ -113,6 +113,11 @@ const couponSchema = new mongoose.Schema(
       default: true,
     },
 
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+
     // ── Audit ─────────────────────────────────────────────────
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
@@ -127,7 +132,7 @@ const couponSchema = new mongoose.Schema(
 );
 
 // ── Indexes ────────────────────────────────────────────────────
-couponSchema.index({ code: 1 });
+// couponSchema.index({ code: 1 });
 couponSchema.index({ isActive: 1, validFrom: 1, validUntil: 1 });
 couponSchema.index({ 'usageLog.user': 1 }); // per-user usage check
 
@@ -184,7 +189,7 @@ couponSchema.methods.getUserUsageCount = function (userId) {
 
 // ── Static: validate coupon for a user + order ─────────────────
 couponSchema.statics.validateForUser = async function (code, userId, orderAmount) {
-  const coupon = await this.findOne({ code: code.toUpperCase() });
+  const coupon = await this.findOne({ code: code.toUpperCase(), isDeleted: false });
 
   if (!coupon) return { valid: false, reason: 'Coupon code not found' };
   if (!coupon.isActive) return { valid: false, reason: 'Coupon is inactive' };

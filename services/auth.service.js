@@ -3,6 +3,7 @@ const authRepository      = require('../repositories/auth.repository');
 const roleService         = require('./role.service');
 const { storeOtp, verifyOtp } = require('../utils/otp');
 const { issueTokens, verifyRefreshToken, clearRefreshCookie } = require('../utils/jwt');
+const serializeUser       = require('../utils/serializeUser');
 const { sendOtpEmail }    = require('../helpers/email.helper');
 const { getAuth }         = require('../config/firebase.config');
 const AppError            = require('../utils/AppError');
@@ -48,7 +49,7 @@ class AuthService {
   async verifyOtpAndLogin(identifier, inputOtp, redis, res) {
     const isEmail = identifier.includes('@');
 
-    const user = isEmail
+    let user = isEmail
       ? await authRepository.findByEmail(identifier)
       : await authRepository.findByMobile(identifier);
 
@@ -57,6 +58,13 @@ class AuthService {
 
     await verifyOtp(redis, identifier, inputOtp);
 
+    if (!user.role_id) {
+      const userRoleId = await roleService.getIdByName('user');
+      await authRepository.updateById(user._id, { role_id: userRoleId });
+      user = isEmail
+        ? await authRepository.findByEmail(identifier)
+        : await authRepository.findByMobile(identifier);
+    }
     if (!user.role_id || !user.role_id.isActive) {
       throw AppError.forbidden('Your role has been deactivated. Please contact support.');
     }
@@ -71,27 +79,22 @@ class AuthService {
     await authRepository.updateRefreshToken(user._id, refreshToken);
     await authRepository.updateLastLogin(user._id);
 
-    return {
-      accessToken,
-      user: {
-        id:         user._id,
-        name:       user.name,
-        mobile:     user.mobile,
-        email:      user.email,
-        role:       { _id: user.role_id._id, name: user.role_id.name, label: user.role_id.label },
-        isVerified: true,
-      },
-    };
+    return { accessToken, user: serializeUser(user) };
   }
 
   async loginWithPassword(email, password, res) {
-    const user = await authRepository.findByEmail(email);
+    let user = await authRepository.findByEmail(email);
     if (!user) throw AppError.unauthorized(MSG.INVALID_CREDENTIALS);
     if (!user.isActive) throw AppError.forbidden(MSG.ACCOUNT_DEACTIVATED);
 
     const isMatch = await user.comparePassword(password);
     if (!isMatch) throw AppError.unauthorized(MSG.INVALID_CREDENTIALS);
 
+    if (!user.role_id) {
+      const userRoleId = await roleService.getIdByName('user');
+      await authRepository.updateById(user._id, { role_id: userRoleId });
+      user = await authRepository.findByEmail(email);
+    }
     if (!user.role_id || !user.role_id.isActive) {
       throw AppError.forbidden('Your role has been deactivated. Please contact support.');
     }
@@ -102,15 +105,7 @@ class AuthService {
     await authRepository.updateRefreshToken(user._id, refreshToken);
     await authRepository.updateLastLogin(user._id);
 
-    return {
-      accessToken,
-      user: {
-        id:    user._id,
-        name:  user.name,
-        email: user.email,
-        role:  { _id: user.role_id._id, name: user.role_id.name, label: user.role_id.label },
-      },
-    };
+    return { accessToken, user: serializeUser(user) };
   }
 
   async googleLogin(idToken, res) {
@@ -165,17 +160,7 @@ class AuthService {
     await authRepository.updateRefreshToken(user._id, refreshToken);
     await authRepository.updateLastLogin(user._id);
 
-    return {
-      accessToken,
-      user: {
-        id:     user._id,
-        name:   user.name,
-        email:  user.email,
-        avatar: user.avatar,
-        role:   { _id: user.role_id._id, name: user.role_id.name, label: user.role_id.label },
-        isVerified: true,
-      },
-    };
+    return { accessToken, user: serializeUser(user) };
   }
 
   async refreshTokens(req, res) {
@@ -185,14 +170,16 @@ class AuthService {
     const decoded = verifyRefreshToken(token);
     const user    = await authRepository.findById(decoded.id);
 
-    if (!user) throw AppError.unauthorized(MSG.INVALID_CREDENTIALS);
+    // Not a credential failure — the session/token is no longer valid (user gone,
+    // soft-deleted, or token forged). Frontend treats this 401 as session expiry.
+    if (!user) throw AppError.unauthorized(MSG.INVALID_TOKEN);
     if (user.refreshToken !== token) {
       await authRepository.clearRefreshToken(user._id);
       throw AppError.unauthorized(MSG.TOKEN_REUSE);
     }
     if (!user.isActive) throw AppError.forbidden(MSG.ACCOUNT_DEACTIVATED);
 
-    const payload = { id: user._id, role: user.role };
+    const payload = { id: user._id, role: user.role_id?.name };
     const { accessToken, refreshToken } = issueTokens(res, payload);
     await authRepository.updateRefreshToken(user._id, refreshToken);
 
@@ -223,15 +210,25 @@ class AuthService {
     await authRepository.clearRefreshToken(user._id);
   }
 
-  async logout(userId, res) {
-    await authRepository.clearRefreshToken(userId);
+  // Idempotent: never throws. Clears the cookie regardless, and invalidates the
+  // stored refreshToken if the cookie decodes to a valid user. Works even when
+  // the access token has expired (logout is not gated by `authenticate`).
+  async logout(refreshToken, res) {
+    if (refreshToken) {
+      try {
+        const decoded = verifyRefreshToken(refreshToken);
+        if (decoded?.id) await authRepository.clearRefreshToken(decoded.id);
+      } catch {
+        // expired/invalid/forged token — nothing to invalidate, still clear cookie
+      }
+    }
     clearRefreshCookie(res);
   }
 
   async getMe(userId) {
     const user = await authRepository.findById(userId);
     if (!user) throw AppError.notFound('User');
-    return user;
+    return serializeUser(user);
   }
 }
 

@@ -122,6 +122,10 @@ const serviceSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
     isFeatured: {
       type: Boolean,
       default: false,
@@ -135,6 +139,12 @@ const serviceSchema = new mongoose.Schema(
     metaTitle: { type: String, trim: true },
     metaDescription: { type: String, trim: true },
     tags: [{ type: String, lowercase: true, trim: true }],
+
+    // ── Metadata (flexible key-value store for frontend/admin use) ──
+    metadata: {
+      type:    mongoose.Schema.Types.Mixed,
+      default: {},
+    },
 
     // ── Audit ─────────────────────────────────────────────────
     createdBy: {

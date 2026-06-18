@@ -10,9 +10,9 @@ const s3 = new S3Client({
     }
 });
 
-const BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME;
+const BUCKET_NAME = process.env.AWS_S3_BUCKET;
 
-const CLOUDFRONT_URL = process.env.CLOUDFRONT_URL || `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION || 'ap-south-1'}.amazonaws.com`;
+const CLOUDFRONT_URL = process.env.AWS_CDN_BASE_URL || `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION || 'ap-south-1'}.amazonaws.com`;
 
 // folder: 'services', 'categories', 'reviews', 'avatars', etc.
 const uploadObject = async (file, folder = 'uploads') => {

@@ -10,7 +10,7 @@ const REFRESH_TTL    = process.env.JWT_REFRESH_TTL || '7d';
 const REFRESH_COOKIE_OPTIONS = {
   httpOnly: true,
   secure:   process.env.NODE_ENV === 'production',
-  sameSite: 'strict',
+  sameSite: 'lax', // Lax survives top-level navigation from external links (avoids surprise logout) while still blocking CSRF on cross-site POSTs
   maxAge:   7 * 24 * 60 * 60 * 1000, // 7 days in ms
   path:     '/',
 };

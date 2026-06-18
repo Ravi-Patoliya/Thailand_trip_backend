@@ -60,8 +60,9 @@ const MSG = {
   SERVICES_FETCHED:        'Services fetched.',
   SERVICE_CREATED:         'Service created successfully.',
   SERVICE_UPDATED:         'Service updated successfully.',
-  SERVICE_DELETED:         'Service deactivated successfully.',
+  SERVICE_DELETED:         'Service deleted successfully.',
   SERVICE_ALREADY_INACTIVE:'Service is already deactivated.',
+  UPDATE_NOTHING:          'Provide at least one field or file to update.',
 
   // ── Inquiry ─────────────────────────────────────────────────────
   INQUIRY_FETCHED:         'Inquiry fetched.',
@@ -110,6 +111,8 @@ const MSG = {
   UPLOAD_NO_IMAGES:        'No image files provided.',
   UPLOAD_NO_MEDIA:         'No files provided. Send images and/or a video.',
   UPLOAD_KEY_REQUIRED:     'S3 key is required.',
+  UPLOAD_DATA_REQUIRED:    'The "data" field (JSON payload) is required.',
+  UPLOAD_DATA_INVALID:     'The "data" field must be valid JSON.',
 
 };
 

@@ -105,9 +105,10 @@ const resetPassword = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
+// Idempotent — does not require a valid access token. Always returns 200.
 const logout = async (req, res, next) => {
   try {
-    await authService.logout(req.user._id, res);
+    await authService.logout(req.cookies?.refreshToken, res);
     API_response.OK({ res, message: MSG.LOGOUT_SUCCESS });
   } catch (err) { next(err); }
 };
