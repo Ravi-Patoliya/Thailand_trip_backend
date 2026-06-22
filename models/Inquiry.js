@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const crypto = require('crypto');
 const { INQUIRY_STATUS, PAYMENT_STATUS, PAYMENT_METHOD } = require('../constants/enums');
 
 /**
@@ -41,7 +42,7 @@ const paymentLogSchema = new mongoose.Schema(
     recordedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     recordedAt: { type: Date, default: Date.now },
   },
-  { _id: true }
+  { _id: true }//
 );
 
 // Sub-schema: status history for timeline view
@@ -217,13 +218,13 @@ inquirySchema.virtual('isUpcoming').get(function () {
 inquirySchema.pre('save', async function (next) {
   if (this.isNew) {
     const date = new Date();
-    const datePart = date.toISOString().slice(0, 10).replace(/-/g, '');
+    const datePart = `ENQ_${date.toISOString().slice(0, 10).replace(/-/g, '')}`;
     // Count today's inquiries for sequential suffix
     const todayStart = new Date(date.setHours(0, 0, 0, 0));
     const count = await mongoose.model('Inquiry').countDocuments({
       createdAt: { $gte: todayStart },
     });
-    this.referenceNumber = `TTP-${datePart}-${String(count + 1).padStart(4, '0')}`;
+    this.referenceNumber = `${datePart}-${crypto.randomBytes(4).toString('hex')}-${String(count + 1).padStart(4, '0')}`;
   }
 
   // Push to status history when status changes

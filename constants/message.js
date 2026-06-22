@@ -93,6 +93,17 @@ const MSG = {
   REVIEW_ALREADY_HELPFUL:     'You have already marked this review as helpful.',
   REVIEW_MAX_IMAGES:          'Maximum 5 images allowed per review.',
 
+  // ── Coupon ──────────────────────────────────────────────────────
+  COUPON_FETCHED:          'Coupon fetched.',
+  COUPONS_FETCHED:         'Coupons fetched.',
+  COUPON_CREATED:          'Coupon created successfully.',
+  COUPON_UPDATED:          'Coupon updated successfully.',
+  COUPON_DELETED:          'Coupon deleted successfully.',
+  COUPON_CODE_CONFLICT:    'A coupon with this code already exists.',
+  COUPON_INVALID_DATES:    'Valid until date must be after valid from date.',
+  COUPON_MAX_DISCOUNT_FLAT:'maxDiscountAmount only applies to percentage coupons.',
+  COUPON_PERCENT_RANGE:    'Percentage value must be between 1 and 100.',
+
   // ── Notification ────────────────────────────────────────────────
   NOTIFICATIONS_FETCHED:   'Notifications fetched.',
   NOTIFICATION_DELETED:    'Notification deleted.',

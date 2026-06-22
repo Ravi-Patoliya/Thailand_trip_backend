@@ -2,11 +2,34 @@
 const { z } = require('zod');
 const AppError = require('../utils/AppError');
 
+// Build a human-friendly message from a zod issue, prefixing the field name so
+// generic/coercion codes ("Required", "Invalid date", "Expected number...")
+// point at the offending field instead of being opaque.
+const GENERIC_RE = /^(required|invalid input|invalid|invalid date|expected .* received .*|nan)$/i;
+
+const messageForIssue = (issue) => {
+  if (!issue) return 'Validation error';
+  const field = Array.isArray(issue.path) && issue.path.length
+    ? issue.path.join('.')
+    : null;
+  if (!field) return issue.message || 'Validation error';
+
+  // Missing field (z.coerce.* turns undefined into NaN/Invalid Date, so detect both).
+  const isMissing =
+    (issue.code === 'invalid_type' && issue.received === 'undefined') ||
+    issue.received === 'nan' ||
+    /^invalid date$/i.test(issue.message || '');
+  if (isMissing) return `${field} is required.`;
+
+  // Other generic messages — prefix with the field for context.
+  if (!issue.message || GENERIC_RE.test(issue.message)) return `${field}: ${issue.message || 'invalid value'}`;
+  return issue.message;
+};
+
 const parseSchema = (schema, data) => {
   const result = schema.safeParse(data);
   if (!result.success) {
-    const first = result.error.issues[0];
-    throw AppError.badRequest(first?.message || 'Validation error');
+    throw AppError.badRequest(messageForIssue(result.error.issues[0]));
   }
   return result.data;
 };

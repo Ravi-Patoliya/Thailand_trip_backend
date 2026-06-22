@@ -17,6 +17,7 @@ const reviewRoutes        = require('./routes/review.routes');
 const notificationRoutes  = require('./routes/notification.routes');
 const categoryRoutes      = require('./routes/category.routes');
 const serviceRoutes       = require('./routes/service.routes');
+const couponRoutes        = require('./routes/coupon.routes');
 const uploadRoutes        = require('./routes/upload.routes');
 
 const app = express();
@@ -75,6 +76,7 @@ app.use('/api/reviews',       reviewRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/categories',   categoryRoutes);
 app.use('/api/services',     serviceRoutes);
+app.use('/api/coupons',      couponRoutes);
 app.use('/api/upload',       uploadRoutes);
 
 app.use((_req, res) => {
