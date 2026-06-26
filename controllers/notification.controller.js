@@ -17,6 +17,12 @@ const removeFcmSchema = z.object({
   fcmToken: z.string().trim().min(10, 'Invalid FCM token'),
 });
 
+const prefsSchema = z.object({
+  booking: z.boolean().optional(),
+  reviews: z.boolean().optional(),
+  offers:  z.boolean().optional(),
+}).refine(obj => Object.keys(obj).length > 0, { message: 'Provide at least one preference to update.' });
+
 const broadcastSchema = z.object({
   title: z.string().trim().min(3).max(150),
   body:  z.string().trim().min(3).max(500),
@@ -24,9 +30,10 @@ const broadcastSchema = z.object({
 });
 
 const listQuerySchema = z.object({
-  page:   zv.positiveInt.optional(),
-  limit:  zv.positiveInt.optional(),
-  unread: z.enum(['true', 'false']).optional(),
+  page:     zv.positiveInt.optional(),
+  limit:    zv.positiveInt.optional(),
+  unread:   z.enum(['true', 'false']).optional(),
+  category: z.enum(['booking', 'reviews', 'offers']).optional(),
 });
 
 const adminListQuerySchema = z.object({
@@ -100,6 +107,21 @@ const deleteAllRead = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
+const getPreferences = async (req, res, next) => {
+  try {
+    const prefs = await notificationService.getNotificationPrefs(req.user._id);
+    API_response.OK({ res, message: MSG.NOTIFICATION_PREFS_FETCHED, payload: prefs });
+  } catch (err) { next(err); }
+};
+
+const prefsValidator = validate(prefsSchema);
+const updatePreferences = async (req, res, next) => {
+  try {
+    const prefs = await notificationService.updateNotificationPrefs(req.user._id, req.body);
+    API_response.OK({ res, message: MSG.NOTIFICATION_PREFS_UPDATED, payload: prefs });
+  } catch (err) { next(err); }
+};
+
 const broadcastValidator = validate(broadcastSchema);
 const sendBroadcast = async (req, res, next) => {
   try {
@@ -131,6 +153,8 @@ module.exports = {
   markAllRead,
   deleteOne,
   deleteAllRead,
+  getPreferences,
+  prefsValidator,            updatePreferences,
   broadcastValidator,        sendBroadcast,
   adminListQueryValidator,   listAllNotifications,
 };

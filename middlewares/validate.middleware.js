@@ -65,7 +65,7 @@ const zv = {
   mongoId:     z.string().regex(/^[a-f\d]{24}$/i, 'Invalid ID format'),
   mobile:      z.string().regex(/^\+?[1-9]\d{9,14}$/, 'Enter a valid mobile number'),
   email:       z.string().trim().toLowerCase().email('Enter a valid email address'),
-  password:    z.string().min(8, 'Password must be at least 8 characters'),
+  password:    z.string().min(6, 'Password must be at least 6 characters'),
   otp:         z.string().length(6, 'OTP must be 6 digits').regex(/^\d{6}$/, 'OTP must be numeric'),
   positiveInt: z.coerce.number().int().positive(),
 };

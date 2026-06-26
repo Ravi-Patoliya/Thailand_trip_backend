@@ -4,22 +4,30 @@ const serviceRepository  = require('../repositories/service.repository');
 const couponRepository   = require('../repositories/coupon.repository');
 const userRepository     = require('../repositories/user.repository');
 const notificationService = require('./notification.service');
+const { uploadObject }   = require('../helpers/s3.helper');
 const AppError           = require('../utils/AppError');
 const MSG                = require('../constants/message');
 const { paginate }       = require('../utils/paginate');
 
+// One-way conveyor belt: new → contacted → confirmed → payment_pending → payment_received → in_progress → completed
+// Cancelled is the emergency exit reachable from any state except in_progress and completed.
 const STATUS_TRANSITIONS = {
-  new:             ['contacted', 'cancelled'],
-  contacted:       ['confirmed', 'cancelled'],
-  confirmed:       ['payment_pending', 'cancelled'],
-  payment_pending: ['completed', 'cancelled'],
-  completed:       [],
-  cancelled:       [],
+  new:              ['contacted', 'cancelled'],
+  contacted:        ['confirmed', 'cancelled'],
+  confirmed:        ['payment_pending', 'cancelled'],
+  payment_pending:  ['payment_received', 'cancelled'],
+  payment_received: ['in_progress', 'cancelled'],
+  in_progress:      ['completed'],
+  completed:        [],
+  cancelled:        [],
 };
 
 class InquiryService {
   async createInquiry(body, user) {
-    const { services: serviceItems, travelDate, returnDate, adults, children, specialRequests, couponCode } = body;
+    const {
+      services: serviceItems, travelDate, returnDate, adults, children, specialRequests, couponCode,
+      contactName, contactMobile, contactWhatsapp, contactEmail,
+    } = body;
 
     const serviceIds = serviceItems.map(i => i.serviceId);
     const dbServices = await Promise.all(serviceIds.map(id => serviceRepository.findById(id)));
@@ -45,12 +53,13 @@ class InquiryService {
       subtotal     += lineSub;
 
       resolvedItems.push({
-        service:        svc._id,
-        serviceTitle:   svc.title,
-        priceSnapshot:  tier.amount,
-        priceTierLabel: tier.label,
-        quantity:       qty,
-        subtotal:       lineSub,
+        service:             svc._id,
+        serviceTitle:        svc.title,
+        priceSnapshot:       tier.amount,
+        strikePriceSnapshot: tier.strikePrice || null,
+        priceTierLabel:      tier.label,
+        quantity:            qty,
+        subtotal:            lineSub,
       });
     }
 
@@ -70,7 +79,12 @@ class InquiryService {
 
     const inquiry = await inquiryRepository.create({
       user:            user._id,
-      contactSnapshot: { name: user.name, mobile: user.mobile || null, email: user.email },
+      contactSnapshot: {
+        name:     contactName     || user.name,
+        mobile:   contactMobile   || user.mobile   || null,
+        whatsapp: contactWhatsapp || user.mobile   || null,
+        email:    contactEmail    || user.email     || null,
+      },
       services:        resolvedItems,
       travelDate:      new Date(travelDate),
       returnDate:      returnDate ? new Date(returnDate) : null,
@@ -86,7 +100,7 @@ class InquiryService {
     });
 
     if (couponId) {
-      await couponRepository.recordUsage(couponId, user._id, inquiry._id, discountAmount);
+      await couponRepository.recordUsage(couponId);
     }
 
     notificationService.notifyInquirySubmitted(inquiry).catch(() => {});
@@ -97,8 +111,8 @@ class InquiryService {
   async getUserInquiries(userId, query) {
     const { page, limit, skip, sort } = paginate(query, { limit: 10 });
     const [data, total] = await Promise.all([
-      inquiryRepository.findByUser(userId, { skip, limit, sort }),
-      inquiryRepository.countByUser(userId),
+      inquiryRepository.findByUser(userId, { skip, limit, sort },query),
+      inquiryRepository.countByUser(userId,query),
     ]);
     return { data, page, limit, total };
   }
@@ -124,6 +138,9 @@ class InquiryService {
         throw AppError.badRequest(MSG.INQUIRY_INVALID_ASSIGN);
       }
       filter.assignedTo = query.assignedTo;
+    }
+    if (query.id) {
+      filter._id = query.id;
     }
     if (query.search) {
       const regex = new RegExp(query.search, 'i');
@@ -166,7 +183,43 @@ class InquiryService {
       );
     }
 
+    const now = new Date();
+
+    // in_progress is only valid once the travel date has actually arrived
+    if (newStatus === 'in_progress') {
+      if (!inquiry.travelDate || inquiry.travelDate > now) {
+        throw AppError.badRequest(MSG.INQUIRY_IN_PROGRESS_EARLY);
+      }
+    }
+
+    // completed is only valid once the return date has passed
+    if (newStatus === 'completed') {
+      const endDate = inquiry.returnDate || inquiry.travelDate;
+      if (!endDate || endDate > now) {
+        throw AppError.badRequest(MSG.INQUIRY_COMPLETED_EARLY);
+      }
+    }
+
     const updated = await inquiryRepository.updateStatus(id, newStatus, note, adminId);
+    notificationService.notifyInquiryStatusUpdate(updated).catch(() => {});
+    return updated;
+  }
+
+  async cancelByUser(id, userId, reason) {
+    const inquiry = await inquiryRepository.findById(id);
+    if (!inquiry) throw AppError.notFound('Inquiry');
+
+    if (inquiry.user._id.toString() !== userId.toString()) {
+      throw AppError.forbidden(MSG.INQUIRY_CANCEL_FORBIDDEN);
+    }
+    if (inquiry.status === 'cancelled') {
+      throw AppError.badRequest(MSG.INQUIRY_ALREADY_CANCELLED);
+    }
+    if (['in_progress', 'completed'].includes(inquiry.status)) {
+      throw AppError.badRequest(MSG.INQUIRY_CANCEL_NOT_ALLOWED);
+    }
+
+    const updated = await inquiryRepository.updateStatus(id, 'cancelled', `User cancelled: ${reason}`, userId);
     notificationService.notifyInquiryStatusUpdate(updated).catch(() => {});
     return updated;
   }
@@ -177,15 +230,18 @@ class InquiryService {
     return inquiryRepository.addNote(id, text, adminId);
   }
 
-  async logPayment(id, paymentData, adminId) {
+  async logPayment(id, paymentData, adminId, screenshotFile = null) {
     const inquiry = await inquiryRepository.findById(id);
     if (!inquiry) throw AppError.notFound('Inquiry');
 
-    if (['new', 'contacted'].includes(inquiry.status)) {
-      throw AppError.badRequest(MSG.INQUIRY_PAYMENT_UNCONFIRMED);
-    }
+    // Payment can only be logged once we're actively collecting it (payment_pending or payment_received)
+    // or while the trip is running (in_progress — partial payments / balance collection)
+    const paymentAllowedStatuses = ['payment_pending', 'payment_received', 'in_progress'];
     if (inquiry.status === 'cancelled') {
       throw AppError.badRequest(MSG.INQUIRY_PAYMENT_CANCELLED);
+    }
+    if (!paymentAllowedStatuses.includes(inquiry.status)) {
+      throw AppError.badRequest(MSG.INQUIRY_PAYMENT_UNCONFIRMED);
     }
 
     const newTotal = inquiry.totalPaid + paymentData.amount;
@@ -196,18 +252,31 @@ class InquiryService {
       );
     }
 
-    const updated = await inquiryRepository.logPayment(id, { ...paymentData, recordedBy: adminId });
+    let screenshotUrl = null;
+    let screenshotKey = null;
+    if (screenshotFile) {
+      const uploaded = await uploadObject(screenshotFile, 'payments');
+      screenshotUrl  = uploaded.url;
+      screenshotKey  = uploaded.key;
+    }
+
+    const updated = await inquiryRepository.logPayment(id, {
+      ...paymentData,
+      screenshotUrl,
+      screenshotKey,
+      recordedBy: adminId,
+    });
     notificationService.notifyPaymentReceived(updated, paymentData.amount).catch(() => {});
     return updated;
   }
 
-  async recordCall(id, adminId) {
+  async recordCall(id, adminId, note) {
     const inquiry = await inquiryRepository.findById(id);
     if (!inquiry) throw AppError.notFound('Inquiry');
     if (inquiry.status === 'new') {
       await inquiryRepository.updateStatus(id, 'contacted', 'Admin called user', adminId);
     }
-    return inquiryRepository.recordCallAttempt(id);
+    return inquiryRepository.recordCallAttempt(id, adminId, note);
   }
 
   async assignInquiry(id, adminId) {

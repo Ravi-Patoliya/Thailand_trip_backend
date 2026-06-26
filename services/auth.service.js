@@ -191,6 +191,10 @@ class AuthService {
     if (!user) throw AppError.notFound('No account found with this email.');
     if (!user.isActive) throw AppError.forbidden(MSG.ACCOUNT_DEACTIVATED);
 
+    if (!['admin', 'superadmin'].includes(user.role_id?.name)) {
+      throw AppError.forbidden(MSG.FORBIDDEN);
+    }
+
     const otp = await storeOtp(redis, `reset:${email}`);
     await sendOtpEmail(email, otp, { subject: 'Reset your password', purpose: 'password reset' });
 
@@ -203,6 +207,10 @@ class AuthService {
     const user = await authRepository.findByEmail(email);
     if (!user) throw AppError.notFound('User');
     if (!user.isActive) throw AppError.forbidden(MSG.ACCOUNT_DEACTIVATED);
+
+    if (!['admin', 'superadmin'].includes(user.role_id?.name)) {
+      throw AppError.forbidden(MSG.FORBIDDEN);
+    }
 
     const hashed = await require('bcryptjs').hash(newPassword, 12);
     await authRepository.updatePassword(user._id, hashed);

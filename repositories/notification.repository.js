@@ -1,5 +1,5 @@
 'use strict';
-const { Notification, User } = require('../models');
+const { Notification, User, Role } = require('../models');
 
 class NotificationRepository {
   async create(data) {
@@ -10,9 +10,10 @@ class NotificationRepository {
     return Notification.insertMany(docs, { ordered: false });
   }
 
-  async findByUser({ userId, skip = 0, limit = 20, onlyUnread = false }) {
+  async findByUser({ userId, skip = 0, limit = 20, onlyUnread = false, types }) {
     const filter = { user: userId };
     if (onlyUnread) filter.isRead = false;
+    if (types?.length) filter.type = { $in: types };
     return Notification.find(filter)
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -20,9 +21,10 @@ class NotificationRepository {
       .lean();
   }
 
-  async countByUser(userId, onlyUnread = false) {
+  async countByUser(userId, onlyUnread = false, types) {
     const filter = { user: userId };
     if (onlyUnread) filter.isRead = false;
+    if (types?.length) filter.type = { $in: types };
     return Notification.countDocuments(filter);
   }
 
@@ -81,7 +83,9 @@ class NotificationRepository {
   }
 
   async findAdminsWithFcmTokens() {
-    return User.find({ role: { $in: ['admin', 'superadmin'] }, isActive: true })
+    const adminRoles = await Role.find({ name: { $in: ['admin', 'superadmin'] } }).select('_id').lean();
+    const adminRoleIds = adminRoles.map(r => r._id);
+    return User.find({ role_id: { $in: adminRoleIds }, isActive: true, isDeleted: false })
       .select('+fcmTokens')
       .lean();
   }
@@ -92,6 +96,24 @@ class NotificationRepository {
 
   async removeFcmToken(userId, fcmToken) {
     return User.findByIdAndUpdate(userId, { $pull: { fcmTokens: fcmToken } });
+  }
+
+  async getPrefs(userId) {
+    const user = await User.findById(userId).select('notificationPrefs').lean();
+    return user?.notificationPrefs ?? { booking: true, reviews: true, offers: true };
+  }
+
+  async updatePrefs(userId, prefs) {
+    const update = {};
+    for (const [k, v] of Object.entries(prefs)) {
+      update[`notificationPrefs.${k}`] = v;
+    }
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $set: update },
+      { new: true, select: 'notificationPrefs' }
+    ).lean();
+    return user?.notificationPrefs;
   }
 }
 

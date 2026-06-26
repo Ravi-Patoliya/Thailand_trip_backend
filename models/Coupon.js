@@ -88,16 +88,6 @@ const couponSchema = new mongoose.Schema(
       min: 1,
     },
 
-    // Usage log: [{ userId, inquiryId, usedAt }]
-    usageLog: [
-      {
-        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-        inquiry: { type: mongoose.Schema.Types.ObjectId, ref: 'Inquiry' },
-        usedAt: { type: Date, default: Date.now },
-        discountGiven: { type: Number },
-      },
-    ],
-
     // ── Validity ──────────────────────────────────────────────
     validFrom: {
       type: Date,
@@ -134,7 +124,6 @@ const couponSchema = new mongoose.Schema(
 // ── Indexes ────────────────────────────────────────────────────
 // couponSchema.index({ code: 1 });
 couponSchema.index({ isActive: 1, validFrom: 1, validUntil: 1 });
-couponSchema.index({ 'usageLog.user': 1 }); // per-user usage check
 
 // ── Virtual: is currently valid ────────────────────────────────
 couponSchema.virtual('isValid').get(function () {
@@ -180,14 +169,9 @@ couponSchema.methods.calculateDiscount = function (orderAmount) {
   };
 };
 
-// ── Instance method: check per-user usage ─────────────────────
-couponSchema.methods.getUserUsageCount = function (userId) {
-  return this.usageLog.filter(
-    (log) => log.user.toString() === userId.toString()
-  ).length;
-};
-
 // ── Static: validate coupon for a user + order ─────────────────
+// Per-user check queries the Inquiry collection instead of a usageLog array
+// so the Coupon document stays small regardless of how many users use it.
 couponSchema.statics.validateForUser = async function (code, userId, orderAmount) {
   const coupon = await this.findOne({ code: code.toUpperCase(), isDeleted: false });
 
@@ -201,9 +185,13 @@ couponSchema.statics.validateForUser = async function (code, userId, orderAmount
     return { valid: false, reason: 'Coupon usage limit reached' };
   }
 
-  const userUses = coupon.getUserUsageCount(userId);
-  if (userUses >= coupon.maxUsesPerUser) {
-    return { valid: false, reason: 'You have already used this coupon' };
+  // Per-user limit: only checked when a logged-in userId is provided
+  if (userId) {
+    const Inquiry = mongoose.model('Inquiry');
+    const userUses = await Inquiry.countDocuments({ user: userId, coupon: coupon._id });
+    if (userUses >= coupon.maxUsesPerUser) {
+      return { valid: false, reason: 'You have already used this coupon' };
+    }
   }
 
   return coupon.calculateDiscount(orderAmount);

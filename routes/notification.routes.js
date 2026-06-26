@@ -13,6 +13,9 @@ router.delete('/read',         ...requireUser,  ctrl.deleteAllRead);
 router.patch ('/:id/read',     ...requireUser,  ctrl.idParamValidator,           ctrl.markRead);
 router.delete('/:id',          ...requireUser,  ctrl.idParamValidator,           ctrl.deleteOne);
 
+router.get   ('/preferences',   ...requireUser,  ctrl.getPreferences);
+router.patch ('/preferences',   ...requireUser,  ctrl.prefsValidator,             ctrl.updatePreferences);
+
 router.post('/broadcast',      ...requireAdmin, ctrl.broadcastValidator,         ctrl.sendBroadcast);
 router.get ('/admin/all',      ...requireAdmin, ctrl.adminListQueryValidator,     ctrl.listAllNotifications);
 

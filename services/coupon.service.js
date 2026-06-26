@@ -62,7 +62,6 @@ class CouponService {
       return couponRepository.updateById(deleted._id, {
         ...data,
         usedCount: 0,
-        usageLog:  [],
         isDeleted: false,
         isActive:  data.isActive ?? true,
         createdBy: adminId,
@@ -92,6 +91,12 @@ class CouponService {
     return couponRepository.updateById(id, update);
   }
 
+  async validateCoupon(code, userId, orderAmount) {
+    const result = await couponRepository.validateForUser(code, userId, orderAmount);
+    if (!result.valid) throw AppError.badRequest(result.reason);
+    return result;
+  }
+
   async deleteCoupon(id) {
     const coupon = await couponRepository.findById(id);
     if (!coupon) throw AppError.notFound('Coupon');
@@ -102,8 +107,6 @@ class CouponService {
   _sanitize(body) {
     const data = { ...body };
     if (data.code) data.code = data.code.toUpperCase().trim();
-    // The admin UI only supplies an expiry date; start validity from now.
-    if (!data.validFrom) data.validFrom = new Date();
     return data;
   }
 

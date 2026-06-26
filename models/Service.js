@@ -27,6 +27,7 @@ const priceTierSchema = new mongoose.Schema(
   {
     label: { type: String, required: true }, // e.g. "Per Person", "Per Vehicle", "Per Night"
     amount: { type: Number, required: true, min: 0 },
+    strikePrice: { type: Number, default: null, min: 0 }, // crossed-out original price shown on card
     currency: { type: String, default: 'INR' },
     isBase: { type: Boolean, default: false }, // base/starting price shown on card
   },

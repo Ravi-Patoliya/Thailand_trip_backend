@@ -11,6 +11,9 @@ const idParamValidator = validateParams(idParam);
 // GET /api/coupons          — list (admin: all | user/public: active & valid) or single via ?id=
 router.get('/', optionalAuth, ctrl.listQueryValidator, ctrl.getCoupons);
 
+// POST /api/coupons/validate — preview discount for a coupon code + order amount (no usage recorded)
+router.post('/validate', optionalAuth, ctrl.validateCouponValidator, ctrl.validateCoupon);
+
 // Admin & Super Admin — create / update / delete
 router.post('/', ...requireAdmin, ctrl.createCouponValidator, ctrl.createCoupon);
 router.patch('/:id', ...requireAdmin, idParamValidator, ctrl.updateCouponValidator, ctrl.updateCoupon);

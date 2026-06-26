@@ -68,7 +68,7 @@ const sendToUser = async (user, payload) => {
 
   if (staleTokens.length > 0) {
     try {
-      const { User } = require('../models');
+      const { User } = require('./models');
       await User.findByIdAndUpdate(user._id, { $pull: { fcmTokens: { $in: staleTokens } } });
     } catch (err) {
       console.warn('[FCM] Failed to remove stale tokens:', err.message);

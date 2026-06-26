@@ -6,7 +6,8 @@ const { INQUIRY_STATUS, PAYMENT_STATUS, PAYMENT_METHOD } = require('../constants
  * Inquiry Model
  * The core transaction document. Represents a user's request for one or more services.
  * Admin actions on inquiries: call user, confirm, log payment, mark complete.
- * Status machine: new → contacted → confirmed → payment_pending → completed | cancelled
+ * Status machine: new → contacted → confirmed → payment_pending → payment_received → in_progress → completed
+ *                  Cancelled is reachable from any state except in_progress and completed.
  */
 
 // Sub-schema: a service item within the inquiry
@@ -20,6 +21,7 @@ const inquiryServiceSchema = new mongoose.Schema(
     // Snapshot of pricing at time of inquiry (price may change later)
     serviceTitle: { type: String, required: true },
     priceSnapshot: { type: Number, required: true },
+    strikePriceSnapshot: { type: Number, default: null }, // crossed-out price at time of inquiry
     priceTierLabel: { type: String }, // e.g. "Per Person"
     quantity: { type: Number, default: 1, min: 1 }, // number of units/people
     subtotal: { type: Number, required: true },
@@ -39,6 +41,8 @@ const paymentLogSchema = new mongoose.Schema(
     },
     reference: { type: String, trim: true }, // UTR / transaction ID
     note: { type: String, trim: true },
+    screenshotUrl: { type: String, default: null }, // S3 URL of payment screenshot
+    screenshotKey: { type: String, default: null }, // S3 key for deletion
     recordedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     recordedAt: { type: Date, default: Date.now },
   },
@@ -52,6 +56,16 @@ const statusHistorySchema = new mongoose.Schema(
     note: { type: String, trim: true },
     changedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     changedAt: { type: Date, default: Date.now },
+  },
+  { _id: true }
+);
+
+// Sub-schema: individual call log entry
+const callLogSchema = new mongoose.Schema(
+  {
+    calledBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    calledAt: { type: Date, default: Date.now },
+    note:     { type: String, trim: true, maxlength: 500 },
   },
   { _id: true }
 );
@@ -83,9 +97,10 @@ const inquirySchema = new mongoose.Schema(
     },
     // Snapshot of user contact at time of inquiry
     contactSnapshot: {
-      name: { type: String, required: true },
-      mobile: { type: String, default: null },
-      email: { type: String },
+      name:      { type: String, required: true },
+      mobile:    { type: String, default: null },
+      whatsapp:  { type: String, default: null },
+      email:     { type: String, default: null },
     },
 
     // ── Services Selected ─────────────────────────────────────
@@ -163,6 +178,7 @@ const inquirySchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    callLog: [callLogSchema],
 
     // ── Payment (offline, collected via call) ─────────────────
     paymentLog: [paymentLogSchema],
@@ -202,6 +218,7 @@ inquirySchema.index({ assignedTo: 1, status: 1 });    // admin staff workload
 inquirySchema.index({ travelDate: 1 });               // upcoming travel
 inquirySchema.index({ paymentStatus: 1 });
 inquirySchema.index({ coupon: 1 });                   // coupon analytics
+inquirySchema.index({ user: 1, coupon: 1 });          // per-user coupon usage check
 inquirySchema.index({ createdAt: -1 });
 
 // ── Virtual: balance due ───────────────────────────────────────

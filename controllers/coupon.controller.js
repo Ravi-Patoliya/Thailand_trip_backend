@@ -23,8 +23,8 @@ const listQuerySchema = z.object({
 const createCouponSchema = z.object({
   code:                codeField,
   description:         z.string().trim().max(200).optional(),
-  type:                z.enum(Object.values(COUPON_TYPE)),
-  value:               z.coerce.number().min(1, 'Value must be at least 1'),
+  type:                z.enum(Object.values(COUPON_TYPE), { required_error: 'Discount type is required' }),
+  value:               z.coerce.number().min(1, 'Discount amount must be at least 1'),
   maxDiscountAmount:   z.coerce.number().min(0).nullable().optional(),
   minOrderAmount:      z.coerce.number().min(0).optional(),
   currency:            z.string().trim().optional(),
@@ -32,9 +32,8 @@ const createCouponSchema = z.object({
   applicableServices:  z.array(zv.mongoId).optional(),
   maxUses:             z.coerce.number().int().min(1).nullable().optional(),
   maxUsesPerUser:      z.coerce.number().int().min(1).optional(),
-  // validFrom is optional — defaults to "now" so the admin UI only needs an expiry date.
-  validFrom:           z.coerce.date().optional(),
-  validUntil:          z.coerce.date(),
+  validFrom:           z.coerce.date({ required_error: 'Valid from date is required' }),
+  validUntil:          z.coerce.date({ required_error: 'Valid until date is required' }),
   isActive:            z.boolean().optional(),
 });
 
@@ -55,9 +54,15 @@ const updateCouponSchema = z.object({
   isActive:            z.boolean().optional(),
 }).refine(obj => Object.keys(obj).length > 0, { message: 'At least one field is required.' });
 
-const listQueryValidator    = validateQuery(listQuerySchema);
-const createCouponValidator = validate(createCouponSchema);
-const updateCouponValidator = validate(updateCouponSchema);
+const validateCouponSchema = z.object({
+  code:        codeField,
+  orderAmount: z.coerce.number().positive('orderAmount must be a positive number'),
+});
+
+const listQueryValidator      = validateQuery(listQuerySchema);
+const createCouponValidator   = validate(createCouponSchema);
+const updateCouponValidator   = validate(updateCouponSchema);
+const validateCouponValidator = validate(validateCouponSchema);
 
 const isAdmin = (req) => req.user && ['admin', 'superadmin'].includes(req.user.role);
 
@@ -100,6 +105,17 @@ const updateCoupon = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
+// POST /api/coupons/validate
+// Requires an authenticated user — per-user limit check needs a real userId.
+const validateCoupon = async (req, res, next) => {
+  try {
+    const { code, orderAmount } = req.body;
+    const userId = req.user?._id ?? null;
+    const result = await couponService.validateCoupon(code, userId, orderAmount);
+    API_response.OK({ res, message: MSG.COUPON_VALIDATED, payload: result });
+  } catch (err) { next(err); }
+};
+
 const deleteCoupon = async (req, res, next) => {
   try {
     await couponService.deleteCoupon(req.params.id);
@@ -111,8 +127,10 @@ module.exports = {
   listQueryValidator,
   createCouponValidator,
   updateCouponValidator,
+  validateCouponValidator,
   getCoupons,
   createCoupon,
   updateCoupon,
   deleteCoupon,
+  validateCoupon,
 };

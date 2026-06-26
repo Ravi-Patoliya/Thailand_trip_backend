@@ -5,7 +5,7 @@ const { requireUser, requireAdmin, requireSuperAdmin } = require('../middlewares
 
 router.get   ('/me',           ...requireUser,       ctrl.getMe);
 router.patch ('/me',           ...requireUser,       ctrl.updateProfileValidator,   ctrl.updateProfile);
-router.patch ('/me/password',  ...requireUser,       ctrl.changePasswordValidator,  ctrl.changePassword);
+router.patch ('/me/password',  ...requireAdmin,      ctrl.changePasswordValidator,  ctrl.changePassword);
 router.patch ('/me/avatar',    ...requireUser,       ctrl.updateAvatarValidator,    ctrl.updateAvatar);
 
 router.get   ('/stats',        ...requireAdmin,      ctrl.getUserStats);

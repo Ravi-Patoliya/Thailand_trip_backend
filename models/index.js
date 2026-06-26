@@ -8,5 +8,6 @@ const Coupon       = require('./Coupon');
 const Review       = require('./Review');
 const Contact      = require('./Contact');
 const Notification = require('./Notification');
+const { Banner }   = require('./Banner');
 
-module.exports = { Role, User, Category, Service, Inquiry, Coupon, Review, Contact, Notification };
+module.exports = { Role, User, Category, Service, Inquiry, Coupon, Review, Contact, Notification, Banner };

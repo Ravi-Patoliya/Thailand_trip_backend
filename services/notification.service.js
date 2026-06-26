@@ -11,16 +11,40 @@ const {
 const AppError               = require('../utils/AppError');
 const { paginate }           = require('../utils/paginate');
 
+const CATEGORY_MAP = {
+  inquiry_submitted:    'booking',
+  inquiry_status_update:'booking',
+  payment_received:     'booking',
+  review_approved:      'reviews',
+  review_rejected:      'reviews',
+  admin_review_reply:   'reviews',
+  new_category:         'offers',
+  new_service:          'offers',
+  broadcast:            'offers',
+};
+
 class NotificationService {
+  // ── Internal: check user's category preference ────────────────
+
+  async _isAllowed(userId, type) {
+    const category = CATEGORY_MAP[type];
+    if (!category) return true; // unknown types (e.g. 'system') are always allowed
+    const prefs = await notificationRepository.getPrefs(userId);
+    return prefs[category] !== false;
+  }
+
   // ── Internal: save record + send FCM push to one user ────────
 
   async _createAndSend(userId, payload, notifData = {}) {
     try {
+      const type = notifData.type || payload.data?.type || 'system';
+      if (!(await this._isAllowed(userId, type))) return;
+
       const notif = await notificationRepository.create({
         user:     userId,
         title:    payload.title,
         body:     payload.body,
-        type:     notifData.type || payload.data?.type || 'system',
+        type,
         data:     notifData.data || {},
         pushSent: false,
       });
@@ -131,6 +155,23 @@ class NotificationService {
     return { message: `Broadcast sent to topic "${topic}".` };
   }
 
+  // ── Notification preferences ──────────────────────────────────
+
+  async getNotificationPrefs(userId) {
+    return notificationRepository.getPrefs(userId);
+  }
+
+  async updateNotificationPrefs(userId, prefs) {
+    const ALLOWED = new Set(['booking', 'reviews', 'offers']);
+    const invalid = Object.keys(prefs).filter(k => !ALLOWED.has(k));
+    if (invalid.length) throw AppError.badRequest(`Invalid preference keys: ${invalid.join(', ')}`);
+
+    const nonBool = Object.entries(prefs).filter(([, v]) => typeof v !== 'boolean');
+    if (nonBool.length) throw AppError.badRequest('Preference values must be boolean.');
+
+    return notificationRepository.updatePrefs(userId, prefs);
+  }
+
   // ── FCM token management ──────────────────────────────────────
 
   async registerFcmToken(userId, fcmToken, role = 'user') {
@@ -160,9 +201,16 @@ class NotificationService {
     const { page, limit, skip } = paginate(query, { limit: 20 });
     const onlyUnread = query.unread === 'true';
 
+    let categoryTypes;
+    if (query.category) {
+      categoryTypes = Object.entries(CATEGORY_MAP)
+        .filter(([, cat]) => cat === query.category)
+        .map(([type]) => type);
+    }
+
     const [data, total, unread] = await Promise.all([
-      notificationRepository.findByUser({ userId, skip, limit, onlyUnread }),
-      notificationRepository.countByUser(userId, onlyUnread),
+      notificationRepository.findByUser({ userId, skip, limit, onlyUnread, types: categoryTypes }),
+      notificationRepository.countByUser(userId, onlyUnread, categoryTypes),
       notificationRepository.unreadCount(userId),
     ]);
 
@@ -207,3 +255,4 @@ class NotificationService {
 }
 
 module.exports = new NotificationService();
+module.exports.CATEGORY_MAP = CATEGORY_MAP;

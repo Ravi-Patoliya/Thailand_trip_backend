@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type:      String,
-      minlength: [8, 'Password must be at least 8 characters'],
+      minlength: [6, 'Password must be at least 6 characters'],
       select:    false,
     },
     role_id: {
@@ -72,6 +72,11 @@ const userSchema = new mongoose.Schema(
       type:    [String],
       default: [],
       select:  false,
+    },
+    notificationPrefs: {
+      booking: { type: Boolean, default: true },
+      reviews: { type: Boolean, default: true },
+      offers:  { type: Boolean, default: true },
     },
     isActive: {
       type:    Boolean,

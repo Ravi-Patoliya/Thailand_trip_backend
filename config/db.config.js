@@ -7,31 +7,27 @@ const mongoose = require('mongoose');
  * - Event listeners for connection state logging
  */
 
-let retries = 0;
 const MAX_RETRIES = 5;
 
-const connectDB = async () => {
+const connectDB = async (retries = 0) => {
   try {
     const conn = await mongoose.connect(process.env.MONGODB_URI, {
-      // These are the recommended production settings
-      maxPoolSize: 10,         // max 10 connections in pool
+      maxPoolSize: 10,
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
     });
 
     console.log(`✅ MongoDB connected: ${conn.connection.host}`);
-    retries = 0;
   } catch (error) {
     console.error(`❌ MongoDB connection error: ${error.message}`);
     if (retries < MAX_RETRIES) {
-      retries++;
-      const delay = retries * 2000; // 2s, 4s, 6s, 8s, 10s
-      console.log(`🔄 Retrying in ${delay / 1000}s... (attempt ${retries}/${MAX_RETRIES})`);
-      setTimeout(connectDB, delay);
-    } else {
-      console.error('💀 Max retries reached. Exiting process.');
-      process.exit(1);
+      const delay = (retries + 1) * 2000; // 2s, 4s, 6s, 8s, 10s
+      console.log(`🔄 Retrying in ${delay / 1000}s... (attempt ${retries + 1}/${MAX_RETRIES})`);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+      return connectDB(retries + 1);
     }
+    console.error('💀 Max retries reached. Exiting process.');
+    process.exit(1);
   }
 };
 

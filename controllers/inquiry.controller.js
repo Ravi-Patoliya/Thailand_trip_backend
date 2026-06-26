@@ -22,6 +22,11 @@ const createInquirySchema = z.object({
   children:        z.coerce.number().int().min(0).max(20).default(0),
   specialRequests: z.string().trim().max(1000).optional(),
   couponCode:      z.string().trim().toUpperCase().max(20).optional(),
+  // Optional contact overrides — if not provided, auto-filled from user profile
+  contactName:     z.string().trim().min(1).max(100).optional(),
+  contactMobile:   zv.mobile.optional(),
+  contactWhatsapp: zv.mobile.optional(),
+  contactEmail:    zv.email.optional(),
 }).refine(d => !d.returnDate || d.returnDate > d.travelDate, {
   message: 'Return date must be after travel date.',
   path:    ['returnDate'],
@@ -57,6 +62,14 @@ const logPaymentSchema = z.object({
   note:      z.string().trim().max(300).optional(),
 });
 
+const cancelInquirySchema = z.object({
+  reason: z.string().trim().min(5, 'Please provide a reason (min 5 characters).').max(500),
+});
+
+const recordCallSchema = z.object({
+  note: z.string().trim().max(500).optional(),
+});
+
 const assignSchema = z.object({
   adminId: zv.mongoId,
 });
@@ -71,6 +84,8 @@ const listQueryValidator      = validateQuery(listQuerySchema);
 const updateStatusValidator   = validate(updateStatusSchema);
 const addNoteValidator        = validate(addNoteSchema);
 const logPaymentValidator     = validate(logPaymentSchema);
+const cancelInquiryValidator  = validate(cancelInquirySchema);
+const recordCallValidator     = validate(recordCallSchema);
 const assignValidator         = validate(assignSchema);
 const statsQueryValidator     = validateQuery(statsQuerySchema);
 
@@ -90,14 +105,14 @@ const createInquiry = async (req, res, next) => {
 const getInquiries = async (req, res, next) => {
   try {
     const admin      = isAdmin(req);
-    const { id, ...rest } = req.query;
+    const { ...rest } = req.query;
 
-    if (id) {
-      const inquiry = admin
-        ? await inquiryService.getInquiryById(id)
-        : await inquiryService.getUserInquiryById(id, req.user._id);
-      return API_response.OK({ res, message: MSG.INQUIRY_FETCHED, payload: inquiry });
-    }
+    // if (id) {
+    //   const inquiry = admin
+    //     ? await inquiryService.getInquiryById(id)
+    //     : await inquiryService.getUserInquiryById(id, req.user._id,rest);
+    //   return API_response.OK({ res, message: MSG.INQUIRY_FETCHED, payload: inquiry });
+    // }
 
     if (admin) {
       const { data, page, limit, total } = await inquiryService.listAdminInquiries(rest);
@@ -129,15 +144,23 @@ const addNote = async (req, res, next) => {
 // POST /api/inquiries/:id/payment  — admin only
 const logPayment = async (req, res, next) => {
   try {
-    const inquiry = await inquiryService.logPayment(req.params.id, req.body, req.user._id);
+    const inquiry = await inquiryService.logPayment(req.params.id, req.body, req.user._id, req.file || null);
     API_response.OK({ res, message: MSG.INQUIRY_PAYMENT_LOGGED, payload: inquiry });
+  } catch (err) { next(err); }
+};
+
+// PATCH /api/inquiries/:id/cancel  — authenticated user only
+const cancelInquiry = async (req, res, next) => {
+  try {
+    const inquiry = await inquiryService.cancelByUser(req.params.id, req.user._id, req.body.reason);
+    API_response.OK({ res, message: MSG.INQUIRY_CANCELLED, payload: inquiry });
   } catch (err) { next(err); }
 };
 
 // POST /api/inquiries/:id/call  — admin only
 const recordCall = async (req, res, next) => {
   try {
-    const inquiry = await inquiryService.recordCall(req.params.id, req.user._id);
+    const inquiry = await inquiryService.recordCall(req.params.id, req.user._id, req.body.note);
     API_response.OK({ res, message: MSG.INQUIRY_CALL_RECORDED, payload: inquiry });
   } catch (err) { next(err); }
 };
@@ -165,10 +188,13 @@ module.exports = {
   updateStatusValidator,
   addNoteValidator,
   logPaymentValidator,
+  cancelInquiryValidator,
+  recordCallValidator,
   assignValidator,
   statsQueryValidator,
   createInquiry,
   getInquiries,
+  cancelInquiry,
   updateStatus,
   addNote,
   logPayment,

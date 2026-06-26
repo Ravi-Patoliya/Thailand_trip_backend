@@ -67,6 +67,10 @@ class UserService {
     const user = await userRepository.findByIdWithSensitive(userId);
     if (!user) throw AppError.notFound('User');
 
+    if (!ADMIN_ROLES.includes(user.role_id?.name)) {
+      throw AppError.forbidden(MSG.FORBIDDEN);
+    }
+
     if (!user.password) {
       throw AppError.badRequest(MSG.NO_PASSWORD);
     }

@@ -9,10 +9,11 @@ const { SERVICE_AVAILABILITY, DURATION_UNIT, ROLE, THAILAND_CITY } = require('..
 const MSG              = require('../constants/message');
 
 const priceTierSchema = z.object({
-  label:    z.string().trim().min(1),
-  amount:   z.coerce.number().min(0),
-  currency: z.string().trim().default('INR'),
-  isBase:   z.boolean().default(false),
+  label:       z.string().trim().min(1),
+  amount:      z.coerce.number().min(0),
+  strikePrice: z.coerce.number().min(0).nullable().optional(),
+  currency:    z.string().trim().default('INR'),
+  isBase:      z.boolean().default(false),
 });
 
 // Media asset already uploaded to S3 — client sends back the url/key, not the file.

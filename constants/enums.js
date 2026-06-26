@@ -70,6 +70,21 @@ const DURATION_UNIT = {
   NIGHTS: 'nights',
 };
 
+// ── Banner ────────────────────────────────────────────────────────
+const BANNER_TYPE = {
+  HERO:        'hero',
+  PROMOTIONAL: 'promotional',
+  CATEGORY:    'category',
+  POPUP:       'popup',
+};
+
+const BANNER_TARGET = {
+  HOME:     'home',
+  SERVICES: 'services',
+  CATEGORY: 'category',
+  CUSTOM:   'custom',
+};
+
 // ── Coupon ────────────────────────────────────────────────────────
 const COUPON_TYPE = {
   FLAT:       'flat',
@@ -127,6 +142,8 @@ const HTTP_CODES = {
 module.exports = {
   ROLE,
   THAILAND_CITY,
+  BANNER_TYPE,
+  BANNER_TARGET,
   INQUIRY_STATUS,
   PAYMENT_STATUS,
   PAYMENT_METHOD,

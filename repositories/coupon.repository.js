@@ -54,11 +54,8 @@ class CouponRepository {
     return Coupon.validateForUser(code, userId, orderAmount);
   }
 
-  async recordUsage(couponId, userId, inquiryId, discountGiven) {
-    return Coupon.findByIdAndUpdate(couponId, {
-      $inc:  { usedCount: 1 },
-      $push: { usageLog: { user: userId, inquiry: inquiryId, usedAt: new Date(), discountGiven } },
-    });
+  async recordUsage(couponId) {
+    return Coupon.findByIdAndUpdate(couponId, { $inc: { usedCount: 1 } });
   }
 }
 

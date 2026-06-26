@@ -7,6 +7,7 @@ const cookieParser  = require('cookie-parser');
 
 const errorHandler     = require('./middlewares/error.handler');
 const requestLogger    = require('./middlewares/request.logger');
+const dbHealthCheck    = require('./middlewares/db.health.middleware');
 
 const roleRoutes          = require('./routes/role.routes');
 const cityRoutes          = require('./routes/city.routes');
@@ -18,6 +19,7 @@ const notificationRoutes  = require('./routes/notification.routes');
 const categoryRoutes      = require('./routes/category.routes');
 const serviceRoutes       = require('./routes/service.routes');
 const couponRoutes        = require('./routes/coupon.routes');
+const bannerRoutes        = require('./routes/banner.routes');
 const uploadRoutes        = require('./routes/upload.routes');
 
 const app = express();
@@ -64,6 +66,8 @@ app.get('/health', (_req, res) => {
   });
 });
 
+app.use(dbHealthCheck);
+
 const { initFirebase } = require('./config/firebase.config');
 initFirebase();
 
@@ -77,6 +81,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/categories',   categoryRoutes);
 app.use('/api/services',     serviceRoutes);
 app.use('/api/coupons',      couponRoutes);
+app.use('/api/banners',      bannerRoutes);
 app.use('/api/upload',       uploadRoutes);
 
 app.use((_req, res) => {
