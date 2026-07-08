@@ -70,4 +70,4 @@ const zv = {
   positiveInt: z.coerce.number().int().positive(),
 };
 
-module.exports = { validate, validateParams, validateQuery, zod: zv };
+module.exports = { validate, validateParams, validateQuery, zod: zv, messageForIssue };

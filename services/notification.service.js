@@ -10,6 +10,7 @@ const {
 }                            = require('../notification.util');
 const AppError               = require('../utils/AppError');
 const { paginate }           = require('../utils/paginate');
+const logger                 = require('../helpers/logger.helper');
 
 const CATEGORY_MAP = {
   inquiry_submitted:    'booking',
@@ -55,7 +56,7 @@ class NotificationService {
         await notificationRepository.markPushSent(notif._id);
       }
     } catch (err) {
-      console.error('[NotificationService] _createAndSend error:', err.message);
+      logger.error('[NotificationService] _createAndSend error:', err.message);
     }
   }
 
@@ -75,7 +76,7 @@ class NotificationService {
       await notificationRepository.createMany(docs);
       await sendToMany(admins, payload);
     } catch (err) {
-      console.error('[NotificationService] _createAndSendToAdmins error:', err.message);
+      logger.error('[NotificationService] _createAndSendToAdmins error:', err.message);
     }
   }
 

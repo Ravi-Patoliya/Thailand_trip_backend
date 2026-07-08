@@ -1,1369 +1,644 @@
 const dotenv = require('dotenv');
 dotenv.config();
 
-// Email configuration and templates
+/* ─── Shared design tokens (mirrors the client-side CSS palette) ──────────── */
+const T = {
+    brandDark:    '#0D2618',
+    brandPrimary: '#1C3D2E',
+    brandMid:     '#2E6B4A',
+    brandLight:   '#4A9E70',
+    brandSurface: '#EAF4EE',
+    gold:         '#F0BE5C',
+    goldDark:     '#D4A017',
+    goldSurface:  '#FFF9EE',
+    bgPage:       '#F7F3ED',
+    bgWarm:       '#EFE9E0',
+    bgCard:       '#FFFFFF',
+    surface2:     '#F1ECE3',
+    textPrimary:  '#1A1A1A',
+    textSecondary:'#4A3F35',
+    textMuted:    '#9B8B79',
+    border:       '#E8E0D4',
+    borderStrong: '#D4C9BE',
+};
+
+/* ─── Reusable partial builders ───────────────────────────────────────────── */
+const baseStyles = () => `
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap');
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background-color:${T.bgPage};font-family:'Inter',Helvetica,Arial,sans-serif;color:${T.textPrimary};-webkit-font-smoothing:antialiased;}
+    .wrap{max-width:620px;margin:32px auto;background:${T.bgCard};border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(13,38,24,0.13);}
+    /* header */
+    .hdr{background:linear-gradient(145deg,${T.brandDark} 0%,${T.brandPrimary} 55%,${T.brandMid} 100%);padding:40px 32px 32px;text-align:center;position:relative;}
+    .hdr::after{content:'';display:block;position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,${T.gold},${T.goldDark},${T.gold});}
+    .hdr-logo{display:inline-block;font-family:'Playfair Display','Georgia',serif;font-size:26px;font-weight:700;color:${T.gold};letter-spacing:2px;margin-bottom:6px;}
+    .hdr-sub{font-size:13px;color:rgba(234,244,238,0.75);letter-spacing:1.5px;text-transform:uppercase;}
+    .hdr-title{font-size:22px;font-weight:600;color:#FFFFFF;margin-top:18px;line-height:1.3;}
+    /* body */
+    .body{padding:40px 36px;}
+    .greeting{font-size:17px;color:${T.brandPrimary};font-weight:600;margin-bottom:14px;}
+    .lead{font-size:15px;color:${T.textSecondary};line-height:1.75;margin-bottom:28px;}
+    /* OTP box */
+    .otp-wrap{text-align:center;margin:32px 0;}
+    .otp-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${T.textMuted};margin-bottom:14px;}
+    .otp-box{display:inline-block;background:linear-gradient(145deg,${T.brandSurface},${T.bgWarm});border:2px solid ${T.gold};border-radius:14px;padding:28px 40px;min-width:260px;}
+    .otp-code{font-family:'Courier New',Courier,monospace;font-size:42px;font-weight:700;color:${T.brandPrimary};letter-spacing:10px;line-height:1;}
+    .otp-expiry{margin-top:14px;font-size:12px;color:${T.goldDark};font-weight:600;letter-spacing:0.5px;}
+    /* info card */
+    .card{background:${T.brandSurface};border:1px solid ${T.border};border-radius:10px;padding:22px 24px;margin:24px 0;}
+    .card-title{font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:${T.brandMid};font-weight:600;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid ${T.border};}
+    .row{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 0;border-bottom:1px solid ${T.border};}
+    .row:last-child{border-bottom:none;}
+    .row-label{font-size:13px;color:${T.textMuted};font-weight:500;flex:0 0 42%;}
+    .row-value{font-size:13px;color:${T.textPrimary};font-weight:600;text-align:right;flex:1;}
+    /* security notice */
+    .notice{background:${T.goldSurface};border-left:4px solid ${T.gold};border-radius:0 8px 8px 0;padding:18px 20px;margin:24px 0;}
+    .notice-title{font-size:13px;font-weight:700;color:${T.brandPrimary};margin-bottom:10px;letter-spacing:0.5px;}
+    .notice ul{padding-left:18px;margin:0;}
+    .notice li{font-size:13px;color:${T.textSecondary};margin-bottom:7px;line-height:1.6;}
+    /* alert badge */
+    .badge{display:inline-block;background:${T.gold};color:${T.brandDark};font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:0.5px;margin-bottom:20px;}
+    .badge-red{background:#FEE2E2;color:#991B1B;}
+    .badge-amber{background:${T.goldSurface};color:${T.goldDark};}
+    /* stat row */
+    .stats{display:table;width:100%;border-collapse:separate;border-spacing:10px;margin:20px 0;}
+    .stat{display:table-cell;background:${T.bgCard};border:1px solid ${T.border};border-radius:10px;padding:16px;text-align:center;width:33%;}
+    .stat-num{font-size:28px;font-weight:700;color:${T.brandMid};font-family:'Playfair Display',serif;}
+    .stat-lbl{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:${T.textMuted};margin-top:4px;}
+    /* buttons */
+    .btn-wrap{text-align:center;margin:32px 0;}
+    .btn{display:inline-block;padding:14px 32px;border-radius:8px;font-size:15px;font-weight:600;text-decoration:none;letter-spacing:0.5px;margin:6px;}
+    .btn-approve{background:${T.brandMid};color:#FFFFFF !important;}
+    .btn-reject{background:transparent;color:${T.textSecondary} !important;border:2px solid ${T.borderStrong};}
+    /* divider */
+    .divider{border:none;border-top:1px solid ${T.border};margin:28px 0;}
+    /* footer */
+    .ftr{background:${T.brandDark};padding:28px 32px;text-align:center;}
+    .ftr-brand{font-family:'Playfair Display',serif;font-size:16px;color:${T.gold};letter-spacing:2px;margin-bottom:8px;}
+    .ftr-text{font-size:11px;color:rgba(234,244,238,0.5);line-height:1.8;}
+    .ftr-gold-line{width:48px;height:2px;background:${T.gold};margin:12px auto;}
+    @media(max-width:600px){
+      .wrap{margin:0;border-radius:0;}
+      .body{padding:28px 20px;}
+      .otp-code{font-size:32px;letter-spacing:6px;}
+      .stats{display:block;}
+      .stat{display:block;margin-bottom:10px;width:100%;}
+      .row{flex-direction:column;}
+      .row-value{text-align:left;margin-top:3px;}
+    }
+  </style>`;
+
+const header = (subtitle, title) => `
+  <div class="hdr">
+    <div class="hdr-logo">Thai Tour</div>
+    <div class="hdr-sub">${subtitle}</div>
+    ${title ? `<div class="hdr-title">${title}</div>` : ''}
+  </div>`;
+
+const footer = () => `
+  <div class="ftr">
+    <div class="ftr-brand">Thai Tour</div>
+    <div class="ftr-gold-line"></div>
+    <div class="ftr-text">
+      This is an automated message — please do not reply.<br>
+      &copy; ${new Date().getFullYear()} Thai Tour &nbsp;&middot;&nbsp; Crafting Unforgettable Journeys
+    </div>
+  </div>`;
+
+const html = (head, body) => `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  ${head}
+  ${baseStyles()}
+</head>
+<body>
+  <div class="wrap">
+    ${body}
+    ${footer()}
+  </div>
+</body>
+</html>`;
+
+/* ─── Email config ────────────────────────────────────────────────────────── */
 const emailConfig = {
-    // SMTP Configuration
     smtp: {
-        host: process.env.SMTP_HOST,
-        port: parseInt(process.env.SMTP_PORT) || 465,
-        secure: true, // true for 465, false for other ports
+        host:   process.env.SMTP_HOST,
+        port:   parseInt(process.env.SMTP_PORT) || 465,
+        secure: true,
         auth: {
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASSWORD,
         },
     },
 
-    // Default sender information
     sender: {
-        name: 'FleetIQ',
-        email: process.env.EMAIL_SENDER || 'no-reply@forklyft.in',
-        company: 'Plixr Technologies Pvt. Ltd.',
+        name:    'Thai Tour',
+        email:   process.env.EMAIL_SENDER || 'no-reply@thaitour.com',
+        company: 'Thai Tour Co., Ltd.',
     },
 
-    // Email templates configuration
     templates: {
-        // OTP Login Email Template
+
+        /* ── 1. Login OTP ─────────────────────────────────────────────────── */
         employee_login_otp: {
-            subject: (data) => `${data.otp} - Your FleetIQ Login OTP`,
-            html: (data) => `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>FleetIQ Login OTP</title>
-                    <style>
-                        body { 
-                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-                            line-height: 1.6; 
-                            color: #333; 
-                            margin: 0; 
-                            padding: 0; 
-                            background-color: #f4f4f4; 
-                        }
-                        .email-container { 
-                            max-width: 600px; 
-                            margin: 20px auto; 
-                            background-color: #ffffff; 
-                            border-radius: 12px; 
-                            overflow: hidden; 
-                            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
-                        }
-                        .header { 
-                            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); 
-                            color: white; 
-                            padding: 30px 20px; 
-                            text-align: center; 
-                        }
-                        .header h1 { 
-                            margin: 0; 
-                            font-size: 28px; 
-                            font-weight: 600; 
-                        }
-                        .header p { 
-                            margin: 8px 0 0 0; 
-                            opacity: 0.9; 
-                            font-size: 16px; 
-                        }
-                        .content { 
-                            padding: 40px 30px; 
-                        }
-                        .greeting { 
-                            font-size: 18px; 
-                            margin-bottom: 20px; 
-                            color: #2c3e50; 
-                        }
-                        .otp-section { 
-                            text-align: center; 
-                            margin: 30px 0; 
-                        }
-                        .otp-box { 
-                            background: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 100%); 
-                            border: 2px dashed #007bff; 
-                            padding: 25px; 
-                            border-radius: 12px; 
-                            margin: 20px 0; 
-                            display: inline-block; 
-                            min-width: 250px; 
-                        }
-                        .otp-label { 
-                            font-size: 14px; 
-                            color: #6c757d; 
-                            margin-bottom: 10px; 
-                            text-transform: uppercase; 
-                            letter-spacing: 1px; 
-                        }
-                        .otp-code { 
-                            font-size: 36px; 
-                            font-weight: bold; 
-                            color: #007bff; 
-                            letter-spacing: 8px; 
-                            margin: 15px 0; 
-                            font-family: 'Courier New', monospace; 
-                        }
-                        .otp-expiry { 
-                            font-size: 13px; 
-                            color: #dc3545; 
-                            margin-top: 10px; 
-                            font-weight: 500; 
-                        }
-                        .security-notice { 
-                            background: linear-gradient(145deg, #fff3cd 0%, #ffeaa7 100%); 
-                            border: 1px solid #ffc107; 
-                            padding: 20px; 
-                            border-radius: 8px; 
-                            margin: 25px 0; 
-                        }
-                        .security-notice h4 { 
-                            color: #856404; 
-                            margin: 0 0 15px 0; 
-                            font-size: 16px; 
-                            display: flex; 
-                            align-items: center; 
-                        }
-                        .security-notice ul { 
-                            margin: 0; 
-                            color: #856404; 
-                            font-size: 14px; 
-                            padding-left: 20px; 
-                        }
-                        .security-notice li { 
-                            margin-bottom: 8px; 
-                        }
-                        .footer { 
-                            background-color: #f8f9fa; 
-                            padding: 25px; 
-                            text-align: center; 
-                            border-top: 1px solid #dee2e6; 
-                        }
-                        .footer p { 
-                            margin: 5px 0; 
-                            color: #6c757d; 
-                            font-size: 12px; 
-                        }
-                        .company-info { 
-                            margin-top: 15px; 
-                            padding-top: 15px; 
-                            border-top: 1px solid #dee2e6; 
-                        }
-                        @media (max-width: 600px) {
-                            .email-container { margin: 10px; }
-                            .content { padding: 25px 20px; }
-                            .otp-code { font-size: 28px; letter-spacing: 4px; }
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="email-container">
-                        <div class="header">
-                            <h1>🚛 FleetIQ</h1>
-                            <p>Secure Login Verification</p>
-                        </div>
-                        
-                        <div class="content">
-                            <div class="greeting">
-                                Hello <strong>${data.user_name || 'User'}</strong>,
-                            </div>
-                            
-                            <p>You have requested to login to your <strong>${data.company_name || 'FleetIQ'}</strong> account. Please use the verification code below to complete your login:</p>
-                            
-                            <div class="otp-section">
-                                <div class="otp-box">
-                                    <div class="otp-label">Your Login Code</div>
-                                    <div class="otp-code">${data.otp}</div>
-                                    <div class="otp-expiry">⏱️ Expires in ${data.expires_in || '10 minutes'}</div>
-                                </div>
-                            </div>
-                            
-                            <div class="security-notice">
-                                <h4>🔒 Security Notice</h4>
-                                <ul>
-                                    <li>This OTP is valid for <strong>${data.expires_in || '10 minutes'}</strong> only</li>
-                                    <li>Never share this code with anyone, including FleetIQ support</li>
-                                    <li>FleetIQ staff will never ask for your OTP via phone or email</li>
-                                    <li>If you didn't request this login, please ignore this email and notify your administrator</li>
-                                    </ul>
-                            </div>
-                            
-                            <p>If you're experiencing issues logging in or have security concerns, please contact your system administrator immediately.</p>
-                            
-                            <p style="color: #6c757d; font-size: 14px; margin-top: 30px;">
-                                <strong>Login Details:</strong><br>
-                                📧 Account: ${data.identifier || 'Not specified'}<br>
-                                🕐 Requested: ${new Date().toLocaleString()}<br>
-                            </p>
-                        </div>
-                        
-                        <div class="footer">
-                            <p><strong>© 2024 FleetIQ</strong> - Fleet Management Solution</p>
-                            <p>This is an automated security message. Please do not reply to this email.</p>
-                            <div class="company-info">
-                                <p><strong>Plixr Technologies Pvt. Ltd.</strong></p>
-                                <p>Building the future of fleet management</p>
-                            </div>
-                        </div>
+            subject: (d) => `${d.otp} — Your Thai Tour Login Code`,
+            html: (d) => html(
+                '<title>Thai Tour Login OTP</title>',
+                `${header('Secure Account Access', 'Verify Your Login')}
+                <div class="body">
+                  <p class="greeting">Hello, ${d.user_name || 'Traveller'}</p>
+                  <p class="lead">
+                    We received a login request for your <strong>${d.company_name || 'Thai Tour'}</strong> account.
+                    Use the one-time code below to complete your sign-in.
+                  </p>
+                  <div class="otp-wrap">
+                    <div class="otp-label">Your secure login code</div>
+                    <div class="otp-box">
+                      <div class="otp-code">${d.otp}</div>
+                      <div class="otp-expiry">Expires in ${d.expires_in || '10 minutes'}</div>
                     </div>
-                </body>
-                </html>
-            `,
-            text: (data) => `
-FleetIQ - Login Verification Code
-
-Hello ${data.employee_name || 'Employee'},
-
-You have requested to login to your ${data.company_name || 'FleetIQ'} account.
-
-Your Login OTP: ${data.otp}
-Valid for: ${data.expires_in || '10 minutes'}
-
-SECURITY NOTICE:
-- This OTP is valid for ${data.expires_in || '10 minutes'} only
-- Never share this code with anyone, including FleetIQ support
-- FleetIQ staff will never ask for your OTP via phone or email
-- If you didn't request this login, please ignore this email
-
-Login Details:
-Account: ${data.identifier || 'Not specified'}
-Requested: ${new Date().toLocaleString()}
-IP Address: ${data.ip_address || 'Not tracked'}
-
-If you're experiencing issues, please contact your system administrator.
-
----
-© 2024 FleetIQ - Fleet Management Solution
-Plixr Technologies Pvt. Ltd.
-
-This is an automated security message. Please do not reply.
-            `
+                  </div>
+                  <div class="notice">
+                    <div class="notice-title">Security Notice</div>
+                    <ul>
+                      <li>This code is valid for <strong>${d.expires_in || '10 minutes'}</strong> only.</li>
+                      <li>Never share this code with anyone, including Thai Tour staff.</li>
+                      <li>If you did not request this, please ignore this email and notify your administrator.</li>
+                    </ul>
+                  </div>
+                  <div class="card">
+                    <div class="card-title">Login Details</div>
+                    <div class="row">
+                      <span class="row-label">Account</span>
+                      <span class="row-value">${d.identifier || '—'}</span>
+                    </div>
+                    <div class="row">
+                      <span class="row-label">Requested</span>
+                      <span class="row-value">${new Date().toLocaleString()}</span>
+                    </div>
+                  </div>
+                </div>`
+            ),
+            text: (d) => `Thai Tour — Login OTP\n\nHello ${d.user_name || 'Traveller'},\n\nYour Login OTP: ${d.otp}\nValid for: ${d.expires_in || '10 minutes'}\n\nAccount: ${d.identifier || '—'}\n\nNever share this OTP with anyone.\n\n© ${new Date().getFullYear()} Thai Tour`,
         },
 
-        // Password Reset Email Template
-        password_reset: {
-            subject: (data) => `FleetIQ - Password Reset Request`,
-            html: (data) => `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>FleetIQ Password Reset</title>
-                    <style>
-                        body { font-family: 'Segoe UI', sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4; }
-                        .email-container { max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-                        .header { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; padding: 30px 20px; text-align: center; }
-                        .content { padding: 40px 30px; }
-                        .reset-code { background: #f8f9fa; border: 2px dashed #dc3545; padding: 25px; border-radius: 12px; text-align: center; margin: 20px 0; }
-                        .reset-code-text { font-size: 32px; font-weight: bold; color: #dc3545; letter-spacing: 6px; font-family: monospace; }
-                        .footer { background-color: #f8f9fa; padding: 25px; text-align: center; border-top: 1px solid #dee2e6; }
-                    </style>
-                </head>
-                <body>
-                    <div class="email-container">
-                        <div class="header">
-                            <h1>🔑 Password Reset</h1>
-                            <p>FleetIQ Account Security</p>
-                        </div>
-                        <div class="content">
-                            <h2>Hello ${data.employee_name || 'Employee'},</h2>
-                            <p>You have requested to reset your FleetIQ account password.</p>
-                            <div class="reset-code">
-                                <p>Your Password Reset Code:</p>
-                                <div class="reset-code-text">${data.reset_code}</div>
-                                <p>Valid for ${data.expires_in || '15 minutes'}</p>
-                            </div>
-                            <p>If you didn't request this reset, please contact your administrator immediately.</p>
-                        </div>
-                        <div class="footer">
-                            <p>© 2024 FleetIQ by Plixr Technologies Pvt. Ltd.</p>
-                        </div>
-                    </div>
-                </body>
-                </html>
-            `,
-            text: (data) => `
-FleetIQ - Password Reset Request
-
-Hello ${data.employee_name || 'Employee'},
-
-You have requested to reset your FleetIQ account password.
-
-Reset Code: ${data.reset_code}
-Valid for: ${data.expires_in || '15 minutes'}
-
-If you didn't request this reset, please contact your administrator.
-
-© 2024 FleetIQ by Plixr Technologies Pvt. Ltd.
-            `
-        },
-
-        // Welcome Email Template
-        welcome: {
-            subject: (data) => `Welcome to FleetIQ - ${data.company_name || 'Your Account is Ready'}`,
-            html: (data) => `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Welcome to FleetIQ</title>
-                    <style>
-                        body { font-family: 'Segoe UI', sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4; }
-                        .email-container { max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-                        .header { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 30px 20px; text-align: center; }
-                        .content { padding: 40px 30px; }
-                        .welcome-box { background: #e7f5e7; border-left: 4px solid #28a745; padding: 20px; margin: 20px 0; border-radius: 4px; }
-                        .footer { background-color: #f8f9fa; padding: 25px; text-align: center; border-top: 1px solid #dee2e6; }
-                    </style>
-                </head>
-                <body>
-                    <div class="email-container">
-                        <div class="header">
-                            <h1>🎉 Welcome to FleetIQ!</h1>
-                            <p>Your Fleet Management Journey Begins</p>
-                        </div>
-                        <div class="content">
-                            <h2>Hello ${data.employee_name || 'Employee'},</h2>
-                            <div class="welcome-box">
-                                <p><strong>Welcome to ${data.company_name || 'FleetIQ'}!</strong></p>
-                                <p>Your account has been successfully created and you can now access the FleetIQ platform.</p>
-                            </div>
-                            <p>FleetIQ provides comprehensive fleet management solutions to help optimize your operations.</p>
-                            <p>If you have any questions, please contact your system administrator.</p>
-                        </div>
-                        <div class="footer">
-                            <p>© 2024 FleetIQ by Plixr Technologies Pvt. Ltd.</p>
-                        </div>
-                    </div>
-                </body>
-                </html>
-            `,
-            text: (data) => `
-Welcome to FleetIQ!
-
-Hello ${data.employee_name || 'Employee'},
-
-Welcome to ${data.company_name || 'FleetIQ'}! Your account has been successfully created.
-
-FleetIQ provides comprehensive fleet management solutions to help optimize your operations.
-
-If you have any questions, please contact your system administrator.
-
-© 2024 FleetIQ by Plixr Technologies Pvt. Ltd.
-            `
-        },
-
-        // Vehicle shortage notification template
-        vehicle_shortage: {
-            subject: (data) => `Vehicle Shortage Alert - ${data.ride_date}`,
-            html: (data) => `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Vehicle Shortage Alert</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4; }
-                        .email-container { max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-                        .header { background-color: #dc3545; color: white; padding: 20px; text-align: center; }
-                        .content { padding: 30px; }
-                        .alert-box { background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 15px; border-radius: 5px; margin: 15px 0; }
-                        .details { background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0; }
-                        .footer { background-color: #f8f9fa; padding: 20px; text-align: center; border-top: 1px solid #dee2e6; }
-                    </style>
-                </head>
-                <body>
-                    <div class="email-container">
-                        <div class="header">
-                            <h1>⚠️ Vehicle Shortage Alert</h1>
-                        </div>
-                        <div class="content">
-                            <div class="alert-box">
-                                <strong>No vehicles available for ride grouping</strong>
-                            </div>
-                            <p><strong>Date:</strong> ${data.ride_date}</p>
-                            <p><strong>Time:</strong> ${data.batch_time}</p>
-                            <p><strong>Pending Rides:</strong> ${data.ride_count}</p>
-                            <div class="details">
-                                <p><strong>Required Locations:</strong></p>
-                                <p>Cities: ${data.cities || 'Not specified'}</p>
-                                <p>States: ${data.states || 'Not specified'}</p>
-                            </div>
-                            <p>Please check vehicle availability in the required locations and ensure drivers are assigned.</p>
-                        </div>
-                        <div class="footer">
-                            <p>© 2024 FleetIQ by Plixr Technologies Pvt. Ltd.</p>
-                        </div>
-                    </div>
-                </body>
-                </html>
-            `,
-            text: (data) => `
-Vehicle Shortage Alert
-
-No vehicles available for ride grouping on ${data.ride_date} at ${data.batch_time}.
-${data.ride_count} rides remain pending.
-
-Required Locations:
-Cities: ${data.cities || 'Not specified'}
-States: ${data.states || 'Not specified'}
-
-Please check vehicle availability in the required locations.
-
-© 2024 FleetIQ by Plixr Technologies Pvt. Ltd.
-            `
-        },
-
-        // Partial scheduling notification template
-        partial_scheduling: {
-            subject: (data) => `Partial Ride Scheduling - ${data.ride_date}`,
-            html: (data) => `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Partial Ride Scheduling</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4; }
-                        .email-container { max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-                        .header { background-color: #ffc107; color: #212529; padding: 20px; text-align: center; }
-                        .content { padding: 30px; }
-                        .warning-box { background-color: #fff3cd; border: 1px solid #ffeaa7; color: #856404; padding: 15px; border-radius: 5px; margin: 15px 0; }
-                        .stats { display: flex; justify-content: space-around; margin: 20px 0; }
-                        .stat { text-align: center; }
-                        .stat-number { font-size: 24px; font-weight: bold; color: #007bff; }
-                        .details { background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0; }
-                        .footer { background-color: #f8f9fa; padding: 20px; text-align: center; border-top: 1px solid #dee2e6; }
-                    </style>
-                </head>
-                <body>
-                    <div class="email-container">
-                        <div class="header">
-                            <h1>⚠️ Partial Ride Scheduling</h1>
-                        </div>
-                        <div class="content">
-                            <div class="warning-box">
-                                <strong>Some rides could not be scheduled due to limited vehicle capacity</strong>
-                            </div>
-                            <div class="stats">
-                                <div class="stat">
-                                    <div class="stat-number">${data.scheduled_count}</div>
-                                    <div>Scheduled</div>
-                                </div>
-                                <div class="stat">
-                                    <div class="stat-number">${data.pending_count}</div>
-                                    <div>Pending</div>
-                                </div>
-                                <div class="stat">
-                                    <div class="stat-number">${data.available_capacity}</div>
-                                    <div>Available Seats</div>
-                                </div>
-                            </div>
-                            <div class="details">
-                                <p><strong>Date:</strong> ${data.ride_date}</p>
-                                <p><strong>Time:</strong> ${data.batch_time}</p>
-                                <p><strong>Total Requested:</strong> ${data.total_requested} rides</p>
-                                <p><strong>Locations:</strong> Cities: ${data.cities}, States: ${data.states}</p>
-                            </div>
-                            <p>Please add more vehicles or reschedule the pending rides to ensure all employees have transportation.</p>
-                        </div>
-                        <div class="footer">
-                            <p>© 2024 FleetIQ by Plixr Technologies Pvt. Ltd.</p>
-                        </div>
-                    </div>
-                </body>
-                </html>
-            `,
-            text: (data) => `
-Partial Ride Scheduling - ${data.ride_date}
-
-${data.scheduled_count} rides scheduled successfully
-${data.pending_count} rides remain pending due to insufficient vehicle capacity
-
-Date: ${data.ride_date}
-Time: ${data.batch_time}
-Total Requested: ${data.total_requested} rides
-Available Capacity: ${data.available_capacity} seats
-
-Locations: Cities: ${data.cities}, States: ${data.states}
-
-Please add more vehicles or reschedule pending rides.
-
-© 2024 FleetIQ by Plixr Technologies Pvt. Ltd.
-            `
-        },
-        //template for forgot password otp
+        /* ── 2. Forgot Password OTP ───────────────────────────────────────── */
         employee_forgot_password_otp: {
-            subject: (data) => `FleetIQ - Password Reset OTP`,
-            html: (data) => `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>FleetIQ Password Reset OTP</title>
-                    <style>
-                        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4; }
-                        .email-container { max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-                        .header { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; padding: 30px 20px; text-align: center; }
-                        .header h1 { margin: 0; font-size: 28px; font-weight: 600; }
-                        .header p { margin: 8px 0 0 0; opacity: 0.9; font-size: 16px; }
-                        .content { padding: 40px 30px; }
-                        .greeting { font-size: 18px; margin-bottom: 20px; color: #2c3e50; }
-                        .otp-section { text-align: center; margin: 30px 0; }
-                        .otp-box { background: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 100%); border: 2px dashed #007bff; padding: 25px; border-radius: 12px; margin: 20px 0; display: inline-block; min-width: 250px; }
-                        .otp-label { font-size: 14px; color: #6c757d; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
-                        .otp-code { font-size: 36px; font-weight: bold; color: #007bff; letter-spacing: 8px; margin: 15px 0; font-family: 'Courier New', monospace; }
-                        .otp-expiry { font-size: 13px; color: #dc3545; margin-top: 10px; font-weight: 500; }
-                        .security-notice { background: linear-gradient(145deg, #fff3cd 0%, #ffeaa7 100%); border: 1px solid #ffc107; padding: 20px; border-radius: 8px; margin: 25px 0; }
-                        .security-notice h4 { color: #856404; margin: 0 0 15px 0; font-size: 16px; display: flex; align-items: center; }
-                        .security-notice ul { margin: 0; color: #856404; font-size: 14px; padding-left: 20px; }
-                        .security-notice li { margin-bottom: 8px; }
-                        .footer { background-color: #f8f9fa; padding: 25px; text-align: center; border-top: 1px solid #dee2e6; }
-                        .footer p { margin: 5px 0; color: #6c757d; font-size: 12px; }
-                        .company-info { margin-top: 15px; padding-top: 15px; border-top: 1px solid #dee2e6; }
-                        @media (max-width: 600px) {
-                            .email-container { margin: 10px; }
-                            .content { padding: 25px 20px; }
-                            .otp-code { font-size: 28px; letter-spacing: 4px; }
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="email-container">
-                        <div class="header">
-                            <h1>🚛 FleetIQ</h1>
-                            <p>Password Reset Verification</p>
-                        </div>
-                        <div class="content">
-                            <div class="greeting">
-                                Hello <strong>${data.user_name || 'User'}</strong>,
-
-                            </div>
-                            <p>You have requested to reset your password for your <strong>${data.company_name || 'FleetIQ'}</strong> account. Please use the verification code below to proceed with resetting your password:</p>
-                            <div class="otp-section">
-                                <div class="otp-box">
-                                    <div class="otp-label">Your Password Reset Code</div>
-                                    <div class="otp-code">${data.otp}</div>
-                                    <div class="otp-expiry">⏱️ Expires in ${data.expires_in || '10 minutes'}</div>
-                                </div>
-                            </div>
-                            <div class="security-notice">
-                                <h4>🔒 Security Notice</h4>
-                                <ul>
-                                    <li>This OTP is valid for <strong>${data.expires_in || '10 minutes'}</strong> only</li>
-                                    <li>Never share this code with anyone, including FleetIQ support</li>
-                                    <li>FleetIQ staff will never ask for your OTP via phone or email</li>
-                                    <li>If you didn't request this password reset, please ignore this email and notify your administrator</li>
-                                </ul>
-                            </div>
-                            <p>If you're experiencing issues resetting your password or have security concerns, please contact your system administrator immediately.</p>
-                            <p style="color: #6c757d; font-size: 14px; margin-top: 30px;">
-                                <strong>Request Details:</strong><br>
-                                📧 Account: ${data.identifier || 'Not specified'}<br>
-                                🕐 Requested: ${new Date().toLocaleString()}<br>
-                            </p>
-                        </div>
-                        <div class="footer">
-                            <p><strong>© ${new Date().getFullYear()} FleetIQ</strong> - Fleet Management Solution</p>
-                            <p>This is an automated security message. Please do not reply to this email.</p>
-                            <div class="company-info">
-                                <p><strong>Plixr Technologies Pvt. Ltd.</strong></p>
-                                <p>Building the future of fleet management</p>
-                            </div>
-                        </div>
+            subject: (d) => `Reset Your Thai Tour Password`,
+            html: (d) => html(
+                '<title>Password Reset OTP</title>',
+                `${header('Account Security', 'Password Reset Request')}
+                <div class="body">
+                  <p class="greeting">Hello, ${d.user_name || 'Traveller'}</p>
+                  <p class="lead">
+                    We received a request to reset the password for your
+                    <strong>${d.company_name || 'Thai Tour'}</strong> account.
+                    Enter the code below to proceed.
+                  </p>
+                  <div class="otp-wrap">
+                    <div class="otp-label">Password reset code</div>
+                    <div class="otp-box">
+                      <div class="otp-code">${d.otp}</div>
+                      <div class="otp-expiry">Expires in ${d.expires_in || '10 minutes'}</div>
                     </div>
-                </body>
-                </html>
-            `,
-            text: (data) => `
-FleetIQ - Password Reset Verification Code
-Hello ${data.employee_name || 'Employee'},
-
-You have requested to reset your password for your ${data.company_name || 'FleetIQ'} account.
-Your Password Reset OTP: ${data.otp}
-Valid for: ${data.expires_in || '10 minutes'}
-SECURITY NOTICE:
-- This OTP is valid for ${data.expires_in || '10 minutes'} only
-- Never share this code with anyone, including FleetIQ support
-- FleetIQ staff will never ask for your OTP via phone or email
-- If you didn't request this password reset, please ignore this email
-Request Details:
-Account: ${data.identifier || 'Not specified'}
-Requested: ${new Date().toLocaleString()}
-If you're experiencing issues, please contact your system administrator.
----
-© 2024 FleetIQ - Fleet Management Solution
-Plixr Technologies Pvt. Ltd.
-
-This is an automated security message. Please do not reply.
-            `
+                  </div>
+                  <div class="notice">
+                    <div class="notice-title">Security Notice</div>
+                    <ul>
+                      <li>This code expires in <strong>${d.expires_in || '10 minutes'}</strong>.</li>
+                      <li>Never share this code — Thai Tour staff will never ask for it.</li>
+                      <li>If you did not request a password reset, please contact your administrator immediately.</li>
+                    </ul>
+                  </div>
+                  <div class="card">
+                    <div class="card-title">Request Details</div>
+                    <div class="row">
+                      <span class="row-label">Account</span>
+                      <span class="row-value">${d.identifier || '—'}</span>
+                    </div>
+                    <div class="row">
+                      <span class="row-label">Requested at</span>
+                      <span class="row-value">${new Date().toLocaleString()}</span>
+                    </div>
+                  </div>
+                </div>`
+            ),
+            text: (d) => `Thai Tour — Password Reset OTP\n\nHello ${d.user_name || 'Traveller'},\n\nYour Password Reset OTP: ${d.otp}\nValid for: ${d.expires_in || '10 minutes'}\n\nAccount: ${d.identifier || '—'}\n\nIf you did not request this, contact your administrator.\n\n© ${new Date().getFullYear()} Thai Tour`,
         },
 
-        // Ride Manager Approval Email Template
+        /* ── 3. Password Reset (link-based legacy) ────────────────────────── */
+        password_reset: {
+            subject: () => `Thai Tour — Password Reset`,
+            html: (d) => html(
+                '<title>Password Reset</title>',
+                `${header('Account Security', 'Reset Your Password')}
+                <div class="body">
+                  <p class="greeting">Hello, ${d.employee_name || 'Traveller'}</p>
+                  <p class="lead">Use the code below to reset your Thai Tour account password.</p>
+                  <div class="otp-wrap">
+                    <div class="otp-label">Reset code</div>
+                    <div class="otp-box">
+                      <div class="otp-code">${d.reset_code}</div>
+                      <div class="otp-expiry">Expires in ${d.expires_in || '15 minutes'}</div>
+                    </div>
+                  </div>
+                  <p class="lead" style="font-size:13px;margin-top:0;">
+                    If you did not request this, please contact your administrator immediately.
+                  </p>
+                </div>`
+            ),
+            text: (d) => `Thai Tour — Password Reset\n\nHello ${d.employee_name || 'Traveller'},\n\nReset Code: ${d.reset_code}\nValid for: ${d.expires_in || '15 minutes'}\n\n© ${new Date().getFullYear()} Thai Tour`,
+        },
+
+        /* ── 4. Welcome ───────────────────────────────────────────────────── */
+        welcome: {
+            subject: (d) => `Welcome to Thai Tour${d.company_name ? ` — ${d.company_name}` : ''}`,
+            html: (d) => html(
+                '<title>Welcome to Thai Tour</title>',
+                `${header('Welcome Aboard', 'Your Journey Begins Here')}
+                <div class="body">
+                  <p class="greeting">Hello, ${d.employee_name || 'Traveller'}</p>
+                  <p class="lead">
+                    Welcome to <strong>${d.company_name || 'Thai Tour'}</strong>!
+                    Your account is now active and ready to use. We're delighted to have you on board.
+                  </p>
+                  <div class="card" style="background:linear-gradient(145deg,${T.brandSurface},${T.bgWarm});border-color:${T.gold};">
+                    <div class="card-title" style="color:${T.goldDark};">What You Can Do Now</div>
+                    <div class="row">
+                      <span class="row-label">Browse Tours</span>
+                      <span class="row-value" style="color:${T.brandMid};">Explore Thailand's finest destinations</span>
+                    </div>
+                    <div class="row">
+                      <span class="row-label">Manage Bookings</span>
+                      <span class="row-value" style="color:${T.brandMid};">Track and update your reservations</span>
+                    </div>
+                    <div class="row">
+                      <span class="row-label">Get Support</span>
+                      <span class="row-value" style="color:${T.brandMid};">Our team is always here to help</span>
+                    </div>
+                  </div>
+                  <p class="lead" style="font-size:13px;">
+                    If you have any questions or need assistance, please reach out to your administrator.
+                  </p>
+                </div>`
+            ),
+            text: (d) => `Welcome to Thai Tour!\n\nHello ${d.employee_name || 'Traveller'},\n\nYour account with ${d.company_name || 'Thai Tour'} is now active.\n\nIf you have questions, contact your administrator.\n\n© ${new Date().getFullYear()} Thai Tour`,
+        },
+
+        /* ── 5. Vehicle Shortage Alert ────────────────────────────────────── */
+        vehicle_shortage: {
+            subject: (d) => `Vehicle Shortage Alert — ${d.ride_date}`,
+            html: (d) => html(
+                '<title>Vehicle Shortage Alert</title>',
+                `${header('Fleet Operations', 'Vehicle Shortage Alert')}
+                <div class="body">
+                  <span class="badge badge-red">Action Required</span>
+                  <p class="lead">
+                    There are <strong>no vehicles available</strong> for ride grouping on the date below.
+                    Immediate attention is required to prevent service disruptions.
+                  </p>
+                  <div class="card">
+                    <div class="card-title">Shortage Details</div>
+                    <div class="row">
+                      <span class="row-label">Date</span>
+                      <span class="row-value">${d.ride_date}</span>
+                    </div>
+                    <div class="row">
+                      <span class="row-label">Batch Time</span>
+                      <span class="row-value">${d.batch_time}</span>
+                    </div>
+                    <div class="row">
+                      <span class="row-label">Pending Rides</span>
+                      <span class="row-value" style="color:#991B1B;font-weight:700;">${d.ride_count}</span>
+                    </div>
+                    <div class="row">
+                      <span class="row-label">Cities</span>
+                      <span class="row-value">${d.cities || '—'}</span>
+                    </div>
+                    <div class="row">
+                      <span class="row-label">States</span>
+                      <span class="row-value">${d.states || '—'}</span>
+                    </div>
+                  </div>
+                  <div class="notice">
+                    <div class="notice-title">Next Steps</div>
+                    <ul>
+                      <li>Check vehicle availability in the listed locations.</li>
+                      <li>Assign drivers or procure additional vehicles.</li>
+                      <li>Notify the operations team if rides cannot be fulfilled.</li>
+                    </ul>
+                  </div>
+                </div>`
+            ),
+            text: (d) => `Vehicle Shortage Alert\n\nDate: ${d.ride_date}\nTime: ${d.batch_time}\nPending Rides: ${d.ride_count}\nCities: ${d.cities || '—'}\nStates: ${d.states || '—'}\n\nPlease check vehicle availability immediately.\n\n© ${new Date().getFullYear()} Thai Tour`,
+        },
+
+        /* ── 6. Partial Scheduling ────────────────────────────────────────── */
+        partial_scheduling: {
+            subject: (d) => `Partial Ride Scheduling — ${d.ride_date}`,
+            html: (d) => html(
+                '<title>Partial Ride Scheduling</title>',
+                `${header('Fleet Operations', 'Partial Ride Scheduling')}
+                <div class="body">
+                  <span class="badge badge-amber">Capacity Warning</span>
+                  <p class="lead">
+                    Some rides could not be scheduled due to limited vehicle capacity.
+                    Please review the summary below and take corrective action.
+                  </p>
+                  <table class="stats" role="presentation" width="100%" cellpadding="0" cellspacing="10">
+                    <tr>
+                      <td class="stat">
+                        <div class="stat-num" style="color:${T.brandMid};">${d.scheduled_count}</div>
+                        <div class="stat-lbl">Scheduled</div>
+                      </td>
+                      <td class="stat">
+                        <div class="stat-num" style="color:#991B1B;">${d.pending_count}</div>
+                        <div class="stat-lbl">Pending</div>
+                      </td>
+                      <td class="stat">
+                        <div class="stat-num" style="color:${T.goldDark};">${d.available_capacity}</div>
+                        <div class="stat-lbl">Available Seats</div>
+                      </td>
+                    </tr>
+                  </table>
+                  <div class="card">
+                    <div class="card-title">Scheduling Details</div>
+                    <div class="row">
+                      <span class="row-label">Date</span>
+                      <span class="row-value">${d.ride_date}</span>
+                    </div>
+                    <div class="row">
+                      <span class="row-label">Batch Time</span>
+                      <span class="row-value">${d.batch_time}</span>
+                    </div>
+                    <div class="row">
+                      <span class="row-label">Total Requested</span>
+                      <span class="row-value">${d.total_requested} rides</span>
+                    </div>
+                    <div class="row">
+                      <span class="row-label">Locations</span>
+                      <span class="row-value">${d.cities}, ${d.states}</span>
+                    </div>
+                  </div>
+                  <div class="notice">
+                    <div class="notice-title">Recommended Actions</div>
+                    <ul>
+                      <li>Add more vehicles to cover the pending rides.</li>
+                      <li>Reschedule pending rides to an available slot.</li>
+                      <li>Notify affected employees of any delays.</li>
+                    </ul>
+                  </div>
+                </div>`
+            ),
+            text: (d) => `Partial Ride Scheduling — ${d.ride_date}\n\nScheduled: ${d.scheduled_count}\nPending: ${d.pending_count}\nAvailable Seats: ${d.available_capacity}\n\nDate: ${d.ride_date} | Time: ${d.batch_time}\nTotal Requested: ${d.total_requested} rides\nLocations: ${d.cities}, ${d.states}\n\nPlease add vehicles or reschedule pending rides.\n\n© ${new Date().getFullYear()} Thai Tour`,
+        },
+
+        /* ── 7. Ride Manager Approval ─────────────────────────────────────── */
         ride_manager_approval: {
-            subject: (data) => `Ride Approval Required - ${data.employee_name}`,
-            html: (data) => `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Ride Approval Required</title>
-                    <style>
-                        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4; }
-                        .email-container { max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-                        .header { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; padding: 30px 20px; text-align: center; }
-                        .header h1 { margin: 0; font-size: 24px; font-weight: 600; }
-                        .content { padding: 30px; }
-                        .ride-details { background-color: #f8f9fa; border-left: 4px solid #007bff; padding: 20px; margin: 20px 0; border-radius: 6px; }
-                        .ride-details h3 { margin-top: 0; color: #007bff; font-size: 18px; }
-                        .detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #dee2e6; }
-                        .detail-row:last-child { border-bottom: none; }
-                        .detail-label { font-weight: 600; color: #495057; }
-                        .detail-value { color: #6c757d; text-align: right; }
-                        .button-container { text-align: center; margin: 30px 0; }
-                        .btn { display: inline-block; padding: 14px 32px; margin: 10px; text-decoration: none !important; border-radius: 6px; font-weight: 600; font-size: 16px; transition: all 0.3s; color: white !important; }
-                        .btn-approve { background-color: #28a745; color: white !important; }
-                        .btn-approve a { color: white !important; }
-                        .btn-approve:hover { background-color: #218838; color: white !important; }
-                        .btn-reject { background-color: #dc3545; color: white !important; }
-                        .btn-reject:hover { background-color: #c82333; color: white !important; }
-                        .footer { background-color: #f8f9fa; padding: 20px; text-align: center; border-top: 1px solid #dee2e6; color: #6c757d; font-size: 14px; }
-                        .warning { background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 6px; color: #856404; }
-                    </style>
-                </head>
-                <body>
-                    <div class="email-container">
-                        <div class="header">
-                            <h1>🚗 Ride Approval Required</h1>
+            subject: (d) => `Ride Approval Required — ${d.employee_name}`,
+            html: (d) => {
+                const isMulti = d.ride_dates && d.ride_dates.length > 1;
+                const fmt = (v) => typeof v === 'string' ? v : new Date(v).toISOString().split('T')[0];
+                const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+                return html(
+                    '<title>Ride Approval Required</title>',
+                    `${header('Tour Operations', 'Ride Approval Required')}
+                    <div class="body">
+                      <span class="badge">Action Required</span>
+                      <p class="lead">
+                        A new ride request has been submitted and requires your approval.
+                        Please review the details and respond promptly.
+                      </p>
+                      <div class="card">
+                        <div class="card-title">Ride Details</div>
+                        <div class="row">
+                          <span class="row-label">Employee</span>
+                          <span class="row-value">${d.employee_name}</span>
                         </div>
-                        <div class="content">
-                            <p>Hello Manager,</p>
-                            <p>A new ride request has been submitted and requires your approval.</p>
-                            
-                            <div class="ride-details">
-                                <h3>Ride Details</h3>
-                                <div class="detail-row">
-                                    <span class="detail-label">Employee:</span>
-                                    <span class="detail-value">${data.employee_name}</span>
-                                </div>
-                                ${data.ride_dates && data.ride_dates.length > 1 ? `
-                                <div class="detail-row">
-                                    <span class="detail-label">Period:</span>
-                                    <span class="detail-value">${typeof data.start_date === 'string' ? data.start_date : new Date(data.start_date).toISOString().split('T')[0]} to ${typeof data.end_date === 'string' ? data.end_date : new Date(data.end_date).toISOString().split('T')[0]}</span>
-                                </div>
-                                ` : `
-                                <div class="detail-row">
-                                    <span class="detail-label">Date:</span>
-                                    <span class="detail-value">${data.ride_date}</span>
-                                </div>
-                                `}
-                                <div class="detail-row">
-                                    <span class="detail-label">Pickup Time:</span>
-                                    <span class="detail-value">${data.pickup_time || 'N/A'}</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Pickup Address:</span>
-                                    <span class="detail-value">${data.pickup_address}</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Drop Address:</span>
-                                    <span class="detail-value">${data.drop_address}</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Ride Type:</span>
-                                    <span class="detail-value">${data.ride_type}</span>
-                                </div>
-                            </div>
-
-                            ${data.ride_dates && data.ride_dates.length > 1 ? `
-                            <div class="ride-details" style="margin-top: 20px;">
-                                <h3>📅 Scheduled Ride Dates (${data.ride_dates.length} days)</h3>
-                                <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-                                    <thead>
-                                        <tr style="background-color: #007bff; color: white;">
-                                            <th style="padding: 10px; text-align: left; border: 1px solid #dee2e6;">#</th>
-                                            <th style="padding: 10px; text-align: left; border: 1px solid #dee2e6;">Date</th>
-                                            <th style="padding: 10px; text-align: left; border: 1px solid #dee2e6;">Day</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${data.ride_dates.map((date, index) => {
-                                            const dateObj = new Date(date);
-                                            const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-                                            return `
-                                            <tr style="${index % 2 === 0 ? 'background-color: #f8f9fa;' : 'background-color: white;'}">
-                                                <td style="padding: 10px; border: 1px solid #dee2e6;">${index + 1}</td>
-                                                <td style="padding: 10px; border: 1px solid #dee2e6;">${date}</td>
-                                                <td style="padding: 10px; border: 1px solid #dee2e6;">${dayNames[dateObj.getDay()]}</td>
-                                            </tr>
-                                            `;
-                                        }).join('')}
-                                    </tbody>
-                                </table>
-                            </div>
-                            ` : ''}
-
-                            <div class="warning">
-                                ⚠️ <strong>Action Required:</strong> Please review and approve or reject this ride request.
-                            </div>
-
-                            <div class="button-container">
-                                <a href="${data.approve_url}" class="btn btn-approve">✓ Approve Ride</a>
-                                <a href="${data.reject_url}" class="btn btn-reject">✗ Reject Ride</a>
-                            </div>
-
-                            <p style="color: #6c757d; font-size: 14px; margin-top: 30px;">
-                                <strong>Note:</strong> These links are secure and will expire after use. If you did not expect this email, please contact your system administrator.
-                            </p>
+                        ${isMulti ? `
+                        <div class="row">
+                          <span class="row-label">Period</span>
+                          <span class="row-value">${fmt(d.start_date)} &rarr; ${fmt(d.end_date)}</span>
+                        </div>` : `
+                        <div class="row">
+                          <span class="row-label">Date</span>
+                          <span class="row-value">${d.ride_date}</span>
+                        </div>`}
+                        <div class="row">
+                          <span class="row-label">Pickup Time</span>
+                          <span class="row-value">${d.pickup_time || '—'}</span>
                         </div>
-                        <div class="footer">
-                            <p>© ${new Date().getFullYear()} FleetIQ by Plixr Technologies Pvt. Ltd.</p>
-                            <p>This is an automated message, please do not reply.</p>
+                        <div class="row">
+                          <span class="row-label">Pickup Address</span>
+                          <span class="row-value">${d.pickup_address}</span>
                         </div>
-                    </div>
-                </body>
-                </html>
-            `,
-            text: (data) => `
-                Ride Approval Required
-                
-                Hello Manager,
-                
-                A new ride request has been submitted and requires your approval.
-                
-                Ride Details:
-                - Employee: ${data.employee_name}
-                ${data.ride_dates && data.ride_dates.length > 1 ? 
-                `- Period: ${typeof data.start_date === 'string' ? data.start_date : new Date(data.start_date).toISOString().split('T')[0]} to ${typeof data.end_date === 'string' ? data.end_date : new Date(data.end_date).toISOString().split('T')[0]}` : 
-                `- Date: ${data.ride_date}`}
-                - Pickup Time: ${data.pickup_time || 'N/A'}
-                - Pickup Address: ${data.pickup_address}
-                - Drop Address: ${data.drop_address}
-                - Ride Type: ${data.ride_type}
-                
-                ${data.ride_dates && data.ride_dates.length > 1 ? `
-                Scheduled Ride Dates (${data.ride_dates.length} days):
-                ${data.ride_dates.map((date, index) => {
-                    const dateObj = new Date(date);
-                    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-                    return `${index + 1}. ${date} (${dayNames[dateObj.getDay()]})`;
-                }).join('\\n                ')}
-                ` : ''}
-                
-                To approve this ride, visit: ${data.approve_url}
-                To reject this ride, visit: ${data.reject_url}
-                
-                Note: These links are secure and will expire after use.
-                
-                © ${new Date().getFullYear()} FleetIQ by Plixr Technologies Pvt. Ltd.
-                This is an automated message, please do not reply.
-            `
+                        <div class="row">
+                          <span class="row-label">Drop Address</span>
+                          <span class="row-value">${d.drop_address}</span>
+                        </div>
+                        <div class="row">
+                          <span class="row-label">Ride Type</span>
+                          <span class="row-value">${d.ride_type}</span>
+                        </div>
+                      </div>
+                      ${isMulti ? `
+                      <div class="card">
+                        <div class="card-title">Scheduled Dates (${d.ride_dates.length} days)</div>
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-size:13px;">
+                          <thead>
+                            <tr style="background:${T.brandPrimary};color:#fff;">
+                              <th style="padding:10px 14px;text-align:left;font-weight:600;">#</th>
+                              <th style="padding:10px 14px;text-align:left;font-weight:600;">Date</th>
+                              <th style="padding:10px 14px;text-align:left;font-weight:600;">Day</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            ${d.ride_dates.map((date, i) => {
+                                const obj = new Date(date);
+                                return `<tr style="background:${i % 2 === 0 ? T.brandSurface : T.bgCard};">
+                                  <td style="padding:9px 14px;border-bottom:1px solid ${T.border};color:${T.textMuted};">${i + 1}</td>
+                                  <td style="padding:9px 14px;border-bottom:1px solid ${T.border};color:${T.textPrimary};font-weight:600;">${date}</td>
+                                  <td style="padding:9px 14px;border-bottom:1px solid ${T.border};color:${T.brandMid};">${dayNames[obj.getDay()]}</td>
+                                </tr>`;
+                            }).join('')}
+                          </tbody>
+                        </table>
+                      </div>` : ''}
+                      <div class="notice">
+                        <div class="notice-title">Action Required</div>
+                        <ul>
+                          <li>Review the ride details carefully before approving.</li>
+                          <li>Approval/rejection links expire after use for security.</li>
+                        </ul>
+                      </div>
+                      <div class="btn-wrap">
+                        <a href="${d.approve_url}" class="btn btn-approve" style="color:#FFFFFF !important;">Approve Ride</a>
+                        <a href="${d.reject_url}" class="btn btn-reject" style="color:${T.textSecondary} !important;">Reject Ride</a>
+                      </div>
+                    </div>`
+                );
+            },
+            text: (d) => {
+                const isMulti = d.ride_dates && d.ride_dates.length > 1;
+                const fmt = (v) => typeof v === 'string' ? v : new Date(v).toISOString().split('T')[0];
+                const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+                return `Ride Approval Required\n\nHello Manager,\n\nEmployee: ${d.employee_name}\n${isMulti ? `Period: ${fmt(d.start_date)} to ${fmt(d.end_date)}` : `Date: ${d.ride_date}`}\nPickup Time: ${d.pickup_time || '—'}\nPickup: ${d.pickup_address}\nDrop: ${d.drop_address}\nRide Type: ${d.ride_type}\n${isMulti ? `\nScheduled Dates:\n${d.ride_dates.map((date, i) => `${i+1}. ${date} (${dayNames[new Date(date).getDay()]})`).join('\n')}` : ''}\n\nApprove: ${d.approve_url}\nReject: ${d.reject_url}\n\n© ${new Date().getFullYear()} Thai Tour`;
+            },
         },
 
-        // VIP Vendor Assignment Email Template
+        /* ── 8. VIP Vendor Assignment ─────────────────────────────────────── */
         vip_vendor_assignment: {
-            subject: (data) => `New VIP Ride Assignment - ${data.ride_id ? `#${data.ride_id}` : 'Ride Request'}`,
-            html: (data) => `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>VIP Ride Assignment</title>
-                    <style>
-                        body { 
-                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-                            line-height: 1.6; 
-                            color: #333; 
-                            margin: 0; 
-                            padding: 0; 
-                            background-color: #f4f4f4; 
-                        }
-                        .email-container { 
-                            max-width: 600px; 
-                            margin: 20px auto; 
-                            background-color: #ffffff; 
-                            border-radius: 12px; 
-                            overflow: hidden; 
-                            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
-                        }
-                        .header { 
-                            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); 
-                            color: white; 
-                            padding: 30px 20px; 
-                            text-align: center; 
-                        }
-                        .header h1 { 
-                            margin: 0; 
-                            font-size: 28px; 
-                            font-weight: 600; 
-                        }
-                        .header p { 
-                            margin: 8px 0 0 0; 
-                            opacity: 0.9; 
-                            font-size: 16px; 
-                        }
-                        .content { 
-                            padding: 30px; 
-                        }
-                        .greeting { 
-                            font-size: 18px; 
-                            margin-bottom: 20px; 
-                            color: #2c3e50; 
-                        }
-                        .ride-badge {
-                            background: linear-gradient(145deg, #28a745 0%, #20c997 100%);
-                            color: white;
-                            padding: 15px 25px;
-                            border-radius: 8px;
-                            text-align: center;
-                            margin: 20px 0;
-                            font-size: 20px;
-                            font-weight: bold;
-                            letter-spacing: 1px;
-                        }
-                        .ride-details { 
-                            background: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 100%); 
-                            padding: 25px; 
-                            border-radius: 8px; 
-                            margin: 20px 0; 
-                        }
-                        .ride-details h3 { 
-                            color: #007bff; 
-                            margin-top: 0; 
-                            font-size: 18px; 
-                            border-bottom: 2px solid #007bff; 
-                            padding-bottom: 10px; 
-                        }
-                        .detail-row { 
-                            display: flex; 
-                            justify-content: space-between; 
-                            padding: 10px 0; 
-                            border-bottom: 1px solid #dee2e6; 
-                        }
-                        .detail-row:last-child { 
-                            border-bottom: none; 
-                        }
-                        .detail-label { 
-                            font-weight: 600; 
-                            color: #6c757d; 
-                            flex: 0 0 40%; 
-                        }
-                        .detail-value { 
-                            color: #2c3e50; 
-                            flex: 1; 
-                            text-align: right; 
-                        }
-                        .location-section {
-                            background: #fff;
-                            border: 2px solid #007bff;
-                            border-radius: 8px;
-                            padding: 15px;
-                            margin: 20px 0;
-                        }
-                        .location-label {
-                            font-weight: bold;
-                            color: #007bff;
-                            font-size: 14px;
-                            margin-bottom: 5px;
-                        }
-                        .location-address {
-                            color: #2c3e50;
-                            padding-left: 10px;
-                        }
-                        .footer { 
-                            background-color: #f8f9fa; 
-                            padding: 25px; 
-                            text-align: center; 
-                            border-top: 1px solid #dee2e6; 
-                        }
-                        .footer p { 
-                            margin: 5px 0; 
-                            color: #6c757d; 
-                            font-size: 12px; 
-                        }
-                        .company-info { 
-                            margin-top: 15px; 
-                            padding-top: 15px; 
-                            border-top: 1px solid #dee2e6; 
-                        }
-                        .note-box {
-                            background: #fff3cd;
-                            border-left: 4px solid #ffc107;
-                            padding: 15px;
-                            margin: 20px 0;
-                            border-radius: 4px;
-                        }
-                        .note-box strong {
-                            color: #856404;
-                        }
-                        @media (max-width: 600px) {
-                            .email-container { margin: 10px; }
-                            .content { padding: 20px; }
-                            .detail-row { flex-direction: column; }
-                            .detail-label, .detail-value { text-align: left; }
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="email-container">
-                        <div class="header">
-                            <h1>🚗 FleetIQ VIP Services</h1>
-                            <p>New Ride Assignment</p>
-                        </div>
-                        
-                        <div class="content">
-                            <div class="greeting">
-                                Hello <strong>${data.vendor_name || 'Vendor'}</strong>,
-                            </div>
-                            
-                            <p>You have been assigned a new VIP ride. Please review the details below and ensure timely service.</p>
-                            
-                            ${data.ride_id ? `
-                            <div class="ride-badge">
-                                Ride #${data.ride_id}
-                            </div>
-                            ` : ''}
-                            
-                            <div class="ride-details">
-                                <h3>📋 Ride Information</h3>
-                                <div class="detail-row">
-                                    <span class="detail-label">Ride Date:</span>
-                                    <span class="detail-value">${data.start_date ? new Date(data.start_date).toLocaleDateString() : 'Not specified'}</span>
-                                </div>
-                                ${data.start_time ? `
-                                <div class="detail-row">
-                                    <span class="detail-label">Start Time:</span>
-                                    <span class="detail-value">${data.start_time}</span>
-                                </div>
-                                ` : ''}
-                                ${data.end_time ? `
-                                <div class="detail-row">
-                                    <span class="detail-label">End Time:</span>
-                                    <span class="detail-value">${data.end_time}</span>
-                                </div>
-                                ` : ''}
-                                ${data.report_time ? `
-                                <div class="detail-row">
-                                    <span class="detail-label">Report Time:</span>
-                                    <span class="detail-value">${data.report_time}</span>
-                                </div>
-                                ` : ''}
-                                ${data.vehicle_type ? `
-                                <div class="detail-row">
-                                    <span class="detail-label">Vehicle Type:</span>
-                                    <span class="detail-value">${data.vehicle_type}</span>
-                                </div>
-                                ` : ''}
-                                ${data.guest_count ? `
-                                <div class="detail-row">
-                                    <span class="detail-label">Guest Count:</span>
-                                    <span class="detail-value">${data.guest_count}</span>
-                                </div>
-                                ` : ''}
-                                ${data.customer_name ? `
-                                <div class="detail-row">
-                                    <span class="detail-label">Customer:</span>
-                                    <span class="detail-value">${data.customer_name}</span>
-                                </div>
-                                ` : ''}
-                                ${data.company_name ? `
-                                <div class="detail-row">
-                                    <span class="detail-label">Company:</span>
-                                    <span class="detail-value">${data.company_name}</span>
-                                </div>
-                                ` : ''}
-                            </div>
-                            
-                            ${data.pickup_address || data.reporting_address ? `
-                            <div class="location-section">
-                                <div class="location-label">📍 Pickup Location</div>
-                                <div class="location-address">${data.pickup_address || data.reporting_address}</div>
-                            </div>
-                            ` : ''}
-                            
-                            ${data.drop_address ? `
-                            <div class="location-section">
-                                <div class="location-label">📍 Drop Location</div>
-                                <div class="location-address">${data.drop_address}</div>
-                            </div>
-                            ` : ''}
-                            
-                            ${data.from_city || data.to_city ? `
-                            <div class="ride-details">
-                                <h3>🗺️ Route Details</h3>
-                                ${data.from_city ? `
-                                <div class="detail-row">
-                                    <span class="detail-label">From City:</span>
-                                    <span class="detail-value">${data.from_city}</span>
-                                </div>
-                                ` : ''}
-                                ${data.to_city ? `
-                                <div class="detail-row">
-                                    <span class="detail-label">To City:</span>
-                                    <span class="detail-value">${data.to_city}</span>
-                                </div>
-                                ` : ''}
-                            </div>
-                            ` : ''}
-                            
-                            ${data.remarks || data.operator_notes ? `
-                            <div class="note-box">
-                                <strong>📝 Special Notes:</strong><br>
-                                ${data.remarks || data.operator_notes || ''}
-                            </div>
-                            ` : ''}
-                            
-                            <p style="color: #6c757d; font-size: 14px; margin-top: 30px;">
-                                <strong>Next Steps:</strong><br>
-                                • Review the ride details carefully<br>
-                                • Assign an appropriate vehicle and driver<br>
-                                • Ensure timely pickup and professional service<br>
-                                • Contact the customer if you have any questions
-                            </p>
-                        </div>
-                        
-                        <div class="footer">
-                            <p><strong>© ${new Date().getFullYear()} FleetIQ</strong> - VIP Fleet Management Solution</p>
-                            <p>This is an automated notification. Please do not reply to this email.</p>
-                            <div class="company-info">
-                                <p><strong>Plixr Technologies Pvt. Ltd.</strong></p>
-                                <p>Building the future of fleet management</p>
-                            </div>
-                        </div>
+            subject: (d) => `New VIP Ride Assignment${d.ride_id ? ` — #${d.ride_id}` : ''}`,
+            html: (d) => html(
+                '<title>VIP Ride Assignment</title>',
+                `${header('VIP Services', 'New Ride Assignment')}
+                <div class="body">
+                  ${d.ride_id ? `<div style="background:linear-gradient(135deg,${T.brandPrimary},${T.brandMid});color:#fff;text-align:center;padding:14px 24px;border-radius:10px;margin-bottom:24px;font-family:'Playfair Display',serif;font-size:18px;letter-spacing:2px;">Ride #${d.ride_id}</div>` : ''}
+                  <p class="greeting">Hello, ${d.vendor_name || 'Partner'}</p>
+                  <p class="lead">
+                    You have been assigned a new VIP ride. Please review the details carefully
+                    and ensure premium, on-time service for your guest.
+                  </p>
+                  <div class="card">
+                    <div class="card-title">Ride Information</div>
+                    <div class="row">
+                      <span class="row-label">Ride Date</span>
+                      <span class="row-value">${d.start_date ? new Date(d.start_date).toLocaleDateString('en-US', {weekday:'short',year:'numeric',month:'short',day:'numeric'}) : '—'}</span>
                     </div>
-                </body>
-                </html>
-            `,
-            text: (data) => `
-FleetIQ - New VIP Ride Assignment
-
-Hello ${data.vendor_name || 'Vendor'},
-
-You have been assigned a new VIP ride. Please review the details below:
-
-${data.ride_id ? `Ride ID: #${data.ride_id}` : 'New Ride Assignment'}
-
-RIDE INFORMATION:
-- Ride Date: ${data.start_date ? new Date(data.start_date).toLocaleDateString() : 'Not specified'}
-${data.start_time ? `- Start Time: ${data.start_time}` : ''}
-${data.end_time ? `- End Time: ${data.end_time}` : ''}
-${data.report_time ? `- Report Time: ${data.report_time}` : ''}
-${data.vehicle_type ? `- Vehicle Type: ${data.vehicle_type}` : ''}
-${data.guest_count ? `- Guest Count: ${data.guest_count}` : ''}
-${data.customer_name ? `- Customer: ${data.customer_name}` : ''}
-${data.company_name ? `- Company: ${data.company_name}` : ''}
-
-LOCATIONS:
-${data.pickup_address ? `Pickup: ${data.pickup_address}` : data.reporting_address ? `Reporting: ${data.reporting_address}` : ''}
-${data.drop_address ? `Drop: ${data.drop_address}` : ''}
-
-${data.from_city || data.to_city ? `
-ROUTE:
-${data.from_city ? `From: ${data.from_city}` : ''}
-${data.to_city ? `To: ${data.to_city}` : ''}
-` : ''}
-
-${data.remarks || data.operator_notes ? `
-SPECIAL NOTES:
-${data.remarks || data.operator_notes || ''}
-` : ''}
-
-NEXT STEPS:
-• Review the ride details carefully
-• Assign an appropriate vehicle and driver
-• Ensure timely pickup and professional service
-• Contact the customer if you have any questions
-
----
-© ${new Date().getFullYear()} FleetIQ by Plixr Technologies Pvt. Ltd.
-This is an automated notification. Please do not reply.
-            `
+                    ${d.start_time ? `<div class="row"><span class="row-label">Start Time</span><span class="row-value">${d.start_time}</span></div>` : ''}
+                    ${d.end_time   ? `<div class="row"><span class="row-label">End Time</span><span class="row-value">${d.end_time}</span></div>` : ''}
+                    ${d.report_time? `<div class="row"><span class="row-label">Report Time</span><span class="row-value">${d.report_time}</span></div>` : ''}
+                    ${d.vehicle_type ? `<div class="row"><span class="row-label">Vehicle Type</span><span class="row-value">${d.vehicle_type}</span></div>` : ''}
+                    ${d.guest_count  ? `<div class="row"><span class="row-label">Guests</span><span class="row-value">${d.guest_count}</span></div>` : ''}
+                    ${d.customer_name? `<div class="row"><span class="row-label">Customer</span><span class="row-value">${d.customer_name}</span></div>` : ''}
+                    ${d.company_name ? `<div class="row"><span class="row-label">Company</span><span class="row-value">${d.company_name}</span></div>` : ''}
+                  </div>
+                  ${(d.pickup_address || d.reporting_address) ? `
+                  <div class="card" style="border-left:4px solid ${T.brandLight};">
+                    <div class="card-title">Pickup Location</div>
+                    <p style="font-size:14px;color:${T.textSecondary};margin:0;">${d.pickup_address || d.reporting_address}</p>
+                  </div>` : ''}
+                  ${d.drop_address ? `
+                  <div class="card" style="border-left:4px solid ${T.gold};">
+                    <div class="card-title">Drop Location</div>
+                    <p style="font-size:14px;color:${T.textSecondary};margin:0;">${d.drop_address}</p>
+                  </div>` : ''}
+                  ${(d.from_city || d.to_city) ? `
+                  <div class="card">
+                    <div class="card-title">Route</div>
+                    ${d.from_city ? `<div class="row"><span class="row-label">From</span><span class="row-value">${d.from_city}</span></div>` : ''}
+                    ${d.to_city   ? `<div class="row"><span class="row-label">To</span><span class="row-value">${d.to_city}</span></div>` : ''}
+                  </div>` : ''}
+                  ${(d.remarks || d.operator_notes) ? `
+                  <div class="notice">
+                    <div class="notice-title">Special Notes</div>
+                    <p style="font-size:13px;color:${T.textSecondary};margin:0;">${d.remarks || d.operator_notes}</p>
+                  </div>` : ''}
+                  <div class="notice" style="background:${T.brandSurface};border-color:${T.brandLight};">
+                    <div class="notice-title" style="color:${T.brandPrimary};">Next Steps</div>
+                    <ul>
+                      <li>Review all ride details before confirming.</li>
+                      <li>Assign a suitable vehicle and professional driver.</li>
+                      <li>Ensure punctual pickup and courteous service.</li>
+                      <li>Contact the customer if any clarification is needed.</li>
+                    </ul>
+                  </div>
+                </div>`
+            ),
+            text: (d) => `Thai Tour — VIP Ride Assignment${d.ride_id ? ` #${d.ride_id}` : ''}\n\nHello ${d.vendor_name || 'Partner'},\n\nDate: ${d.start_date ? new Date(d.start_date).toLocaleDateString() : '—'}\n${d.start_time ? `Start: ${d.start_time}` : ''}\n${d.end_time ? `End: ${d.end_time}` : ''}\n${d.vehicle_type ? `Vehicle: ${d.vehicle_type}` : ''}\n${d.customer_name ? `Customer: ${d.customer_name}` : ''}\nPickup: ${d.pickup_address || d.reporting_address || '—'}\nDrop: ${d.drop_address || '—'}\n${d.from_city ? `Route: ${d.from_city} → ${d.to_city || '—'}` : ''}\n${d.remarks || d.operator_notes ? `Notes: ${d.remarks || d.operator_notes}` : ''}\n\n© ${new Date().getFullYear()} Thai Tour`,
         },
 
-        // Default/Generic template
-        default: {
-            subject: (data) => data.subject || 'Notification from FleetIQ',
-            html: (data) => `
-                < !DOCTYPE html>
-            <html>
-                <head>
-                    <meta charset="UTF-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                            <title>FleetIQ Notification</title>
-                            <style>
-                                body {font - family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4; }
-                                .email-container {max - width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-                                .header {background - color: #007bff; color: white; padding: 20px; text-align: center; }
-                                .content {padding: 30px; }
-                                .footer {background - color: #f8f9fa; padding: 20px; text-align: center; border-top: 1px solid #dee2e6; }
-                            </style>
-                        </head>
-                        <body>
-                            <div class="email-container">
-                                <div class="header">
-                                    <h1>FleetIQ</h1>
-                                </div>
-                                <div class="content">
-                                    <h2>Hello ${data.employee_name || 'User'},</h2>
-                                    <p>${data.message || 'You have received a notification from FleetIQ.'}</p>
-                                    ${data.additional_content || ''}
-                                </div>
-                                <div class="footer">
-                                    <p>© 2024 FleetIQ by Plixr Technologies Pvt. Ltd.</p>
-                                    <p>This is an automated message, please do not reply.</p>
-                                </div>
-                            </div>
-                        </body>
-                    </html>
-                    `,
-            text: (data) => `
-                    FleetIQ Notification
-
-                    Hello ${data.employee_name || 'User'},
-
-                    ${data.message || 'You have received a notification from FleetIQ.'}
-
-                    ${data.additional_content || ''}
-
-                    © 2024 FleetIQ by Plixr Technologies Pvt. Ltd.
-                    This is an automated message, please do not reply.
-                    `
-        },
-
-        // VIP Ride Start OTP Email Template
+        /* ── 9. VIP Ride Start / End OTP ──────────────────────────────────── */
         vip_ride_start_otp: {
-            subject: (data) => `Your Ride ${data.otp_type === 'start' ? 'Start' : 'End'} OTP - FleetIQ`,
-            html: (data) => `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Ride ${data.otp_type === 'start' ? 'Start' : 'End'} OTP</title>
-                    <style>
-                        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4; }
-                        .email-container { max-width: 650px; margin: 20px auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-                        .header { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; padding: 30px 20px; text-align: center; }
-                        .header h1 { margin: 0; font-size: 28px; font-weight: 600; }
-                        .header p { margin: 8px 0 0 0; opacity: 0.9; font-size: 16px; }
-                        .content { padding: 30px; }
-                        
-                        /* Card Styles */
-                        .card { background: #f8f9fa; border-radius: 10px; padding: 25px; margin: 20px 0; border: 1px solid #e0e0e0; }
-                        .card-header { font-size: 20px; font-weight: 600; color: #007bff; margin-bottom: 20px; display: flex; align-items: center; }
-                        .card-header::before { content: ''; width: 4px; height: 24px; background: #007bff; margin-right: 10px; border-radius: 2px; }
-                        
-                        /* Ride Details Card */
-                        .detail-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #dee2e6; }
-                        .detail-row:last-child { border-bottom: none; }
-                        .detail-label { font-weight: 600; color: #495057; font-size: 14px; }
-                        .detail-value { color: #6c757d; text-align: right; font-size: 14px; max-width: 60%; }
-                        
-                        /* OTP Card */
-                        .otp-card { background: linear-gradient(145deg, #fff 0%, #f8f9fa 100%); text-align: center; }
-                        .otp-label { font-size: 16px; color: #6c757d; margin-bottom: 15px; font-weight: 500; }
-                        .otp-box { background: linear-gradient(145deg, #e3f2fd 0%, #bbdefb 100%); border: 3px solid #007bff; padding: 25px; border-radius: 12px; margin: 20px 0; }
-                        .otp-code { font-size: 48px; font-weight: bold; color: #007bff; letter-spacing: 12px; font-family: 'Courier New', monospace; margin: 10px 0; }
-                        .otp-instruction { font-size: 14px; color: #495057; margin-top: 15px; line-height: 1.8; }
-                        
-                        .footer { background-color: #f8f9fa; padding: 25px; text-align: center; border-top: 1px solid #dee2e6; }
-                        .footer p { margin: 5px 0; color: #6c757d; font-size: 12px; }
-                        .company-info { margin-top: 15px; padding-top: 15px; border-top: 1px solid #dee2e6; }
-                        
-                        @media (max-width: 600px) {
-                            .email-container { margin: 10px; }
-                            .content { padding: 20px; }
-                            .card { padding: 15px; }
-                            .otp-code { font-size: 36px; letter-spacing: 8px; }
-                            .detail-row { flex-direction: column; }
-                            .detail-value { text-align: left; margin-top: 5px; max-width: 100%; }
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="email-container">
-                        <div class="header">
-                            <h1>🚗 FleetIQ</h1>
-                            <p>VIP Ride ${data.otp_type === 'start' ? 'Start' : 'End'} Verification</p>
+            subject: (d) => `Your Ride ${d.otp_type === 'start' ? 'Start' : 'End'} OTP — Thai Tour`,
+            html: (d) => {
+                const action = d.otp_type === 'start' ? 'start' : 'complete';
+                const label  = d.otp_type === 'start' ? 'Ride Start' : 'Ride End';
+                return html(
+                    `<title>${label} OTP</title>`,
+                    `${header('VIP Services', `${label} Verification`)}
+                    <div class="body">
+                      <p class="greeting">Hello, ${d.customer_name || 'Valued Guest'}</p>
+                      <p class="lead">
+                        Your ride is ready to <strong>${action}</strong>. Share the OTP below with
+                        your driver to ${action} your journey.
+                      </p>
+                      <div class="card">
+                        <div class="card-title">Booking Details</div>
+                        <div class="row">
+                          <span class="row-label">Booking ID</span>
+                          <span class="row-value">#${d.booking_id || '—'}</span>
                         </div>
-                        
-                        <div class="content">
-                            <p style="font-size: 16px; color: #2c3e50; margin-bottom: 25px;">
-                                Hello <strong>${data.customer_name || 'Valued Customer'}</strong>,
-                            </p>
-                            
-                            <p style="margin-bottom: 25px;">Your ride is ready to ${data.otp_type === 'start' ? 'begin' : 'end'}. Please share the OTP below with your driver to ${data.otp_type === 'start' ? 'start' : 'complete'} your journey.</p>
-                            
-                            <!-- Card 1: Ride Booking Details -->
-                            <div class="card">
-                                <div class="card-header">📋 Ride Details</div>
-                                
-                                <div class="detail-row">
-                                    <span class="detail-label">Booking ID:</span>
-                                    <span class="detail-value">#${data.booking_id || 'N/A'}</span>
-                                </div>
-                                
-                                <div class="detail-row">
-                                    <span class="detail-label">Customer Name:</span>
-                                    <span class="detail-value">${data.customer_name || 'N/A'}</span>
-                                </div>
-                                
-                                ${data.customer_mobile ? `
-                                <div class="detail-row">
-                                    <span class="detail-label">Contact:</span>
-                                    <span class="detail-value">${data.customer_mobile}</span>
-                                </div>
-                                ` : ''}
-                                
-                                <div class="detail-row">
-                                    <span class="detail-label">Ride Date:</span>
-                                    <span class="detail-value">${data.start_date ? new Date(data.start_date).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A'}</span>
-                                </div>
-                                
-                                <div class="detail-row">
-                                    <span class="detail-label">Pickup Time:</span>
-                                    <span class="detail-value">${data.start_time || 'N/A'}</span>
-                                </div>
-                                
-                                ${data.end_time ? `
-                                <div class="detail-row">
-                                    <span class="detail-label">Drop Time:</span>
-                                    <span class="detail-value">${data.end_time}</span>
-                                </div>
-                                ` : ''}
-                                
-                                ${data.from_city || data.to_city ? `
-                                <div class="detail-row">
-                                    <span class="detail-label">Route:</span>
-                                    <span class="detail-value">${data.from_city || 'N/A'} → ${data.to_city || 'N/A'}</span>
-                                </div>
-                                ` : ''}
-                                
-                                ${data.pickup_address ? `
-                                <div class="detail-row">
-                                    <span class="detail-label">📍 Pickup Address:</span>
-                                    <span class="detail-value">${data.pickup_address}</span>
-                                </div>
-                                ` : ''}
-                                
-                                ${data.drop_address ? `
-                                <div class="detail-row">
-                                    <span class="detail-label">📍 Drop Address:</span>
-                                    <span class="detail-value">${data.drop_address}</span>
-                                </div>
-                                ` : ''}
-                                
-                                ${data.vehicle_number ? `
-                                <div class="detail-row">
-                                    <span class="detail-label">🚙 Vehicle:</span>
-                                    <span class="detail-value">${data.vehicle_number}${data.vehicle_model ? ` - ${data.vehicle_model}` : ''}</span>
-                                </div>
-                                ` : ''}
-                                
-                                ${data.driver_name ? `
-                                <div class="detail-row">
-                                    <span class="detail-label">👤 Driver:</span>
-                                    <span class="detail-value">${data.driver_name}${data.driver_mobile ? ` (${data.driver_mobile})` : ''}</span>
-                                </div>
-                                ` : ''}
-                            </div>
-                            
-                            <!-- Card 2: OTP Verification -->
-                            <div class="card otp-card">
-                                <div class="card-header" style="justify-content: center;">
-                                    <span>🔐 Ride Verification OTP</span>
-                                </div>
-                                
-                                <div class="otp-label">Share this code with your driver</div>
-                                
-                                <div class="otp-box">
-                                    <div class="otp-code">${data.otp}</div>
-                                </div>
-                                
-                                <div class="otp-instruction">
-                                    ✓ This OTP is required to ${data.otp_type === 'start' ? 'start' : 'complete'} your ride<br>
-                                    ✓ Do not share this code with anyone except your assigned driver<br>
-                                    ✓ Verify driver details before sharing the OTP
-                                </div>
-                            </div>
-                            
-                            <p style="color: #6c757d; font-size: 14px; margin-top: 30px;">
-                                If you did not request this ride or have any concerns, please contact our support team immediately.
-                            </p>
+                        <div class="row">
+                          <span class="row-label">Customer</span>
+                          <span class="row-value">${d.customer_name || '—'}</span>
                         </div>
-                        
-                        <div class="footer">
-                            <p><strong>© ${new Date().getFullYear()} FleetIQ</strong> - Premium Fleet Management Solution</p>
-                            <p>This is an automated message from FleetIQ. Please do not reply to this email.</p>
-                            <div class="company-info">
-                                <p><strong>Plixr Technologies Pvt. Ltd.</strong></p>
-                                <p>Building the future of fleet management</p>
-                            </div>
+                        ${d.customer_mobile ? `<div class="row"><span class="row-label">Contact</span><span class="row-value">${d.customer_mobile}</span></div>` : ''}
+                        <div class="row">
+                          <span class="row-label">Ride Date</span>
+                          <span class="row-value">${d.start_date ? new Date(d.start_date).toLocaleDateString('en-US',{weekday:'short',year:'numeric',month:'short',day:'numeric'}) : '—'}</span>
                         </div>
-                    </div>
-                </body>
-                </html>
-            `,
-            text: (data) => `
-FleetIQ - Ride ${data.otp_type === 'start' ? 'Start' : 'End'} OTP
+                        <div class="row">
+                          <span class="row-label">Pickup Time</span>
+                          <span class="row-value">${d.start_time || '—'}</span>
+                        </div>
+                        ${d.end_time ? `<div class="row"><span class="row-label">Drop Time</span><span class="row-value">${d.end_time}</span></div>` : ''}
+                        ${(d.from_city || d.to_city) ? `<div class="row"><span class="row-label">Route</span><span class="row-value">${d.from_city || '—'} &rarr; ${d.to_city || '—'}</span></div>` : ''}
+                        ${d.pickup_address ? `<div class="row"><span class="row-label">Pickup</span><span class="row-value">${d.pickup_address}</span></div>` : ''}
+                        ${d.drop_address   ? `<div class="row"><span class="row-label">Drop</span><span class="row-value">${d.drop_address}</span></div>` : ''}
+                        ${d.vehicle_number ? `<div class="row"><span class="row-label">Vehicle</span><span class="row-value">${d.vehicle_number}${d.vehicle_model ? ` — ${d.vehicle_model}` : ''}</span></div>` : ''}
+                        ${d.driver_name    ? `<div class="row"><span class="row-label">Driver</span><span class="row-value">${d.driver_name}${d.driver_mobile ? ` (${d.driver_mobile})` : ''}</span></div>` : ''}
+                      </div>
+                      <div class="otp-wrap">
+                        <div class="otp-label">Share this code with your driver</div>
+                        <div class="otp-box">
+                          <div class="otp-code">${d.otp}</div>
+                          <div class="otp-expiry">${label} verification code</div>
+                        </div>
+                      </div>
+                      <div class="notice">
+                        <div class="notice-title">Important</div>
+                        <ul>
+                          <li>Share this OTP <strong>only</strong> with your assigned driver.</li>
+                          <li>Verify driver details before sharing.</li>
+                          <li>This code is required to ${action} your ride.</li>
+                        </ul>
+                      </div>
+                    </div>`
+                );
+            },
+            text: (d) => {
+                const action = d.otp_type === 'start' ? 'start' : 'complete';
+                return `Thai Tour — Ride ${d.otp_type === 'start' ? 'Start' : 'End'} OTP\n\nHello ${d.customer_name || 'Guest'},\n\nYour ride is ready to ${action}.\n\nBooking: #${d.booking_id || '—'}\nDate: ${d.start_date ? new Date(d.start_date).toLocaleDateString() : '—'}\nPickup: ${d.start_time || '—'}\n${d.from_city ? `Route: ${d.from_city} → ${d.to_city || '—'}` : ''}\n${d.driver_name ? `Driver: ${d.driver_name}` : ''}\n\nYour OTP: ${d.otp}\n\nShare only with your assigned driver.\n\n© ${new Date().getFullYear()} Thai Tour`;
+            },
+        },
 
-Hello ${data.customer_name || 'Valued Customer'},
-
-Your ride is ready to ${data.otp_type === 'start' ? 'begin' : 'end'}. Please share the OTP below with your driver.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-RIDE DETAILS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Booking ID: #${data.booking_id || 'N/A'}
-Customer: ${data.customer_name || 'N/A'}
-${data.customer_mobile ? `Contact: ${data.customer_mobile}` : ''}
-Ride Date: ${data.start_date ? new Date(data.start_date).toLocaleDateString() : 'N/A'}
-Pickup Time: ${data.start_time || 'N/A'}
-${data.end_time ? `Drop Time: ${data.end_time}` : ''}
-${data.from_city || data.to_city ? `Route: ${data.from_city || 'N/A'} → ${data.to_city || 'N/A'}` : ''}
-${data.pickup_address ? `Pickup Address: ${data.pickup_address}` : ''}
-${data.drop_address ? `Drop Address: ${data.drop_address}` : ''}
-${data.vehicle_number ? `Vehicle: ${data.vehicle_number}${data.vehicle_model ? ` - ${data.vehicle_model}` : ''}` : ''}
-${data.driver_name ? `Driver: ${data.driver_name}${data.driver_mobile ? ` (${data.driver_mobile})` : ''}` : ''}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-YOUR RIDE ${data.otp_type === 'start' ? 'START' : 'END'} OTP
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-        ${data.otp}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-IMPORTANT:
-✓ Share this code only with your assigned driver
-✓ Verify driver details before sharing the OTP
-✓ This OTP is required to ${data.otp_type === 'start' ? 'start' : 'complete'} your ride
-
-If you did not request this ride, please contact support immediately.
-
----
-© ${new Date().getFullYear()} FleetIQ - Fleet Management Solution
-Plixr Technologies Pvt. Ltd.
-
-This is an automated message. Please do not reply.
-            `
-        }
+        /* ── 10. Default / Generic ────────────────────────────────────────── */
+        default: {
+            subject: (d) => d.subject || 'Notification from Thai Tour',
+            html: (d) => html(
+                '<title>Thai Tour Notification</title>',
+                `${header('Notification', '')}
+                <div class="body">
+                  <p class="greeting">Hello, ${d.employee_name || 'Traveller'}</p>
+                  <p class="lead">${d.message || 'You have received a notification from Thai Tour.'}</p>
+                  ${d.additional_content ? `<div class="card"><p style="font-size:14px;color:${T.textSecondary};margin:0;">${d.additional_content}</p></div>` : ''}
+                </div>`
+            ),
+            text: (d) => `Thai Tour Notification\n\nHello ${d.employee_name || 'Traveller'},\n\n${d.message || 'You have received a notification from Thai Tour.'}\n\n${d.additional_content || ''}\n\n© ${new Date().getFullYear()} Thai Tour`,
+        },
     },
 
-    // Common email settings
     settings: {
-        defaultTimeout: 30000, // 30 seconds
-        retryAttempts: 3,
-        retryDelay: 2000, // 2 seconds
-        enableLogging: true,
-        logLevel: 'info', // 'debug', 'info', 'warn', 'error'
-    }
+        defaultTimeout: 30000,
+        retryAttempts:  3,
+        retryDelay:     2000,
+        enableLogging:  true,
+        logLevel:       'info',
+    },
 };
 
 module.exports = emailConfig;

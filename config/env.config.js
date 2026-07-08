@@ -8,16 +8,24 @@ const isTestEnv = process.env.NODE_ENV === 'test';
 // Schema validation
 const envVarsSchema = Joi.object()
     .keys({
+        NODE_ENV: Joi.string().valid('development', 'production', 'test').default('development'),
         PORT: Joi.number().default(3004),
 
-      
         SENTRY_DSN: Joi.string().optional().description('Sentry DSN for error tracking'),
         SENTRY_ENVIRONMENT: Joi.string().optional().description('Sentry environment'),
         SENTRY_TRACES_SAMPLE_RATE: Joi.number().default(0.1).description('Sentry traces sample rate'),
-        // BUCKET: Joi.string().required().description("AWS Bucket Name"),
-        // REGION: Joi.string().required().description("AWS Bucket Region"),
-        // SECRET_KEY: Joi.string().required().description("AWS Bucket Secret key"),
-        // ACCESSKEYID: Joi.string().required().description("AWS Bucket Access Key ID"),
+
+        // Firebase — required in production, optional in dev (push notifications skipped when absent)
+        FIREBASE_PROJECT_ID: Joi.string().when('NODE_ENV', {
+            is:        'production',
+            then:      Joi.required(),
+            otherwise: Joi.optional(),
+        }).description('Firebase project ID'),
+        FIREBASE_SERVICE_ACCOUNT_JSON: Joi.string().when('NODE_ENV', {
+            is:        'production',
+            then:      Joi.required(),
+            otherwise: Joi.optional(),
+        }).description('Firebase service account JSON string'),
     })
     .unknown();
 
@@ -36,16 +44,13 @@ if (!isTestEnv) {
 const config = {
     environment: envVars.NODE_ENV || process.env.NODE_ENV || 'development',
     port: envVars.NODE_ENV === 'test' ? 3005 : envVars.PORT,
-    db_host: envVars?.DB_HOSTNAME || 'localhost',
-    db_port: envVars?.DB_PORT || '5432',
-    db_name: envVars?.DB_NAME || 'postgres',
-    db_username: envVars?.DB_USERNAME || 'postgres',
-    db_password: envVars?.DB_PASSWORD || 'root',
-    db_schema: envVars?.DB_SCHEMA || 'public',
+    // jwt.secret is consumed by middlewares/auth.js and helpers/utils.helper.js.
+    // This project's primary JWT utils (utils/jwt.js) read JWT_ACCESS_SECRET /
+    // JWT_REFRESH_SECRET directly from process.env — these are separate concerns.
     jwt: {
-        secret: envVars?.JWT_SECRET_KEY || 'secret',
-        accessExpirationMinutes: envVars?.JWT_ACCESS_EXPIRATION_MINUTES || 60,
-        refreshExpirationDays: envVars?.JWT_REFRESH_EXPIRATION_DAYS || 30,
+        secret: process.env.JWT_ACCESS_SECRET || 'secret',
+        accessExpirationMinutes: process.env.JWT_ACCESS_TTL || '15d',
+        refreshExpirationDays: process.env.JWT_REFRESH_TTL || '7d',
         resetPasswordExpirationMinutes: 10,
     },
     sentry: {
@@ -53,12 +58,6 @@ const config = {
         environment: envVars?.SENTRY_ENVIRONMENT || envVars.NODE_ENV || 'development',
         tracesSampleRate: envVars?.SENTRY_TRACES_SAMPLE_RATE || 1.0,
     },
-    // s3_bucket: {
-    //   bucket: envVars?.BUCKET,
-    //   region: envVars?.REGION,
-    //   secretKey: envVars?.SECRET_KEY,
-    //   accessKeyId: envVars?.ACCESSKEYID,
-    // },
 };
 
 module.exports = config;

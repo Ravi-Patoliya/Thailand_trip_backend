@@ -12,17 +12,18 @@ const serializeUser = (user) => {
   const roleId    = user.role_id && user.role_id._id   ? user.role_id._id   : user.role_id || null;
 
   return {
-    id:         user._id,
-    name:       user.name,
-    email:      user.email || null,
-    mobile:     user.mobile || null,
-    avatar:     user.avatar || null,
+    id:               user._id,
+    name:             user.name,
+    email:            user.email || null,
+    mobile:           user.mobile || null,
+    avatar:           user.avatar || null,
     role,                       // string, e.g. "superadmin"
     roleLabel,                  // human-readable, e.g. "Super Admin" (null if role not populated)
-    role_id:    roleId,         // ObjectId of the role
-    isActive:   user.isActive,
-    isVerified: user.isVerified,
-    createdAt:  user.createdAt,
+    role_id:          roleId,   // ObjectId of the role
+    isActive:         user.isActive,
+    isVerified:       user.isVerified,
+    createdAt:        user.createdAt,
+    fcmTokenRequired: user.fcmTokenRequired ?? true,
   };
 };
 

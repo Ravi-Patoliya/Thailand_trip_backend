@@ -101,6 +101,15 @@ class UserRepository {
       .select('name mobile email createdAt')
       .lean();
   }
+
+  async findAdminEmails() {
+    const { Role } = require('../models');
+    const roles = await Role.find({ name: { $in: ['admin', 'superadmin'] }, isActive: true }).select('_id').lean();
+    const roleIds = roles.map(r => r._id);
+    return User.find({ role_id: { $in: roleIds }, isActive: true, isDeleted: false, email: { $exists: true, $ne: null } })
+      .select('name email')
+      .lean();
+  }
 }
 
 module.exports = new UserRepository();

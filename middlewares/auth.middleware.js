@@ -1,8 +1,8 @@
 'use strict';
-const jwt      = require('jsonwebtoken');
-const AppError = require('../utils/AppError');
-const { User } = require('../models');
-const MSG      = require('../constants/message');
+const jwt            = require('jsonwebtoken');
+const AppError       = require('../utils/AppError');
+const authRepository = require('../repositories/auth.repository');
+const MSG            = require('../constants/message');
 
 const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
 
@@ -18,9 +18,7 @@ const decodeAndAttach = async (req) => {
     throw AppError.unauthorized(MSG.INVALID_TOKEN);
   }
 
-  const user = await User.findById(decoded.id)
-    .select('_id name email role_id isActive isVerified fullMobile')
-    .populate({ path: 'role_id', select: 'name label isActive' });
+  const user = await authRepository.findForAuthById(decoded.id);
 
   if (!user)                                throw AppError.unauthorized(MSG.INVALID_TOKEN);
   if (!user.isActive)                       throw AppError.forbidden(MSG.ACCOUNT_DEACTIVATED);

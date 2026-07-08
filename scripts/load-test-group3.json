@@ -1,0 +1,122 @@
+[
+  {
+    "label": "GET /api/users (admin list)",
+    "rps": "20.0",
+    "p50": 1199,
+    "p99": 1814,
+    "p999": 1831,
+    "total": 300,
+    "errPct": "0.0%",
+    "codeStr": "200:300"
+  },
+  {
+    "label": "GET /api/users/:id",
+    "rps": "24.7",
+    "p50": 1070,
+    "p99": 1699,
+    "p999": 1913,
+    "total": 371,
+    "errPct": "0.0%",
+    "codeStr": "200:371"
+  },
+  {
+    "label": "GET /api/users/stats",
+    "rps": "20.0",
+    "p50": 1207,
+    "p99": 1997,
+    "p999": 2043,
+    "total": 300,
+    "errPct": "100.0%",
+    "codeStr": "500:300"
+  },
+  {
+    "label": "GET /api/inquiries (admin)",
+    "rps": "16.0",
+    "p50": 1841,
+    "p99": 2885,
+    "p999": 2901,
+    "total": 240,
+    "errPct": "0.0%",
+    "codeStr": "200:240"
+  },
+  {
+    "label": "GET /api/inquiries/stats",
+    "rps": "23.7",
+    "p50": 1059,
+    "p99": 2672,
+    "p999": 2684,
+    "total": 355,
+    "errPct": "0.0%",
+    "codeStr": "200:355"
+  },
+  {
+    "label": "GET /api/reviews (admin)",
+    "rps": "16.0",
+    "p50": 1893,
+    "p99": 2608,
+    "p999": 2628,
+    "total": 240,
+    "errPct": "0.0%",
+    "codeStr": "200:240"
+  },
+  {
+    "label": "GET /api/reviews/pending-count",
+    "rps": "31.2",
+    "p50": 943,
+    "p99": 2287,
+    "p999": 2303,
+    "total": 468,
+    "errPct": "0.0%",
+    "codeStr": "200:468"
+  },
+  {
+    "label": "GET /api/coupons (admin)",
+    "rps": "24.6",
+    "p50": 1058,
+    "p99": 1708,
+    "p999": 1721,
+    "total": 369,
+    "errPct": "0.0%",
+    "codeStr": "200:369"
+  },
+  {
+    "label": "GET /api/coupons/?id",
+    "rps": "32.9",
+    "p50": 945,
+    "p99": 1211,
+    "p999": 1221,
+    "total": 494,
+    "errPct": "0.0%",
+    "codeStr": "200:494"
+  },
+  {
+    "label": "GET /api/notifications/admin/all",
+    "rps": "20.0",
+    "p50": 1229,
+    "p99": 1996,
+    "p999": 2060,
+    "total": 300,
+    "errPct": "0.0%",
+    "codeStr": "200:300"
+  },
+  {
+    "label": "GET /api/roles/:id",
+    "rps": "99.3",
+    "p50": 110,
+    "p99": 901,
+    "p999": 951,
+    "total": 1490,
+    "errPct": "0.0%",
+    "codeStr": "200:1490"
+  },
+  {
+    "label": "POST /api/notifications/fcm-token",
+    "rps": "20.6",
+    "p50": 525,
+    "p99": 1342,
+    "p999": 1352,
+    "total": 309,
+    "errPct": "0.0%",
+    "codeStr": "200:309"
+  }
+]

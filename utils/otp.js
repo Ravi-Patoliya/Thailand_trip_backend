@@ -11,6 +11,14 @@ const OTP_LENGTH       = 6;
 const otpKey      = (identifier) => `otp:${identifier}`;
 const attemptsKey = (identifier) => `otp:attempts:${identifier}`;
 
+// Redis is optional infra (see config/redis.config.js). If it's down, fail
+// OTP flows cleanly instead of hanging/crashing on the underlying client call.
+const assertRedisReady = (redis) => {
+  if (!redis || redis.status !== 'ready') {
+    throw AppError.serviceUnavailable('OTP service is temporarily unavailable. Please try again shortly.');
+  }
+};
+
 const generateOtp = () => {
   // Deterministic code in non-prod for easier testing; cryptographically-derived in prod.
   if (process.env.NODE_ENV !== 'production') return '123456';
@@ -26,6 +34,7 @@ const generateOtp = () => {
  * Multiple rapid requests simply keep the most recent OTP (last-write-wins).
  */
 const storeOtp = async (redis, identifier) => {
+  assertRedisReady(redis);
   const otp = generateOtp();
   // MULTI so the OTP write and attempt-counter reset are atomic together.
   await redis
@@ -41,6 +50,7 @@ const storeOtp = async (redis, identifier) => {
  * on success. Enforces a per-OTP wrong-guess cap to prevent brute force.
  */
 const verifyOtp = async (redis, identifier, inputOtp) => {
+  assertRedisReady(redis);
   const stored = await redis.get(otpKey(identifier));
 
   // No active OTP: either never requested, already used, or genuinely expired.

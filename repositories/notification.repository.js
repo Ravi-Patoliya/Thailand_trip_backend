@@ -91,7 +91,10 @@ class NotificationRepository {
   }
 
   async addFcmToken(userId, fcmToken) {
-    return User.findByIdAndUpdate(userId, { $addToSet: { fcmTokens: fcmToken } });
+    return User.findByIdAndUpdate(userId, {
+      $addToSet: { fcmTokens: fcmToken },
+      $set:      { fcmTokenRequired: false },
+    });
   }
 
   async removeFcmToken(userId, fcmToken) {
@@ -108,11 +111,12 @@ class NotificationRepository {
     for (const [k, v] of Object.entries(prefs)) {
       update[`notificationPrefs.${k}`] = v;
     }
+    // `.select()` is a query method, not a findByIdAndUpdate option — must be chained.
     const user = await User.findByIdAndUpdate(
       userId,
       { $set: update },
-      { new: true, select: 'notificationPrefs' }
-    ).lean();
+      { new: true }
+    ).select('notificationPrefs').lean();
     return user?.notificationPrefs;
   }
 }

@@ -1,38 +1,39 @@
 const Redis = require('ioredis');
 const logger = require('../helpers/logger.helper');
 
-// Prefer a full REDIS_URL (e.g. redis://:password@host:port/0). Fallback to host/port/env.
+// Redis is optional infrastructure: if it's unreachable, the server must still
+// boot and serve every route that doesn't need it. OTP-dependent routes check
+// redis.status themselves (see utils/otp.js) and fail with a clean 503 instead.
 const REDIS_URL = process.env.REDIS_URL || null;
 const REDIS_HOST = process.env.REDIS_HOST || '127.0.0.1';
 const REDIS_PORT = process.env.REDIS_PORT || 6379;
 const REDIS_PASSWORD = process.env.REDIS_PASSWORD || null;
 
-let redis;
+const commonOptions = {
+  lazyConnect: true,
+  retryStrategy: (times) => Math.min(times * 1000, 30_000),
+  maxRetriesPerRequest: 1,
+  reconnectOnError: (err) => {
+    logger.error(`Redis reconnectOnError: ${err?.message || err}`);
+    return true;
+  }
+};
 
-if (REDIS_URL) {
-  redis = new Redis(REDIS_URL, {
-    lazyConnect: false,
-    reconnectOnError: (err) => {
-      logger.error(`Redis reconnectOnError: ${err?.message || err}`);
-      return true;
-    }
-  });
-  
-} else {
-  redis = new Redis({
-    host: REDIS_HOST,
-    port: Number(REDIS_PORT),
-    password: REDIS_PASSWORD || undefined,
-    lazyConnect: false,
-    reconnectOnError: (err) => {
-      logger.error(`Redis reconnectOnError: ${err?.message || err}`);
-      return true;
-    }
-  });
-}
+const redis = REDIS_URL
+  ? new Redis(REDIS_URL, commonOptions)
+  : new Redis({
+      host: REDIS_HOST,
+      port: Number(REDIS_PORT),
+      password: REDIS_PASSWORD || undefined,
+      ...commonOptions
+    });
 
 redis.on('connect', () => logger.info('✅ Redis client connected ♦'));
-redis.on('error', (err) => logger.error(`❌ Redis error ♦: ${err}`));
+redis.on('error', (err) => logger.error(`❌ Redis error ♦ (OTP features degraded): ${err?.message || err}`));
 redis.on('close', () => logger.warn('🔄 Redis connection closed ♦'));
+
+// lazyConnect defers the actual TCP connection; kick it off but never let a
+// failure here crash the process — errors are handled by the 'error' listener above.
+redis.connect().catch(() => {});
 
 module.exports = redis;

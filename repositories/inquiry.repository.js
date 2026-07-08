@@ -34,22 +34,9 @@ class InquiryRepository {
     return Inquiry.findOne({ referenceNumber });
   }
 
-  async findByUser(userId, { skip = 0, limit = 10, sort = { createdAt: -1 } } = {},query) {
-    return Inquiry.find({ user: userId ,  ...(query.status && { status: query.status }),
-    ...(query.search && { $or: [
-      { referenceNumber:           new RegExp(query.search, 'i') },
-      { 'contactSnapshot.name':    new RegExp(query.search, 'i') },
-      { 'contactSnapshot.mobile':  new RegExp(query.search, 'i') },
-      { 'contactSnapshot.email':   new RegExp(query.search, 'i') },
-      { 'services.serviceTitle':   new RegExp(query.search, 'i') },
-    ] }),
-      ...(query.paymentStatus && { paymentStatus: query.paymentStatus }),
-      ...(query.from || query.to ? { createdAt: {
-        ...(query.from && { $gte: new Date(query.from) }),
-        ...(query.to && { $lte: new Date(query.to) }),
-        ...(query.id && { _id: query.id }),
-        
-      } } : {})})
+  async findByUser(userId, { skip = 0, limit = 10, sort = { createdAt: -1 } } = {}, query) {
+    const filter = this._buildUserFilter(userId, query);
+    return Inquiry.find(filter)
       .populate('services.service', 'title slug images')
       .sort(sort)
       .skip(skip)
@@ -57,23 +44,42 @@ class InquiryRepository {
       .lean();
   }
 
-  async countByUser(userId,query) {
-    return Inquiry.countDocuments({ user: userId,
-      ...(query.status && { status: query.status }),
-      ...(query.search && { $or: [
-      { referenceNumber:           new RegExp(query.search, 'i') },
-      { 'contactSnapshot.name':    new RegExp(query.search, 'i') },
-      { 'contactSnapshot.mobile':  new RegExp(query.search, 'i') },
-      { 'contactSnapshot.email':   new RegExp(query.search, 'i') },
-      { 'services.serviceTitle':   new RegExp(query.search, 'i') },
-    ] }),
-      ...(query.paymentStatus && { paymentStatus: query.paymentStatus }),
-      ...(query.from || query.to ? { createdAt: {
-        ...(query.from && { $gte: new Date(query.from) }),
-        ...(query.to && { $lte: new Date(query.to) }),
-        ...(query.id && { _id: query.id }),
-      } } : {}),
-     });
+  async countByUser(userId, query) {
+    return Inquiry.countDocuments(this._buildUserFilter(userId, query));
+  }
+
+  /** Shared filter builder for findByUser / countByUser — keeps the two in sync. */
+  _buildUserFilter(userId, query = {}) {
+    const filter = { user: userId };
+    if (query.status)        filter.status        = query.status;
+    if (query.paymentStatus) filter.paymentStatus = query.paymentStatus;
+    if (query.id)            filter._id           = query.id;
+    if (query.search) {
+      const re = new RegExp(query.search, 'i');
+      filter.$or = [
+        { referenceNumber:          re },
+        { 'contactSnapshot.name':   re },
+        { 'contactSnapshot.mobile': re },
+        { 'contactSnapshot.email':  re },
+        { 'services.serviceTitle':  re },
+      ];
+    }
+    if (query.from || query.to) {
+      filter.createdAt = {};
+      if (query.from) filter.createdAt.$gte = new Date(query.from);
+      if (query.to)   filter.createdAt.$lte = new Date(query.to);
+    }
+    return filter;
+  }
+
+  /** Cheap existence check — no populate, no document allocation. */
+  async existsById(id) {
+    return Inquiry.exists({ _id: id });
+  }
+
+  /** Returns only the status field for decision logic — avoids the full 7-populate fetch. */
+  async findStatusById(id) {
+    return Inquiry.findById(id).select('status').lean();
   }
 
   async create(data) {
@@ -100,9 +106,34 @@ class InquiryRepository {
   }
 
   async logPayment(id, paymentData) {
+    // pre('save') never fires on findByIdAndUpdate, so totalPaid and paymentStatus
+    // must be recomputed atomically here via an aggregation pipeline update.
+    const PAID    = 'paid';
+    const PARTIAL = 'partial';
+    const UNPAID  = 'unpaid';
     return Inquiry.findByIdAndUpdate(
       id,
-      { $push: { paymentLog: paymentData } },
+      [
+        { $set: { paymentLog: { $concatArrays: ['$paymentLog', [paymentData]] } } },
+        {
+          $set: {
+            totalPaid: { $sum: '$paymentLog.amount' },
+          },
+        },
+        {
+          $set: {
+            paymentStatus: {
+              $switch: {
+                branches: [
+                  { case: { $lte: ['$totalPaid', 0] },                        then: UNPAID  },
+                  { case: { $lt:  ['$totalPaid', '$totalAmount'] },            then: PARTIAL },
+                ],
+                default: PAID,
+              },
+            },
+          },
+        },
+      ],
       { new: true, runValidators: true }
     );
   }

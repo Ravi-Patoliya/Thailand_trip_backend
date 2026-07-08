@@ -2,8 +2,19 @@
 const { Service } = require('../models');
 
 class ServiceRepository {
+  /** Full Mongoose document — retains virtuals (primaryImage) for detail-view responses. */
   async findById(id) {
     return Service.findOne({ _id: id, isDeleted: false }).populate('category', 'name slug');
+  }
+
+  /**
+   * Lean read for validation-only callers (inquiry creation, review creation).
+   * Returns a plain object — faster, no virtuals.
+   */
+  async findByIdLean(id) {
+    return Service.findOne({ _id: id, isDeleted: false })
+      .select('title isActive availability pricing _id')
+      .lean();
   }
 
   async findAll({ filter = {}, skip = 0, limit = 20, sort = { createdAt: -1 } } = {}) {

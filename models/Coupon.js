@@ -122,8 +122,11 @@ const couponSchema = new mongoose.Schema(
 );
 
 // ── Indexes ────────────────────────────────────────────────────
-// couponSchema.index({ code: 1 });
-couponSchema.index({ isActive: 1, validFrom: 1, validUntil: 1 });
+// code is already unique: true on the field, but an explicit index entry makes
+// the compound lookup pattern (code + isDeleted) index-covered.
+couponSchema.index({ code: 1, isDeleted: 1 });
+// isDeleted must be leading so the validity-window query hits the index.
+couponSchema.index({ isDeleted: 1, isActive: 1, validFrom: 1, validUntil: 1 });
 
 // ── Virtual: is currently valid ────────────────────────────────
 couponSchema.virtual('isValid').get(function () {

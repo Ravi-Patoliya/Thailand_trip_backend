@@ -5,6 +5,7 @@ const couponRepository   = require('../repositories/coupon.repository');
 const userRepository     = require('../repositories/user.repository');
 const notificationService = require('./notification.service');
 const { uploadObject }   = require('../helpers/s3.helper');
+const { sendInquiryAdminAlert } = require('../helpers/email.helper');
 const AppError           = require('../utils/AppError');
 const MSG                = require('../constants/message');
 const { paginate }       = require('../utils/paginate');
@@ -30,7 +31,7 @@ class InquiryService {
     } = body;
 
     const serviceIds = serviceItems.map(i => i.serviceId);
-    const dbServices = await Promise.all(serviceIds.map(id => serviceRepository.findById(id)));
+    const dbServices = await Promise.all(serviceIds.map(id => serviceRepository.findByIdLean(id)));
 
     const resolvedItems = [];
     let subtotal = 0;
@@ -67,12 +68,16 @@ class InquiryService {
     let couponId       = null;
 
     if (couponCode) {
-      const result = await couponRepository.validateForUser(couponCode, user._id, subtotal);
+      // Single fetch: findByCode returns the Mongoose doc so we can call calculateDiscount()
+      // without a second round-trip (validateForUser would fetch it again internally).
+      const coupon = await couponRepository.findByCode(couponCode);
+      const result = coupon
+        ? await couponRepository.validateForUser(couponCode, user._id, subtotal)
+        : { valid: false, reason: 'Coupon code not found' };
       if (!result.valid) throw AppError.badRequest(result.reason);
 
       discountAmount = result.discount;
-      const coupon   = await couponRepository.findByCode(couponCode);
-      couponId = coupon._id;
+      couponId       = coupon._id;
     }
 
     const totalAmount = subtotal - discountAmount;
@@ -104,6 +109,10 @@ class InquiryService {
     }
 
     notificationService.notifyInquirySubmitted(inquiry).catch(() => {});
+
+    userRepository.findAdminEmails()
+      .then(admins => sendInquiryAdminAlert(admins, inquiry))
+      .catch(() => {});
 
     return inquiry;
   }
@@ -225,8 +234,9 @@ class InquiryService {
   }
 
   async addNote(id, text, adminId) {
-    const inquiry = await inquiryRepository.findById(id);
-    if (!inquiry) throw AppError.notFound('Inquiry');
+    // Existence check only — no need for the full 7-populate detail fetch here.
+    const exists = await inquiryRepository.existsById(id);
+    if (!exists) throw AppError.notFound('Inquiry');
     return inquiryRepository.addNote(id, text, adminId);
   }
 
@@ -271,7 +281,8 @@ class InquiryService {
   }
 
   async recordCall(id, adminId, note) {
-    const inquiry = await inquiryRepository.findById(id);
+    // Lean fetch: we only need status to decide whether to auto-advance it.
+    const inquiry = await inquiryRepository.findStatusById(id);
     if (!inquiry) throw AppError.notFound('Inquiry');
     if (inquiry.status === 'new') {
       await inquiryRepository.updateStatus(id, 'contacted', 'Admin called user', adminId);

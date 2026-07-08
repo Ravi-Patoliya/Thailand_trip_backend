@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const logger   = require('../helpers/logger.helper');
 
 /**
  * MongoDB connection with:
@@ -7,7 +8,8 @@ const mongoose = require('mongoose');
  * - Event listeners for connection state logging
  */
 
-const MAX_RETRIES = 5;
+const MAX_RETRIES       = 5;
+const RETRY_BASE_DELAY_MS = 2000;
 
 const connectDB = async (retries = 0) => {
   try {
@@ -17,34 +19,34 @@ const connectDB = async (retries = 0) => {
       socketTimeoutMS: 45000,
     });
 
-    console.log(`✅ MongoDB connected: ${conn.connection.host}`);
+    logger.info(`MongoDB connected: ${conn.connection.host}`);
   } catch (error) {
-    console.error(`❌ MongoDB connection error: ${error.message}`);
+    logger.error(`MongoDB connection error: ${error.message}`);
     if (retries < MAX_RETRIES) {
-      const delay = (retries + 1) * 2000; // 2s, 4s, 6s, 8s, 10s
-      console.log(`🔄 Retrying in ${delay / 1000}s... (attempt ${retries + 1}/${MAX_RETRIES})`);
+      const delay = (retries + 1) * RETRY_BASE_DELAY_MS;
+      logger.info(`Retrying in ${delay / 1000}s... (attempt ${retries + 1}/${MAX_RETRIES})`);
       await new Promise((resolve) => setTimeout(resolve, delay));
       return connectDB(retries + 1);
     }
-    console.error('💀 Max retries reached. Exiting process.');
+    logger.error('Max retries reached. Exiting process.');
     process.exit(1);
   }
 };
 
 // ── Mongoose event listeners ───────────────────────────────────
 mongoose.connection.on('disconnected', () => {
-  console.warn('⚠️  MongoDB disconnected');
+  logger.warn('MongoDB disconnected');
 });
 
 mongoose.connection.on('reconnected', () => {
-  console.log('🔁 MongoDB reconnected');
+  logger.info('MongoDB reconnected');
 });
 
 // ── Graceful shutdown ──────────────────────────────────────────
 const gracefulShutdown = async (signal) => {
-  console.log(`\n${signal} received. Closing MongoDB connection...`);
+  logger.info(`${signal} received. Closing MongoDB connection...`);
   await mongoose.connection.close();
-  console.log('MongoDB connection closed.');
+  logger.info('MongoDB connection closed.');
   process.exit(0);
 };
 

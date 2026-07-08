@@ -1,12 +1,15 @@
 /**
  * Rate Limiter Middleware
- * Provides protection against DoS attacks and abuse
- * Simple memory-based rate limiting (for production, use Redis)
+ * Provides protection against DoS attacks and abuse.
+ *
+ * WARNING: the in-memory Map store is per-process and resets on every restart.
+ * In production with multiple Node instances or PM2 cluster mode this offers
+ * no real protection — replace with an ioredis-backed store (e.g. rate-limit-redis
+ * wrapping the shared Redis client from config/redis.config.js).
  */
 
 const { logger } = require('../helpers');
 
-// In-memory store for rate limiting (use Redis in production)
 const rateLimitStore = new Map();
 
 // Cleanup old entries every 5 minutes

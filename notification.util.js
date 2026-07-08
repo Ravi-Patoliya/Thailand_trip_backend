@@ -1,10 +1,11 @@
 'use strict';
 const { getMessaging } = require('./config/firebase.config');
+const logger           = require('./helpers/logger.helper');
 
 const sendToTokens = async (tokens, { title, body, data = {} }) => {
   const messaging = getMessaging();
   if (!messaging) {
-    console.debug('[FCM] Skipped (Firebase not configured):', title);
+    logger.debug(`[FCM] Skipped (Firebase not configured): ${title}`);
     return { successCount: 0, failureCount: 0, staleTokens: [] };
   }
 
@@ -48,15 +49,15 @@ const sendToTokens = async (tokens, { title, body, data = {} }) => {
         ) {
           staleTokens.push(uniqueTokens[idx]);
         }
-        console.warn(`[FCM] Token send failed (${uniqueTokens[idx].slice(0, 12)}...): ${errorCode}`);
+        logger.warn(`[FCM] Token send failed (${uniqueTokens[idx].slice(0, 12)}...): ${errorCode}`);
       }
     });
 
-    console.log(`[FCM] Sent "${title}" → ${response.successCount}✓ ${response.failureCount}✗`);
+    logger.info(`[FCM] Sent "${title}" → ${response.successCount}✓ ${response.failureCount}✗`);
     return { successCount: response.successCount, failureCount: response.failureCount, staleTokens };
 
   } catch (err) {
-    console.error('[FCM] sendToTokens error:', err.message);
+    logger.error('[FCM] sendToTokens error:', err.message);
     return { successCount: 0, failureCount: 0, staleTokens: [] };
   }
 };
@@ -69,9 +70,13 @@ const sendToUser = async (user, payload) => {
   if (staleTokens.length > 0) {
     try {
       const { User } = require('./models');
-      await User.findByIdAndUpdate(user._id, { $pull: { fcmTokens: { $in: staleTokens } } });
+      const remaining = user.fcmTokens.filter(t => !staleTokens.includes(t));
+      const update = { $pull: { fcmTokens: { $in: staleTokens } } };
+      // All tokens gone — ask the client to re-register on next login
+      if (remaining.length === 0) update.$set = { fcmTokenRequired: true };
+      await User.findByIdAndUpdate(user._id, update);
     } catch (err) {
-      console.warn('[FCM] Failed to remove stale tokens:', err.message);
+      logger.warn('[FCM] Failed to remove stale tokens:', err.message);
     }
   }
 };
@@ -86,7 +91,7 @@ const sendToMany = async (users, payload) => {
 const sendToTopic = async (topic, payload) => {
   const messaging = getMessaging();
   if (!messaging) {
-    console.debug(`[FCM] Topic send skipped (Firebase not configured): ${topic}`);
+    logger.debug(`[FCM] Topic send skipped (Firebase not configured): ${topic}`);
     return;
   }
 
@@ -102,9 +107,9 @@ const sendToTopic = async (topic, payload) => {
     };
 
     const response = await messaging.send(message);
-    console.log(`[FCM] Topic "${topic}" sent → messageId: ${response}`);
+    logger.info(`[FCM] Topic "${topic}" sent → messageId: ${response}`);
   } catch (err) {
-    console.error(`[FCM] Topic send error (${topic}):`, err.message);
+    logger.error(`[FCM] Topic send error (${topic}):`, err.message);
   }
 };
 
@@ -113,9 +118,9 @@ const subscribeToTopic = async (tokens, topic) => {
   if (!messaging || !tokens?.length) return;
   try {
     await messaging.subscribeToTopic(tokens, topic);
-    console.log(`[FCM] Subscribed ${tokens.length} token(s) to topic "${topic}"`);
+    logger.info(`[FCM] Subscribed ${tokens.length} token(s) to topic "${topic}"`);
   } catch (err) {
-    console.warn(`[FCM] subscribeToTopic error (${topic}):`, err.message);
+    logger.warn(`[FCM] subscribeToTopic error (${topic}):`, err.message);
   }
 };
 
@@ -125,7 +130,7 @@ const unsubscribeFromTopic = async (tokens, topic) => {
   try {
     await messaging.unsubscribeFromTopic(tokens, topic);
   } catch (err) {
-    console.warn(`[FCM] unsubscribeFromTopic error (${topic}):`, err.message);
+    logger.warn(`[FCM] unsubscribeFromTopic error (${topic}):`, err.message);
   }
 };
 

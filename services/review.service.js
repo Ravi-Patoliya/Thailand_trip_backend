@@ -9,7 +9,7 @@ const { paginate }       = require('../utils/paginate');
 
 class ReviewService {
   async getServiceReviews(serviceId, query) {
-    const service = await serviceRepository.findById(serviceId);
+    const service = await serviceRepository.findByIdLean(serviceId);
     if (!service) throw AppError.notFound('Service');
 
     const { page, limit, skip, sort } = paginate(query, { limit: 10 });
@@ -33,7 +33,8 @@ class ReviewService {
   async createReview(body, user) {
     const { serviceId, inquiryId, rating, title, bodyText, travelType, images = [], video = null } = body;
 
-    const service = await serviceRepository.findById(serviceId);
+    // Lean read — we only need to confirm the service exists before creating the review.
+    const service = await serviceRepository.findByIdLean(serviceId);
     if (!service) throw AppError.notFound('Service');
 
     const inquiry = await inquiryRepository.findById(inquiryId);
@@ -109,7 +110,6 @@ class ReviewService {
     if (status === 'approved') {
       serviceRepository.addRating(review.service._id, review.rating).catch(() => {});
     } else if (status === 'rejected' && review.status === 'approved') {
-      // was previously approved, now rejected — remove it from the cache
       serviceRepository.removeRating(review.service._id, review.rating).catch(() => {});
     }
 

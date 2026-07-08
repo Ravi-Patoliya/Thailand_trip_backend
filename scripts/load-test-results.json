@@ -1,0 +1,347 @@
+[
+  {
+    "title": "Group 1 — Public / optional-auth GET endpoints",
+    "rows": [
+      {
+        "label": "GET /health",
+        "rps": "568.8",
+        "p50": 46,
+        "p99": 196,
+        "p999": 375,
+        "total": 8532,
+        "errPct": "0.0%",
+        "codeStr": "200:8532"
+      },
+      {
+        "label": "GET /api/cities",
+        "rps": "550.9",
+        "p50": 50,
+        "p99": 202,
+        "p999": 362,
+        "total": 8263,
+        "errPct": "0.0%",
+        "codeStr": "200:8263"
+      },
+      {
+        "label": "GET /api/roles",
+        "rps": "8.0",
+        "p50": 3604,
+        "p99": 4802,
+        "p999": 4803,
+        "total": 120,
+        "errPct": "0.0%",
+        "codeStr": "200:120"
+      },
+      {
+        "label": "GET /api/categories",
+        "rps": "7.5",
+        "p50": 3536,
+        "p99": 4618,
+        "p999": 4620,
+        "total": 120,
+        "errPct": "0.0%",
+        "codeStr": "200:120"
+      },
+      {
+        "label": "GET /api/services (list)",
+        "rps": "3.8",
+        "p50": 6366,
+        "p99": 7379,
+        "p999": 7379,
+        "total": 60,
+        "errPct": "0.0%",
+        "codeStr": "200:60"
+      },
+      {
+        "label": "GET /api/services?id (detail)",
+        "rps": "4.0",
+        "p50": 6675,
+        "p99": 7239,
+        "p999": 7239,
+        "total": 60,
+        "errPct": "0.0%",
+        "codeStr": "200:60"
+      },
+      {
+        "label": "GET /api/reviews (by service)",
+        "rps": "3.8",
+        "p50": 7248,
+        "p99": 7858,
+        "p999": 7858,
+        "total": 57,
+        "errPct": "0.0%",
+        "codeStr": "200:57"
+      },
+      {
+        "label": "GET /api/coupons (public)",
+        "rps": "6.0",
+        "p50": 3774,
+        "p99": 4626,
+        "p999": 4626,
+        "total": 90,
+        "errPct": "0.0%",
+        "codeStr": "200:90"
+      },
+      {
+        "label": "GET /api/banners",
+        "rps": "6.0",
+        "p50": 4116,
+        "p99": 5110,
+        "p999": 5110,
+        "total": 90,
+        "errPct": "0.0%",
+        "codeStr": "200:90"
+      }
+    ]
+  },
+  {
+    "title": "Group 2 — Authenticated user GET endpoints",
+    "rows": [
+      {
+        "label": "GET /api/auth/me",
+        "rps": "2.0",
+        "p50": 8979,
+        "p99": 9036,
+        "p999": 9036,
+        "total": 30,
+        "errPct": "0.0%",
+        "codeStr": "200:30"
+      },
+      {
+        "label": "GET /api/users/me",
+        "rps": "2.0",
+        "p50": 9090,
+        "p99": 9145,
+        "p999": 9145,
+        "total": 30,
+        "errPct": "0.0%",
+        "codeStr": "200:30"
+      },
+      {
+        "label": "GET /api/inquiries (user)",
+        "rps": "3.9",
+        "p50": 7107,
+        "p99": 7919,
+        "p999": 7919,
+        "total": 58,
+        "errPct": "0.0%",
+        "codeStr": "200:58"
+      },
+      {
+        "label": "GET /api/notifications",
+        "rps": "2.0",
+        "p50": 7278,
+        "p99": 8493,
+        "p999": 8493,
+        "total": 30,
+        "errPct": "0.0%",
+        "codeStr": "200:30"
+      },
+      {
+        "label": "GET /api/notifications/unread",
+        "rps": "2.0",
+        "p50": 8514,
+        "p99": 8584,
+        "p999": 8584,
+        "total": 30,
+        "errPct": "0.0%",
+        "codeStr": "200:30"
+      },
+      {
+        "label": "GET /api/notifications/prefs",
+        "rps": "2.0",
+        "p50": 8615,
+        "p99": 8662,
+        "p999": 8662,
+        "total": 30,
+        "errPct": "0.0%",
+        "codeStr": "200:30"
+      }
+    ]
+  },
+  {
+    "title": "Group 3 — Admin GET endpoints",
+    "rows": [
+      {
+        "label": "GET /api/users (admin list)",
+        "rps": "0.0",
+        "p50": 0,
+        "p99": 0,
+        "p999": 0,
+        "total": 0,
+        "errPct": "0.0%",
+        "codeStr": ""
+      },
+      {
+        "label": "GET /api/users/:id",
+        "rps": "0.0",
+        "p50": 0,
+        "p99": 0,
+        "p999": 0,
+        "total": 0,
+        "errPct": "0.0%",
+        "codeStr": ""
+      },
+      {
+        "label": "GET /api/users/stats",
+        "rps": "0.0",
+        "p50": 0,
+        "p99": 0,
+        "p999": 0,
+        "total": 0,
+        "errPct": "0.0%",
+        "codeStr": ""
+      },
+      {
+        "label": "GET /api/inquiries (admin)",
+        "rps": "0.0",
+        "p50": 0,
+        "p99": 0,
+        "p999": 0,
+        "total": 0,
+        "errPct": "0.0%",
+        "codeStr": ""
+      },
+      {
+        "label": "GET /api/inquiries/stats",
+        "rps": "0.0",
+        "p50": 0,
+        "p99": 0,
+        "p999": 0,
+        "total": 0,
+        "errPct": "0.0%",
+        "codeStr": ""
+      },
+      {
+        "label": "GET /api/reviews (admin)",
+        "rps": "0.0",
+        "p50": 0,
+        "p99": 0,
+        "p999": 0,
+        "total": 0,
+        "errPct": "0.0%",
+        "codeStr": ""
+      },
+      {
+        "label": "GET /api/reviews/pending-count",
+        "rps": "0.0",
+        "p50": 0,
+        "p99": 0,
+        "p999": 0,
+        "total": 0,
+        "errPct": "0.0%",
+        "codeStr": ""
+      },
+      {
+        "label": "GET /api/coupons (admin)",
+        "rps": "0.0",
+        "p50": 0,
+        "p99": 0,
+        "p999": 0,
+        "total": 0,
+        "errPct": "0.0%",
+        "codeStr": ""
+      },
+      {
+        "label": "GET /api/coupons/:id",
+        "rps": "0.0",
+        "p50": 0,
+        "p99": 0,
+        "p999": 0,
+        "total": 0,
+        "errPct": "0.0%",
+        "codeStr": ""
+      },
+      {
+        "label": "GET /api/notifications/admin",
+        "rps": "0.0",
+        "p50": 0,
+        "p99": 0,
+        "p999": 0,
+        "total": 0,
+        "errPct": "0.0%",
+        "codeStr": ""
+      },
+      {
+        "label": "GET /api/roles/:id",
+        "rps": "0.0",
+        "p50": 0,
+        "p99": 0,
+        "p999": 0,
+        "total": 0,
+        "errPct": "0.0%",
+        "codeStr": ""
+      }
+    ]
+  },
+  {
+    "title": "Group 4 — Write / mutation endpoints",
+    "rows": [
+      {
+        "label": "POST /api/notifications/fcm-token",
+        "rps": "0.0",
+        "p50": 0,
+        "p99": 0,
+        "p999": 0,
+        "total": 0,
+        "errPct": "0.0%",
+        "codeStr": ""
+      },
+      {
+        "label": "PATCH /api/notifications/preferences",
+        "rps": "31.6",
+        "p50": 121,
+        "p99": 1579,
+        "p999": 1595,
+        "total": 474,
+        "errPct": "0.0%",
+        "codeStr": "200:474"
+      },
+      {
+        "label": "PATCH /api/notifications/read-all",
+        "rps": "34.3",
+        "p50": 138,
+        "p99": 699,
+        "p999": 714,
+        "total": 514,
+        "errPct": "0.0%",
+        "codeStr": "200:514"
+      },
+      {
+        "label": "POST /api/coupons/validate",
+        "rps": "103.8",
+        "p50": 40,
+        "p99": 632,
+        "p999": 649,
+        "total": 1557,
+        "errPct": "100.0%",
+        "codeStr": "400:1557"
+      },
+      {
+        "label": "POST /api/inquiries (write + notify)",
+        "rps": "13.1",
+        "p50": 200,
+        "p99": 808,
+        "p999": 826,
+        "total": 196,
+        "errPct": "0.0%",
+        "codeStr": "201:196"
+      }
+    ]
+  },
+  {
+    "title": "Group 5 — Rate limiter probes",
+    "rows": [
+      {
+        "label": "POST /api/auth/send-otp (OTP limiter)",
+        "rps": "1021.5",
+        "p50": 20,
+        "p99": 46,
+        "p999": 68,
+        "total": 11236,
+        "errPct": "100.0%",
+        "codeStr": "200:1 429:11235"
+      }
+    ]
+  }
+]

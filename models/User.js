@@ -73,6 +73,11 @@ const userSchema = new mongoose.Schema(
       default: [],
       select:  false,
     },
+    fcmTokenRequired: {
+      type:    Boolean,
+      default: true,
+      select:  false,
+    },
     notificationPrefs: {
       booking: { type: Boolean, default: true },
       reviews: { type: Boolean, default: true },
@@ -102,8 +107,11 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-userSchema.index({ role_id: 1 });
 userSchema.index({ createdAt: -1 });
+// Supports the common filter pattern: { isDeleted: false, isActive: true } used on every read.
+userSchema.index({ isDeleted: 1, isActive: 1 });
+// Covers role_id alone (prefix) and findAdmins: { role_id, isActive, isDeleted }.
+userSchema.index({ role_id: 1, isActive: 1, isDeleted: 1 });
 
 userSchema.virtual('fullMobile').get(function () {
   if (!this.mobile) return null;

@@ -33,6 +33,7 @@ const errorHandler = async (err, req, res, next) => {
             404: 'NOT_FOUND',
             409: 'DUPLICATE_VALUE',
             422: 'VALIDATION_ERROR',
+            503: 'SERVICE_UNAVAILABLE',
         };
         const method = STATUS_MAP[err.statusCode];
         if (method) return API_response[method]({ res, message: err.message });

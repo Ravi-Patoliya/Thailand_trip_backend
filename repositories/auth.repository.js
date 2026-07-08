@@ -4,24 +4,25 @@ const { User } = require('../models');
 class AuthRepository {
   async findByMobile(mobile) {
     return User.findOne({ mobile, isDeleted: false })
-      .select('+password +refreshToken')
+      .select('+password +refreshToken +fcmTokenRequired')
       .populate({ path: 'role_id', select: 'name label isActive' });
   }
 
   async findByEmail(email) {
     return User.findOne({ email: email.toLowerCase(), isDeleted: false })
-      .select('+password +refreshToken')
+      .select('+password +refreshToken +fcmTokenRequired')
       .populate({ path: 'role_id', select: 'name label isActive' });
   }
 
   async findById(id) {
     return User.findOne({ _id: id, isDeleted: false })
-      .select('+refreshToken')
+      .select('+refreshToken +fcmTokenRequired')
       .populate({ path: 'role_id', select: 'name label isActive' });
   }
 
   async findByGoogleId(googleId) {
     return User.findOne({ googleId, isDeleted: false })
+      .select('+fcmTokenRequired')
       .populate({ path: 'role_id', select: 'name label isActive' });
   }
 
@@ -30,11 +31,10 @@ class AuthRepository {
   }
 
   async linkGoogleId(userId, googleId, avatar) {
-    return User.findByIdAndUpdate(
-      userId,
-      { $set: { googleId, ...(avatar && !avatar ? {} : { avatar }) } },
-      { new: true }
-    );
+    // Only set avatar when the caller provided one; let the existing value stand otherwise.
+    const update = { googleId };
+    if (avatar) update.avatar = avatar;
+    return User.findByIdAndUpdate(userId, { $set: update }, { new: true });
   }
 
   async existsByMobile(mobile) {
@@ -80,6 +80,16 @@ class AuthRepository {
 
   async updateById(userId, data) {
     return User.findByIdAndUpdate(userId, { $set: data }, { new: true });
+  }
+
+  /**
+   * Minimal projection used by auth middleware on every authenticated request.
+   * Returns the fields needed for identity checks — not the full profile.
+   */
+  async findForAuthById(id) {
+    return User.findById(id)
+      .select('_id name email role_id isActive isVerified')
+      .populate({ path: 'role_id', select: 'name label isActive' });
   }
 }
 

@@ -46,9 +46,9 @@ router.get('/', optionalAuth, ctrl.listQueryValidator, ctrl.getBanners);
 // PATCH  /api/banners/:id         — update
 // DELETE /api/banners/:id         — soft delete
 
-router.post  ('/',         ...requireAdmin, uploadBanner, ctrl.createBanner);
-router.patch ('/reorder',  ...requireAdmin, ctrl.reorderValidator, ctrl.reorderBanners);
-router.patch ('/:id',      ...requireAdmin, uploadBanner, idParam, ctrl.updateBanner);
-router.delete('/:id',      ...requireAdmin, idParam, ctrl.deleteBanner);
+router.post  ('/',        ...requireAdmin, uploadBanner, ctrl.createBanner);
+router.patch ('/reorder', ...requireAdmin, ctrl.reorderValidator, ctrl.reorderBanners);
+router.patch ('/:id',     ...requireAdmin, uploadBanner, idParam, ctrl.updateBanner);
+router.delete('/:id',     ...requireAdmin, idParam, ctrl.deleteBanner);
 
 module.exports = router;
