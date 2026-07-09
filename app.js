@@ -4,23 +4,11 @@ const cors          = require('cors');
 const helmet        = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const cookieParser  = require('cookie-parser');
+const router        = require('./routes/index');
 
 const errorHandler     = require('./middlewares/error.handler');
 const requestLogger    = require('./middlewares/request.logger');
 const dbHealthCheck    = require('./middlewares/db.health.middleware');
-
-const roleRoutes          = require('./routes/role.routes');
-const cityRoutes          = require('./routes/city.routes');
-const authRoutes          = require('./routes/auth.routes');
-const userRoutes          = require('./routes/user.routes');
-const inquiryRoutes       = require('./routes/inquiry.routes');
-const reviewRoutes        = require('./routes/review.routes');
-const notificationRoutes  = require('./routes/notification.routes');
-const categoryRoutes      = require('./routes/category.routes');
-const serviceRoutes       = require('./routes/service.routes');
-const couponRoutes        = require('./routes/coupon.routes');
-const bannerRoutes        = require('./routes/banner.routes');
-const uploadRoutes        = require('./routes/upload.routes');
 
 const app = express();
 
@@ -51,38 +39,19 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser());
 app.use(mongoSanitize());
 app.use(requestLogger);
+app.use('/api/v1', router);
 
 app.use((req, _res, next) => {
   req.redis = app.locals.redis;
   next();
 });
 
-app.get('/health', (_req, res) => {
-  res.json({
-    status:  'ok',
-    service: 'Thailand Tour API',
-    env:     process.env.NODE_ENV,
-    ts:      new Date().toISOString(),
-  });
-});
 
 app.use(dbHealthCheck);
 
 const { initFirebase } = require('./config/firebase.config');
 initFirebase();
 
-app.use('/api/roles',         roleRoutes);
-app.use('/api/cities',        cityRoutes);
-app.use('/api/auth',          authRoutes);
-app.use('/api/users',         userRoutes);
-app.use('/api/inquiries',     inquiryRoutes);
-app.use('/api/reviews',       reviewRoutes);
-app.use('/api/notifications', notificationRoutes);
-app.use('/api/categories',   categoryRoutes);
-app.use('/api/services',     serviceRoutes);
-app.use('/api/coupons',      couponRoutes);
-app.use('/api/banners',      bannerRoutes);
-app.use('/api/upload',       uploadRoutes);
 
 app.use((_req, res) => {
   res.status(404).json({ success: false, status: 404, message: "Oops! Looks like you're lost." });
