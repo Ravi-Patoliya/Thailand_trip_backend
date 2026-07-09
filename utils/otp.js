@@ -11,11 +11,27 @@ const OTP_LENGTH       = 6;
 const otpKey      = (identifier) => `otp:${identifier}`;
 const attemptsKey = (identifier) => `otp:attempts:${identifier}`;
 
-// Redis is optional infra (see config/redis.config.js). If it's down, fail
-// OTP flows cleanly instead of hanging/crashing on the underlying client call.
+// Redis is optional infra (see config/redis.config.js). `status` can be
+// transiently 'connecting'/'reconnecting' even while the client is about to
+// serve the call fine (e.g. brief provider-side blips), so gating on the
+// status string alone caused false 503s. Instead, only report unavailable
+// once redis has never connected at all (status 'end', or missing client).
 const assertRedisReady = (redis) => {
-  if (!redis || redis.status !== 'ready') {
+  if (!redis || redis.status === 'end') {
     throw AppError.serviceUnavailable('OTP service is temporarily unavailable. Please try again shortly.');
+  }
+};
+
+// Wrap a redis call so genuine connection failures surface as a clean 503
+// instead of the raw ioredis error (e.g. ECONNREFUSED, MaxRetriesPerRequestError).
+const withRedis = async (fn) => {
+  try {
+    return await fn();
+  } catch (err) {
+    if (err?.message?.includes('Redis is not ready') || err?.name === 'MaxRetriesPerRequestError' || err?.code === 'ECONNREFUSED') {
+      throw AppError.serviceUnavailable('OTP service is temporarily unavailable. Please try again shortly.');
+    }
+    throw err;
   }
 };
 
@@ -37,11 +53,11 @@ const storeOtp = async (redis, identifier) => {
   assertRedisReady(redis);
   const otp = generateOtp();
   // MULTI so the OTP write and attempt-counter reset are atomic together.
-  await redis
+  await withRedis(() => redis
     .multi()
     .set(otpKey(identifier), otp, 'EX', OTP_TTL)
     .del(attemptsKey(identifier))
-    .exec();
+    .exec());
   return otp;
 };
 
@@ -51,7 +67,7 @@ const storeOtp = async (redis, identifier) => {
  */
 const verifyOtp = async (redis, identifier, inputOtp) => {
   assertRedisReady(redis);
-  const stored = await redis.get(otpKey(identifier));
+  const stored = await withRedis(() => redis.get(otpKey(identifier)));
 
   // No active OTP: either never requested, already used, or genuinely expired.
   if (!stored) {
@@ -61,12 +77,12 @@ const verifyOtp = async (redis, identifier, inputOtp) => {
   if (stored !== inputOtp) {
     // Count the failed attempt against the CURRENT OTP. The counter shares the
     // OTP's lifetime, so it resets automatically when a new OTP is issued.
-    const attempts = await redis.incr(attemptsKey(identifier));
-    if (attempts === 1) await redis.expire(attemptsKey(identifier), OTP_TTL);
+    const attempts = await withRedis(() => redis.incr(attemptsKey(identifier)));
+    if (attempts === 1) await withRedis(() => redis.expire(attemptsKey(identifier), OTP_TTL));
 
     if (attempts >= MAX_VERIFY_TRIES) {
       // Burn the OTP so the attacker must trigger a new send (rate-limited upstream).
-      await redis.del(otpKey(identifier), attemptsKey(identifier));
+      await withRedis(() => redis.del(otpKey(identifier), attemptsKey(identifier)));
       throw AppError.badRequest('Too many incorrect attempts. Please request a new OTP.');
     }
 
@@ -75,7 +91,7 @@ const verifyOtp = async (redis, identifier, inputOtp) => {
   }
 
   // Success — consume the OTP and clear the attempt counter (one-time use).
-  await redis.del(otpKey(identifier), attemptsKey(identifier));
+  await withRedis(() => redis.del(otpKey(identifier), attemptsKey(identifier)));
 };
 
 /**
