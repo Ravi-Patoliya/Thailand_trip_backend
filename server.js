@@ -21,7 +21,7 @@ const bootstrap = async () => {
       console.log(`\n🚀 Thailand Tour API running`);
       console.log(`   Environment : ${process.env.NODE_ENV}`);
       console.log(`   Port        : ${PORT}`);
-      console.log(`   Health      : http://localhost:${PORT}/health\n`);
+      console.log(`   Health      : http://localhost:${PORT}/api/v1/health\n`);
     });
 
     const shutdown = async (signal) => {
