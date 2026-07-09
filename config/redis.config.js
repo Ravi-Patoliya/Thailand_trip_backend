@@ -12,7 +12,7 @@ const REDIS_PASSWORD = process.env.REDIS_PASSWORD || null;
 const commonOptions = {
   lazyConnect: true,
   retryStrategy: (times) => Math.min(times * 1000, 30_000),
-  maxRetriesPerRequest: 1,
+  maxRetriesPerRequest: 3,
   reconnectOnError: (err) => {
     logger.error(`Redis reconnectOnError: ${err?.message || err}`);
     return true;
