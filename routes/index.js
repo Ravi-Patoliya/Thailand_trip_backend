@@ -19,18 +19,18 @@ const router = express.Router();
 //---------
 
 
-router.use('/api/roles',         roleRoutes);
-router.use('/api/cities',        cityRoutes);
-router.use('/api/auth',          authRoutes);
-router.use('/api/users',         userRoutes);
-router.use('/api/inquiries',     inquiryRoutes);
-router.use('/api/reviews',       reviewRoutes);
-router.use('/api/notifications', notificationRoutes);
-router.use('/api/categories',   categoryRoutes);
-router.use('/api/services',     serviceRoutes);
-router.use('/api/coupons',      couponRoutes);
-router.use('/api/banners',      bannerRoutes);
-router.use('/api/upload',       uploadRoutes);
+router.use('/roles',         roleRoutes);
+router.use('/cities',        cityRoutes);
+router.use('/auth',          authRoutes);
+router.use('/users',         userRoutes);
+router.use('/inquiries',     inquiryRoutes);
+router.use('/reviews',       reviewRoutes);
+router.use('/notifications', notificationRoutes);
+router.use('/categories',   categoryRoutes);
+router.use('/services',     serviceRoutes);
+router.use('/coupons',      couponRoutes);
+router.use('/banners',      bannerRoutes);
+router.use('/upload',       uploadRoutes);
 //---------
 
 
