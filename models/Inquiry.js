@@ -85,7 +85,6 @@ const inquirySchema = new mongoose.Schema(
     // ── Reference number ─────────────────────────────────────
     referenceNumber: {
       type: String,
-      unique: true,
       // Generated pre-save: TTP-YYYYMMDD-XXXX
     },
 
