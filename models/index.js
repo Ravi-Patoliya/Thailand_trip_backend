@@ -9,5 +9,6 @@ const Review       = require('./Review');
 const Contact      = require('./Contact');
 const Notification = require('./Notification');
 const { Banner }   = require('./Banner');
+const Otp          = require('./Otp');
 
-module.exports = { Role, User, Category, Service, Inquiry, Coupon, Review, Contact, Notification, Banner };
+module.exports = { Role, User, Category, Service, Inquiry, Coupon, Review, Contact, Notification, Banner, Otp };

@@ -12,7 +12,12 @@ const REDIS_PASSWORD = process.env.REDIS_PASSWORD || null;
 const commonOptions = {
   lazyConnect: true,
   retryStrategy: (times) => Math.min(times * 1000, 30_000),
-  maxRetriesPerRequest: 3,
+  // Upstash silently closes idle connections; ioredis doesn't always notice
+  // until a real command hits the dead socket. With maxRetriesPerRequest set,
+  // that command fails fast (MaxRetriesPerRequestError) instead of queuing
+  // until the reconnect (driven by retryStrategy above) completes.
+  maxRetriesPerRequest: null,
+  enableReadyCheck: false,
   reconnectOnError: (err) => {
     logger.error(`Redis reconnectOnError: ${err?.message || err}`);
     return true;
@@ -35,5 +40,12 @@ redis.on('close', () => logger.warn('🔄 Redis connection closed ♦'));
 // lazyConnect defers the actual TCP connection; kick it off but never let a
 // failure here crash the process — errors are handled by the 'error' listener above.
 redis.connect().catch(() => {});
+
+// Upstash reaps idle connections; a periodic app-level ping keeps the session
+// active so the reaper never triggers, instead of discovering the drop only
+// when a real OTP request hits the dead socket.
+setInterval(() => {
+  redis.ping().catch(() => {});
+}, 30_000).unref();
 
 module.exports = redis;
