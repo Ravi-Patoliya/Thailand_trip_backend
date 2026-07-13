@@ -1,5 +1,6 @@
 'use strict';
 const { Service } = require('../models');
+const escapeRegex  = require('../utils/escapeRegex');
 
 class ServiceRepository {
   /** Full Mongoose document — retains virtuals (primaryImage) for detail-view responses. */
@@ -13,6 +14,16 @@ class ServiceRepository {
    */
   async findByIdLean(id) {
     return Service.findOne({ _id: id, isDeleted: false })
+      .select('title isActive availability pricing _id')
+      .lean();
+  }
+
+  /**
+   * Batch version of findByIdLean — one query instead of one per id.
+   * Duplicate ids in the input resolve to the same doc.
+   */
+  async findByIdsLean(ids) {
+    return Service.find({ _id: { $in: ids }, isDeleted: false })
       .select('title isActive availability pricing _id')
       .lean();
   }
@@ -35,7 +46,7 @@ class ServiceRepository {
   }
 
   async existsByTitle(title, excludeId = null) {
-    const filter = { title: new RegExp(`^${title}$`, 'i'), isDeleted: false };
+    const filter = { title: new RegExp(`^${escapeRegex(title)}$`, 'i'), isDeleted: false };
     if (excludeId) filter._id = { $ne: excludeId };
     return Service.exists(filter);
   }

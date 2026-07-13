@@ -19,7 +19,8 @@ class UserRepository {
   async findById(id) {
     return User.findOne({ _id: id, isDeleted: false })
       .select('-refreshToken -otp -password')
-      .populate({ path: 'role_id', select: 'name label' });
+      .populate({ path: 'role_id', select: 'name label' })
+      .lean();
   }
 
   async findByIdWithSensitive(id) {

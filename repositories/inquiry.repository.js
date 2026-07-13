@@ -1,5 +1,6 @@
 'use strict';
 const { Inquiry } = require('../models');
+const escapeRegex  = require('../utils/escapeRegex');
 
 class InquiryRepository {
   async findAll({ filter = {}, skip = 0, limit = 20, sort = { createdAt: -1 } }) {
@@ -55,7 +56,7 @@ class InquiryRepository {
     if (query.paymentStatus) filter.paymentStatus = query.paymentStatus;
     if (query.id)            filter._id           = query.id;
     if (query.search) {
-      const re = new RegExp(query.search, 'i');
+      const re = new RegExp(escapeRegex(query.search), 'i');
       filter.$or = [
         { referenceNumber:          re },
         { 'contactSnapshot.name':   re },

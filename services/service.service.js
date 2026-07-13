@@ -3,6 +3,7 @@ const serviceRepository  = require('../repositories/service.repository');
 const categoryRepository = require('../repositories/category.repository');
 const AppError           = require('../utils/AppError');
 const MSG                = require('../constants/message');
+const escapeRegex        = require('../utils/escapeRegex');
 
 class ServiceService {
   async getServices(query, adminView = false) {
@@ -30,7 +31,7 @@ class ServiceService {
     if (query.maxPrice)     filter.basePrice         = { ...filter.basePrice, $lte: Number(query.maxPrice) };
     if (query.tags)         filter.tags              = { $in: query.tags.split(',').map(t => t.trim().toLowerCase()) };
     if (query.search) {
-      const regex = new RegExp(query.search, 'i');
+      const regex = new RegExp(escapeRegex(query.search), 'i');
       filter.$or  = [
         { title:            regex },
         { shortDescription: regex },

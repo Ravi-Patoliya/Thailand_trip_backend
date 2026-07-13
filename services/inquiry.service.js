@@ -9,6 +9,8 @@ const { sendInquiryAdminAlert } = require('../helpers/email.helper');
 const AppError           = require('../utils/AppError');
 const MSG                = require('../constants/message');
 const { paginate }       = require('../utils/paginate');
+const escapeRegex        = require('../utils/escapeRegex');
+const logger             = require('../helpers/logger.helper');
 
 // One-way conveyor belt: new → contacted → confirmed → payment_pending → payment_received → in_progress → completed
 // Cancelled is the emergency exit reachable from any state except in_progress and completed.
@@ -30,15 +32,16 @@ class InquiryService {
       contactName, contactMobile, contactWhatsapp, contactEmail,
     } = body;
 
-    const serviceIds = serviceItems.map(i => i.serviceId);
-    const dbServices = await Promise.all(serviceIds.map(id => serviceRepository.findByIdLean(id)));
+    const serviceIds  = serviceItems.map(i => i.serviceId);
+    const dbServices  = await serviceRepository.findByIdsLean(serviceIds);
+    const servicesById = new Map(dbServices.map(svc => [svc._id.toString(), svc]));
 
     const resolvedItems = [];
     let subtotal = 0;
 
     for (let i = 0; i < serviceItems.length; i++) {
       const item = serviceItems[i];
-      const svc  = dbServices[i];
+      const svc  = servicesById.get(item.serviceId.toString());
 
       if (!svc)          throw AppError.badRequest(`Service "${item.serviceId}" not found.`);
       if (!svc.isActive) throw AppError.badRequest(`Service "${svc.title}" is currently unavailable.`);
@@ -108,11 +111,15 @@ class InquiryService {
       await couponRepository.recordUsage(couponId);
     }
 
-    notificationService.notifyInquirySubmitted(inquiry).catch(() => {});
+    notificationService.notifyInquirySubmitted(inquiry).catch(err =>
+      logger.error(`Failed to notify inquiry submitted (inquiry ${inquiry._id}): ${err?.message || err}`)
+    );
 
     userRepository.findAdminEmails()
       .then(admins => sendInquiryAdminAlert(admins, inquiry))
-      .catch(() => {});
+      .catch(err =>
+        logger.error(`Failed to send inquiry admin alert (inquiry ${inquiry._id}): ${err?.message || err}`)
+      );
 
     return inquiry;
   }
@@ -152,7 +159,7 @@ class InquiryService {
       filter._id = query.id;
     }
     if (query.search) {
-      const regex = new RegExp(query.search, 'i');
+      const regex = new RegExp(escapeRegex(query.search), 'i');
       filter.$or  = [
         { referenceNumber:           regex },
         { 'contactSnapshot.name':    regex },

@@ -5,6 +5,7 @@ const notificationService = require('./notification.service');
 const AppError            = require('../utils/AppError');
 const { deleteObject }    = require('../helpers/s3.helper');
 const MSG                 = require('../constants/message');
+const escapeRegex         = require('../utils/escapeRegex');
 
 class CategoryService {
   async getActiveCategories(query = {}) {
@@ -16,7 +17,7 @@ class CategoryService {
       if (!parentCat) throw AppError.notFound('Parent Category');
       filter.parent = query.parent;
     }
-    if (query.search) filter.name = { $regex: new RegExp(query.search, 'i') };
+    if (query.search) filter.name = { $regex: new RegExp(escapeRegex(query.search), 'i') };
     return categoryRepository.findAllWithChildren(filter);
   }
 
@@ -27,7 +28,7 @@ class CategoryService {
 
     const filter = { isDeleted: false };
     if (query.isActive !== undefined) filter.isActive = query.isActive === 'true';
-    if (query.search)  filter.name = { $regex: new RegExp(query.search, 'i') };
+    if (query.search)  filter.name = { $regex: new RegExp(escapeRegex(query.search), 'i') };
     if (query.parent === 'null') {
       filter.parent = null;
     } else if (query.parent) {

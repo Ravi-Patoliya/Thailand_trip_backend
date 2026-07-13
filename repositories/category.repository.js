@@ -1,5 +1,6 @@
 'use strict';
 const { Category } = require('../models');
+const escapeRegex   = require('../utils/escapeRegex');
 
 class CategoryRepository {
   async findAll({ filter = {}, sort = { order: 1 } } = {}) {
@@ -27,7 +28,7 @@ class CategoryRepository {
   }
 
   async existsByName(name, excludeId = null) {
-    const filter = { name: new RegExp(`^${name}$`, 'i'), isDeleted: false };
+    const filter = { name: new RegExp(`^${escapeRegex(name)}$`, 'i'), isDeleted: false };
     if (excludeId) filter._id = { $ne: excludeId };
     return Category.exists(filter);
   }
@@ -35,7 +36,7 @@ class CategoryRepository {
   // Find a soft-deleted category by exact (case-insensitive) name, so a create
   // with the same name can revive it instead of leaving a duplicate tombstone.
   async findDeletedByName(name) {
-    return Category.findOne({ name: new RegExp(`^${name}$`, 'i'), isDeleted: true });
+    return Category.findOne({ name: new RegExp(`^${escapeRegex(name)}$`, 'i'), isDeleted: true });
   }
 
   async getMaxOrder(parent = null) {

@@ -3,6 +3,7 @@ const couponRepository = require('../repositories/coupon.repository');
 const AppError         = require('../utils/AppError');
 const MSG              = require('../constants/message');
 const { COUPON_TYPE }  = require('../constants/enums');
+const escapeRegex      = require('../utils/escapeRegex');
 
 const EDITABLE_FIELDS = [
   'description', 'type', 'value', 'maxDiscountAmount', 'minOrderAmount',
@@ -20,7 +21,7 @@ class CouponService {
     const filter = { isDeleted: false };
     if (query.isActive !== undefined) filter.isActive = query.isActive === 'true';
     if (query.type) filter.type = query.type;
-    if (query.search) filter.code = { $regex: new RegExp(query.search, 'i') };
+    if (query.search) filter.code = { $regex: new RegExp(escapeRegex(query.search), 'i') };
 
     const [data, total] = await Promise.all([
       couponRepository.findAllPaginated({ filter, skip, limit }),

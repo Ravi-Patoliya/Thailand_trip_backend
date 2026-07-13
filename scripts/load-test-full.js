@@ -7,8 +7,14 @@
 const autocannon = require('autocannon');
 
 const BASE         = 'http://localhost:5000';
-const USER_TOKEN   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmNlOGI3MmVkMDU1YmU0NDhjMDM5OSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzgyNjUwOTI0LCJleHAiOjE3ODM5NDY5MjR9.9AI7Gk48FO2YpQl6SWD1OPA37dn9Ulkv_H5PmihUelA';
-const ADMIN_TOKEN  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMWViOTUxZDE5ZDk1ZmU5MTVlN2JkOCIsInJvbGUiOiJzdXBlcmFkbWluIiwiaWF0IjoxNzgyNjUwOTcwLCJleHAiOjE3ODM5NDY5NzB9.tTqg7fZJqq9B-49vyAYG-B9PpppywD00697XitkWQxM';
+// Provide fresh tokens via env vars — do not hardcode credentials in this file.
+const USER_TOKEN   = process.env.LOAD_TEST_USER_TOKEN;
+const ADMIN_TOKEN  = process.env.LOAD_TEST_ADMIN_TOKEN;
+
+if (!USER_TOKEN || !ADMIN_TOKEN) {
+  console.error('Set LOAD_TEST_USER_TOKEN and LOAD_TEST_ADMIN_TOKEN env vars before running this script.');
+  process.exit(1);
+}
 
 // Real IDs discovered from the DB
 const SVC_ID      = '6a3384909fad55b3ae7407ff';

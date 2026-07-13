@@ -14,9 +14,21 @@ const BUCKET_NAME = process.env.AWS_S3_BUCKET;
 
 const CLOUDFRONT_URL = process.env.AWS_CDN_BASE_URL || `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION || 'ap-south-1'}.amazonaws.com`;
 
+// Maps validated mimetypes (see middlewares/upload.middleware.js) to a fixed
+// extension, so the stored file's extension can't be spoofed via a
+// client-supplied filename independent of its actual content type.
+const MIME_TO_EXT = {
+  'image/jpeg':      'jpg',
+  'image/jpg':       'jpg',
+  'image/png':       'png',
+  'image/webp':      'webp',
+  'video/mp4':       'mp4',
+  'video/quicktime': 'mov',
+};
+
 // folder: 'services', 'categories', 'reviews', 'avatars', etc.
 const uploadObject = async (file, folder = 'uploads') => {
-  const ext    = file.originalname.split('.').pop();
+  const ext    = MIME_TO_EXT[file.mimetype] || file.originalname.split('.').pop();
   const key    = `${folder}/${randomUUID()}.${ext}`;
 
   await s3.send(new PutObjectCommand({

@@ -3,8 +3,14 @@ const autocannon = require('autocannon');
 const fs = require('fs');
 
 const BASE  = 'http://localhost:5000';
-const ADMIN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMWViOTUxZDE5ZDk1ZmU5MTVlN2JkOCIsInJvbGUiOiJzdXBlcmFkbWluIiwiaWF0IjoxNzgyNjUwOTcwLCJleHAiOjE3ODM5NDY5NzB9.tTqg7fZJqq9B-49vyAYG-B9PpppywD00697XitkWQxM';
-const USER  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmNlOGI3MmVkMDU1YmU0NDhjMDM5OSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzgyNjUwOTI0LCJleHAiOjE3ODM5NDY5MjR9.9AI7Gk48FO2YpQl6SWD1OPA37dn9Ulkv_H5PmihUelA';
+// Provide fresh tokens via env vars — do not hardcode credentials in this file.
+const ADMIN = process.env.LOAD_TEST_ADMIN_TOKEN;
+const USER  = process.env.LOAD_TEST_USER_TOKEN;
+
+if (!ADMIN || !USER) {
+  console.error('Set LOAD_TEST_ADMIN_TOKEN and LOAD_TEST_USER_TOKEN env vars before running this script.');
+  process.exit(1);
+}
 
 const HA = { 'content-type': 'application/json', authorization: 'Bearer ' + ADMIN };
 const HU = { 'content-type': 'application/json', authorization: 'Bearer ' + USER };

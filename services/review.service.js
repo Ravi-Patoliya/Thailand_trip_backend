@@ -6,6 +6,8 @@ const notificationService = require('./notification.service');
 const AppError           = require('../utils/AppError');
 const MSG                = require('../constants/message');
 const { paginate }       = require('../utils/paginate');
+const escapeRegex        = require('../utils/escapeRegex');
+const logger             = require('../helpers/logger.helper');
 
 class ReviewService {
   async getServiceReviews(serviceId, query) {
@@ -80,7 +82,7 @@ class ReviewService {
     if (query.rating)    filter.rating    = Number(query.rating);
     if (query.isFlagged) filter.isFlagged = query.isFlagged === 'true';
     if (query.search) {
-      const regex = new RegExp(query.search, 'i');
+      const regex = new RegExp(escapeRegex(query.search), 'i');
       filter.$or  = [
         { title: regex },
         { body:  regex },
@@ -108,16 +110,24 @@ class ReviewService {
 
     // update rating cache incrementally — no aggregation query
     if (status === 'approved') {
-      serviceRepository.addRating(review.service._id, review.rating).catch(() => {});
+      serviceRepository.addRating(review.service._id, review.rating).catch(err =>
+        logger.error(`Failed to add rating cache (service ${review.service._id}): ${err?.message || err}`)
+      );
     } else if (status === 'rejected' && review.status === 'approved') {
-      serviceRepository.removeRating(review.service._id, review.rating).catch(() => {});
+      serviceRepository.removeRating(review.service._id, review.rating).catch(err =>
+        logger.error(`Failed to remove rating cache (service ${review.service._id}): ${err?.message || err}`)
+      );
     }
 
     const serviceName = review.service?.title || 'your booked service';
     if (status === 'approved') {
-      notificationService.notifyReviewApproved(review, serviceName).catch(() => {});
+      notificationService.notifyReviewApproved(review, serviceName).catch(err =>
+        logger.error(`Failed to notify review approved (review ${id}): ${err?.message || err}`)
+      );
     } else {
-      notificationService.notifyReviewRejected(review, serviceName, rejectionReason).catch(() => {});
+      notificationService.notifyReviewRejected(review, serviceName, rejectionReason).catch(err =>
+        logger.error(`Failed to notify review rejected (review ${id}): ${err?.message || err}`)
+      );
     }
 
     return updated;
@@ -133,7 +143,9 @@ class ReviewService {
     const updated = await reviewRepository.addAdminReply(id, text, adminId);
 
     const serviceName = review.service?.title || 'your booked service';
-    notificationService.notifyAdminReviewReply(review, serviceName).catch(() => {});
+    notificationService.notifyAdminReviewReply(review, serviceName).catch(err =>
+      logger.error(`Failed to notify admin review reply (review ${id}): ${err?.message || err}`)
+    );
 
     return updated;
   }

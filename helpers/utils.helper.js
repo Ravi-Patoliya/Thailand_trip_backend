@@ -74,7 +74,7 @@ const helper = {
                     "api-key": process.env.MSG_AUTH_KEY,
                 },
             };
-            logger.info("DEBUG: Sending OTP to mobile:", `${mobilePrefix}${mobileNo}`, "OTP:", OTP);
+            logger.info("DEBUG: Sending OTP to mobile:", `${mobilePrefix}${mobileNo}`);
             const data = new URLSearchParams();
             data.append("to", `${mobilePrefix}${mobileNo}`);
             data.append("sender", process.env.MSG_SENDER_ID || "PLIXRT");

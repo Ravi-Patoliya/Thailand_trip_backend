@@ -21,8 +21,12 @@ const errorHandler = async (err, req, res, next) => {
         return API_response.BAD_REQUEST({ res, message: err.message });
     }
 
-    if (err instanceof jwt.JsonWebTokenError || err instanceof jwt.TokenExpiredError || err instanceof jwt.NotBeforeError) {
-        return API_response.UNAUTHORIZED({ res, message: err.message });
+    if (err instanceof jwt.TokenExpiredError) {
+        return API_response.UNAUTHORIZED({ res, message: 'Session expired. Please log in again.' });
+    }
+
+    if (err instanceof jwt.JsonWebTokenError || err instanceof jwt.NotBeforeError) {
+        return API_response.UNAUTHORIZED({ res, message: 'Invalid authentication token.' });
     }
 
     if (err instanceof AppError && err.isOperational) {

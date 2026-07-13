@@ -44,11 +44,11 @@ if (!isTestEnv) {
 const config = {
     environment: envVars.NODE_ENV || process.env.NODE_ENV || 'development',
     port: envVars.NODE_ENV === 'test' ? 3005 : envVars.PORT,
-    // jwt.secret is consumed by middlewares/auth.js and helpers/utils.helper.js.
+    // jwt.secret is consumed by helpers/utils.helper.js (legacy, unused elsewhere).
     // This project's primary JWT utils (utils/jwt.js) read JWT_ACCESS_SECRET /
     // JWT_REFRESH_SECRET directly from process.env — these are separate concerns.
     jwt: {
-        secret: process.env.JWT_ACCESS_SECRET || 'secret',
+        secret: process.env.JWT_ACCESS_SECRET,
         accessExpirationMinutes: process.env.JWT_ACCESS_TTL || '15d',
         refreshExpirationDays: process.env.JWT_REFRESH_TTL || '7d',
         resetPasswordExpirationMinutes: 10,

@@ -6,6 +6,7 @@ const AppError       = require('../utils/AppError');
 const MSG            = require('../constants/message');
 const { paginate }   = require('../utils/paginate');
 const { deleteObject } = require('../helpers/s3.helper');
+const escapeRegex    = require('../utils/escapeRegex');
 
 const ADMIN_ROLES = ['admin', 'superadmin'];
 
@@ -19,7 +20,7 @@ class UserService {
     if (query.isActive !== undefined) filter.isActive = query.isActive === 'true';
 
     if (query.search) {
-      const regex = new RegExp(query.search, 'i');
+      const regex = new RegExp(escapeRegex(query.search), 'i');
       filter.$or = [{ name: regex }, { email: regex }, { mobile: regex }];
     }
 

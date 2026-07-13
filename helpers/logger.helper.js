@@ -36,7 +36,10 @@ const logger = createLogger({
     transports: [
         new transports.Console(),
         ...(process.env.NODE_ENV !== 'development'
-            ? [new transports.File({ filename: 'logs/error.log', level: 'error' }), new transports.File({ filename: 'logs/combined.log' })]
+            ? [
+                new transports.File({ filename: 'logs/error.log', level: 'error', maxsize: 10 * 1024 * 1024, maxFiles: 5 }),
+                new transports.File({ filename: 'logs/combined.log', maxsize: 10 * 1024 * 1024, maxFiles: 5 }),
+              ]
             : []),
     ],
 });
@@ -60,13 +63,17 @@ const groupingLogger = createLogger({
                 )
             )
         }),
-        new transports.File({ 
+        new transports.File({
             filename: 'logs/grouping.log',
-            level: 'info'
+            level: 'info',
+            maxsize: 10 * 1024 * 1024,
+            maxFiles: 5,
         }),
-        new transports.File({ 
+        new transports.File({
             filename: 'logs/grouping-errors.log',
-            level: 'error'
+            level: 'error',
+            maxsize: 10 * 1024 * 1024,
+            maxFiles: 5,
         })
     ],
 });
