@@ -1,8 +1,8 @@
 {
-  "name": "travel-book",
+  "name": "my-thai-booking",
   "version": "1.0.0",
   "private": true,
-  "description": "Thailand Tour API backend",
+  "description": "My Thai Booking API backend",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -11,7 +11,7 @@
     "pm2:start": "pm2 start ecosystem.config.js --env production",
     "pm2:restart": "pm2 restart ecosystem.config.js --env production",
     "pm2:stop": "pm2 stop ecosystem.config.js",
-    "pm2:logs": "pm2 logs thailand-tour-api"
+    "pm2:logs": "pm2 logs my-thai-booking-api"
   },
   "engines": {
     "node": ">=18"

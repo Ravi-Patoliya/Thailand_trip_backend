@@ -18,7 +18,7 @@ const bootstrap = async () => {
     app.locals.redis = redis;
 
     const server = app.listen(PORT, () => {
-      console.log(`\n🚀 Thailand Tour API running`);
+      console.log(`\n🚀 My Thai Booking API running`);
       console.log(`   Environment : ${process.env.NODE_ENV}`);
       console.log(`   Port        : ${PORT}`);
       console.log(`   Health      : http://localhost:${PORT}/api/v1/health\n`);

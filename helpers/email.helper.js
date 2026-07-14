@@ -12,13 +12,13 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendOtpEmail = async (to, otp, opts = {}) => {
-  const subject = opts.subject || 'Your Thai Tour OTP Code';
+  const subject = opts.subject || 'Your My Thai Booking OTP Code';
   const purpose = opts.purpose || 'verification';
   await transporter.sendMail({
-    from:    `Thai Tour <${process.env.EMAIL_FROM || process.env.SMTP_USER}>`,
+    from:    `My Thai Booking <${process.env.EMAIL_FROM || process.env.SMTP_USER}>`,
     to,
     subject,
-    text:    `Your Thai Tour OTP for ${purpose}: ${otp}\nExpires in 5 minutes.\n\nDo not share this code with anyone.`,
+    text:    `Your My Thai Booking OTP for ${purpose}: ${otp}\nExpires in 5 minutes.\n\nDo not share this code with anyone.`,
     html: `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -39,16 +39,16 @@ const sendOtpEmail = async (to, otp, opts = {}) => {
 </style></head>
 <body>
 <div class="w">
-  <div class="h"><div class="logo">Thai Tour</div><div class="sub">Account Security</div></div>
+  <div class="h"><div class="logo">My Thai Booking</div><div class="sub">Account Security</div></div>
   <div class="b">
     <p class="lead">Your one-time code for <strong>${purpose}</strong>:</p>
     <div class="otp-box">
       <div class="otp">${otp}</div>
       <div class="exp">Expires in 5 minutes</div>
     </div>
-    <p class="lead" style="font-size:12px;color:#9B8B79;">Do not share this code with anyone. Thai Tour staff will never ask for your OTP.</p>
+    <p class="lead" style="font-size:12px;color:#9B8B79;">Do not share this code with anyone. My Thai Booking staff will never ask for your OTP.</p>
   </div>
-  <div class="ftr"><div class="ftr-brand">Thai Tour</div>&copy; ${new Date().getFullYear()} Thai Tour &middot; Automated message, do not reply.</div>
+  <div class="ftr"><div class="ftr-brand">My Thai Booking</div>&copy; ${new Date().getFullYear()} My Thai Booking &middot; Automated message, do not reply.</div>
 </div>
 </body></html>`,
   });
@@ -116,7 +116,7 @@ const sendInquiryAdminAlert = async (adminRecipients, inquiry) => {
 <body>
 <div class="wrap">
   <div class="hdr">
-    <div class="hdr-logo">Thai Tour</div>
+    <div class="hdr-logo">My Thai Booking</div>
     <div class="hdr-sub">Admin Notification</div>
     <div class="hdr-title">New Inquiry Received</div>
   </div>
@@ -177,9 +177,9 @@ const sendInquiryAdminAlert = async (adminRecipients, inquiry) => {
     </div>
   </div>
   <div class="ftr">
-    <div class="ftr-brand">Thai Tour</div>
+    <div class="ftr-brand">My Thai Booking</div>
     <div class="ftr-line"></div>
-    <div class="ftr-text">This is an automated alert — do not reply.<br>&copy; ${new Date().getFullYear()} Thai Tour &middot; Crafting Unforgettable Journeys</div>
+    <div class="ftr-text">This is an automated alert — do not reply.<br>&copy; ${new Date().getFullYear()} My Thai Booking &middot; Crafting Unforgettable Journeys</div>
   </div>
 </div>
 </body>
@@ -187,10 +187,10 @@ const sendInquiryAdminAlert = async (adminRecipients, inquiry) => {
 
   const toList = adminRecipients.map(a => a.email).join(', ');
   await transporter.sendMail({
-    from:    `Thai Tour <${process.env.EMAIL_FROM || process.env.SMTP_USER}>`,
+    from:    `My Thai Booking <${process.env.EMAIL_FROM || process.env.SMTP_USER}>`,
     to:      toList,
     subject: `New Inquiry #${inquiry.referenceNumber || inquiry._id} — ${contact.name || 'Guest'} · ${fmt(inquiry.travelDate)}`,
-    text:    `New Inquiry Alert\n\nRef: #${inquiry.referenceNumber || inquiry._id}\nContact: ${contact.name || '—'} | ${contact.email || '—'} | ${contact.mobile || '—'}\nTravel: ${fmt(inquiry.travelDate)} → ${fmt(inquiry.returnDate)}\nGuests: ${inquiry.adults || 1} adults, ${inquiry.children || 0} children\nTotal: ${currency(inquiry.totalAmount)}\n\nPlease review this inquiry in the admin panel.\n\n© ${new Date().getFullYear()} Thai Tour`,
+    text:    `New Inquiry Alert\n\nRef: #${inquiry.referenceNumber || inquiry._id}\nContact: ${contact.name || '—'} | ${contact.email || '—'} | ${contact.mobile || '—'}\nTravel: ${fmt(inquiry.travelDate)} → ${fmt(inquiry.returnDate)}\nGuests: ${inquiry.adults || 1} adults, ${inquiry.children || 0} children\nTotal: ${currency(inquiry.totalAmount)}\n\nPlease review this inquiry in the admin panel.\n\n© ${new Date().getFullYear()} My Thai Booking`,
     html,
   });
 };

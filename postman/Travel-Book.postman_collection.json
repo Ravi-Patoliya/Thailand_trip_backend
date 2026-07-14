@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "Travel-Book API",
-    "description": "Postman collection for the Travel-Book (Thailand Tour API) backend.",
+    "name": "My Thai Booking API",
+    "description": "Postman collection for the My Thai Booking API backend.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [

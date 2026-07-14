@@ -40,7 +40,7 @@ router.use('/upload',       uploadRoutes);
 router.get('/health', async (_, res) => {
   res.json({
     status:  'ok',
-    service: 'Thailand Tour API',
+    service: 'My Thai Booking API',
     env:     process.env.NODE_ENV,
     ts:      new Date().toISOString(),
   });

@@ -3,7 +3,7 @@
 module.exports = {
   apps: [
     {
-      name: 'thailand-tour-api',
+      name: 'my-thai-booking-api',
       script: 'server.js',
       instances: 1,
       exec_mode: 'fork',

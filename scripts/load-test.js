@@ -384,7 +384,7 @@ function printFindings(results, { serviceList, serviceById, categories, inquiry,
 
 (async () => {
   console.log('╔══════════════════════════════════════════════════╗');
-  console.log('║  Thailand Tour API — Load Test                   ║');
+  console.log('║  My Thai Booking API — Load Test                  ║');
   console.log(`║  Target : ${BASE.padEnd(38)} ║`);
   console.log(`║  Auth   : ${(AUTH_TOKEN ? '✓ token provided' : '✗ no token — inquiry test skipped').padEnd(38)} ║`);
   console.log('╚══════════════════════════════════════════════════╝');

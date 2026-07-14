@@ -6,7 +6,7 @@
 const mongoose = require('mongoose');
 
 async function validateSchemas() {
-  console.log('\n🔍 Thailand Tour Platform — Schema Validation\n');
+  console.log('\n🔍 My Thai Booking Platform — Schema Validation\n');
   console.log('═'.repeat(60));
 
   const models = require('../models/index');
