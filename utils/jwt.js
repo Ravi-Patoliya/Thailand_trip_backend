@@ -10,7 +10,18 @@ const REFRESH_TTL    = process.env.JWT_REFRESH_TTL || '7d';
 const REFRESH_COOKIE_OPTIONS = {
   httpOnly: true,
   secure:   process.env.NODE_ENV === 'production',
-  sameSite: 'lax', // Lax survives top-level navigation from external links (avoids surprise logout) while still blocking CSRF on cross-site POSTs
+  // 'none' is required because the frontend (mythaibooking.com) and this API
+  // (thai-api.mythaibooking.com) are different hosts, which browsers treat as
+  // cross-site for cookie purposes even though they share a parent domain.
+  // 'lax' silently dropped the cookie on the frontend's cross-site
+  // withCredentials fetch to /auth/refresh, causing an immediate 401 in
+  // production while working on localhost (where both sides are same-site).
+  // 'none' requires 'secure: true', which is already forced in production above.
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  // Without an explicit domain, the cookie defaults to the exact host that set
+  // it (thai-api.mythaibooking.com only) and is invisible to the frontend's
+  // origin. Scoping it to the shared parent domain lets both subdomains see it.
+  domain:   process.env.COOKIE_DOMAIN || undefined,
   maxAge:   7 * 24 * 60 * 60 * 1000, // 7 days in ms
   path:     '/',
 };
