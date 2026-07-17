@@ -18,11 +18,11 @@ app.use(helmet({
 }));
 
 const allowedOrigins = [
-  process.env.CLIENT_URL,
-  process.env.ADMIN_URL,
+  'https://www.mythaibooking.com',
+  'https://mythaibooking.com',
   'http://localhost:3000',
   'http://localhost:3001',
-].filter(Boolean);
+];
 
 app.use(cors({
   origin: (origin, cb) => {
