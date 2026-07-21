@@ -29,6 +29,7 @@ const updateCategorySchema = z.object({
   description:     z.string().trim().max(500).optional(),
   icon:            z.string().trim().optional(),
   isActive:        z.boolean().optional(),
+  order:           z.coerce.number().int().min(0).optional(),
   metaTitle:       z.string().trim().optional(),
   metaDescription: z.string().trim().optional(),
 }).refine(obj => Object.keys(obj).length > 0, { message: 'At least one field is required.' });

@@ -116,7 +116,7 @@ class CategoryService {
       if (exists) throw AppError.conflict(`Category "${body.name}" already exists.`);
     }
 
-    const allowed = ['name', 'description', 'icon', 'isActive', 'metaTitle', 'metaDescription'];
+    const allowed = ['name', 'description', 'icon', 'isActive', 'order', 'metaTitle', 'metaDescription'];
     const update  = {};
     allowed.forEach(k => { if (body[k] !== undefined) update[k] = body[k]; });
     update.updatedBy = adminId;

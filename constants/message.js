@@ -50,6 +50,7 @@ const MSG = {
   CATEGORY_CREATED:        'Category created successfully.',
   CATEGORY_UPDATED:        'Category updated successfully.',
   CATEGORY_DELETED:        'Category deleted successfully.',
+  CATEGORY_REORDERED:      'Categories reordered successfully.',
   CATEGORY_ALREADY_INACTIVE: 'Category is already deactivated.',
   CATEGORY_NO_DEEP_NEST:   'Nesting beyond one level is not allowed.',
   CATEGORY_REORDER_EMPTY:  'items must be a non-empty array of { id, order }.',
